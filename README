@@ -36,11 +36,28 @@ As in lex, the filtering automaton supports the notion of modes, each
 rule belonging to a set of modes and being applied only when the current
 working mode matches one of the modes associated with the rule.
 
+NOTE
+====
+
+You must install a basic rules fle on Debian systems, namely, one that
+has minimally somthing like
+######################################################################
+### final default rule
+{ 
+        SAVE incoming
+};
+######################################################################
+This is required since Debian MDA policy requires MDA's to be sgid
+mail to lock the /var/spool/mail directory, and making mailagent sgid
+anything would be a security risk.
+
 If you do not install any filtering rules, then some default hardwired
-rules apply. Those simply leave all the messages in your mailbox, but
-process mails whose Subject line is Command (@SH hooks). You may
-override this default behavior by writing your own set of rules,
-and maybe disable this processing entirely.
+rules apply. Those simply leave all the messages in your mailbox
+(which may cause mail to be garbled on Debian systems), but process
+mails whose Subject line is Command (@SH hooks). You may override this
+default behavior by writing your own set of rules, and maybe disable
+this processing entirely.
+
 
 I have included in the subdirectory 'examples' a set of files which are
 part of my own mail environment, in the hope that they will be useful.

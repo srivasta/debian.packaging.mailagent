@@ -8,7 +8,7 @@ if test "$MAIL"; then
 elif test -d /usr/mail; then
 	mailbox=/usr/mail/ram
 else
-	mailbox=/usr/spool/mail/ram
+	mailbox=/var/spool/mail/ram
 fi
 
 # List of folders to look at for new mail

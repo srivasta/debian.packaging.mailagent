@@ -61,8 +61,8 @@ sub init {
 
 	unless (open(COMPSPEC, "$cf'compspec")) {
 		# Configure a set of defaults if the user hasn't specified them manually
+#compress	.Z	compress	uncompress	zcat
 		&add_compressor(<<'EOT');
-compress	.Z	compress	uncompress	zcat
 gzip		.gz	gzip		gunzip		gunzip -c
 EOT
 		local($err) = "$!";

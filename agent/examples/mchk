@@ -2,7 +2,7 @@
 # @(#) Scans all the mailboxes to spot any new mail
 
 # Compute location of the spool mailbox
-spool=/usr/spool/mail
+spool=/var/spool/mail
 if test -d /usr/mail; then
 	spool=/usr/mail;
 fi

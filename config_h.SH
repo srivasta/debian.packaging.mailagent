@@ -43,9 +43,7 @@ sed <<!GROK!THIS! >config.h -e 's!^#undef\(.*/\)\*!/\*#define\1 \*!' -e 's!^#un-
  *	This macro surrounds its token with double quotes.
  */
 #if $cpp_stuff == 1
-#define STRINGIFY(a)"a"
-#define SQuoTe(a)"a
-#define EQuoTe(a)a"
+#define STRINGIFY(a) "a"
 #endif
 #if $cpp_stuff == 42
 #define StGiFy(a)# a

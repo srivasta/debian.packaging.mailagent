@@ -46,6 +46,8 @@
 #include "portable.h"
 #include <stdio.h>
 #include <sys/types.h>
+#include <string.h>
+#include <errno.h>
 
 #ifdef I_TIME
 # include <time.h>
@@ -89,7 +91,6 @@ public Pid_t progpid = 0;		/* Program PID */
 extern Time_t time();			/* Time in seconds since the Epoch */
 extern char *malloc();			/* Memory allocation */
 extern char *strsave();			/* Save string in memory */
-extern int errno;				/* System error report variable */
 
 /* VARARGS2 */
 public void add_log(level, format, arg1, arg2, arg3, arg4, arg5)
@@ -225,6 +226,7 @@ char *where;
 #if !defined(HAS_STRERROR) && defined(HAS_SYS_ERRLIST)
 	extern int sys_nerr;					/* Size of sys_errlist[] */
 	extern char *sys_errlist[];				/* Maps error code to string */
+
 #endif
 
 #ifdef HAS_STRERROR

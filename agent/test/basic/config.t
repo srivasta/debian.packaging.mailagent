@@ -73,7 +73,7 @@ timezone : PST8PDT
 statfile : \$spool/mailagent.st
 rules    : ~/.rules
 rulecache: ~/.cache
-maildrop : $pwd			# Do not LEAVE messages in /usr/spool/mail
+maildrop : $pwd			# Do not LEAVE messages in /var/spool/mail
 mailbox  : \$user		# Use config variable, not current perl $user
 #fromesc : ON			# Backward compatibility -- should be ON when absent
 locksafe : OFF			# Don't bother with failed locks (for fsn <= 14 chars)

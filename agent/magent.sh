@@ -158,6 +158,10 @@ $startperl
 
 $spitshell >>magent <<'!NO!SUBS!'
 
+# Our domain name Changed for Debian
+# $mydomain = '.' . `dnsdomainname`;
+
+
 $prog_name = $0;				# Who I am
 $prog_name =~ s|^.*/(.*)|$1|;	# Keep only base name
 $has_option = 0;				# True if invoked with options
@@ -687,8 +691,8 @@ sub mailbox_name {
 	$maildir = $cf'maildrop if $cf'maildrop ne '';
 	# If Configure gave a valid 'maildir', use it. Otherwise compute one now.
 	unless ($maildir ne '' && -d "$maildir") {
-		$maildir = "/usr/spool/mail";		# Default spooling area
-		-d "/usr/mail" && ($maildir = "/usr/mail");
+		$maildir = "/var/spool/mail";		# Default spooling area
+		-d "$maildir" || ( -d "/usr/mail" && ($maildir = "/usr/mail"));
 		-d "$maildir" || ($maildir = "$cf'home");
 	}
 	local($mbox) = $cf'user;					# Default mailbox file name

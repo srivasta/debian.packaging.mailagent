@@ -61,13 +61,13 @@ Subject: ... 5.1 Setting Up Mailagent
 
 2b] Locate the filter program (it will be filter or filter.sh depending on
     whether you choose the C or the shell version respectively) under some
-    directory like /usr/local/lib/mailagent. From now on, we'll assume we
-    use the C filter and that it is located under /usr/local/lib/mailagent.
+    directory like /usr/lib/mailagent. From now on, we'll assume we
+    use the C filter and that it is located under /usr/lib/mailagent.
 
-3] Copy the file /usr/local/lib/mailagent/mailagent.cf as ~/.mailagent and
-   edit it to configure your system correctly. You will see two distinct
-   sections in that file and you need to set-up properly the first one, the
-   "Configuration section".
+m et	3] Copy the file /usr/share/doc/mailagent/examples/rc/dot.mailagent.gz
+   as ~/.mailagent and edit it to configure your system correctly. You
+   will see two distinct sections in that file and you need to set-up
+   properly the first one, the "Configuration section".
 
    If you have a version of mailagent that is recent enough (at least 3.0 PL32)
    then you can create an initial configuration very easily and quickly by
@@ -117,14 +117,30 @@ Subject: ... 5.1 Setting Up Mailagent
 5b] Enter the following in ~/.rules
 
     Subject: /test/     { SAVE testing };
+    ### final default rule
+    { SAVE incoming };
 
     The meaning of that rule should be pretty obvious: If we receive a mail
     whose subject line contains the word "test", then we save that mail in
     a folder named "testing", under the default folder directory (~/Mail).
 
+    == IMPORTANT NOTE ==
+    The final default rule is needed on Debian systems since debian
+    MDA policy requires MDA's to be sgid mail, but making mailagent
+    sgid anything would be a security risk. Thus, we must *ALWAYS*
+    save any mail message that gets this far; letting it fall back to
+    the system mailbox may cause mail to be garbled.
+
+    See /usr/share/doc/mailagent/SECURITY for details
+
+    **You need that deafult rule**
+
 5c] Create a ~/.forward file as follows:
 
-    "|exec /usr/local/lib/mailagent/filter >> /export/home/ram/.bak 2>&1"
+    "|exec /usr/lib/mailagent/filter >> /export/home/ram/.bak 2>&1"
+
+	Please nore leading and  trailing double quotes are a
+	mandatory part of the line.
 
     The meaning of that line is the following: every mail should be piped
     (hence the leading "|" character) onto the filter program, and any
@@ -138,7 +154,7 @@ Subject: ... 5.1 Setting Up Mailagent
       That's a part that makes your .forward unique (for zealous optimizing
       sendmail that are dead wrong about optimizing!) and that can save
       you a lot of trouble if anything goes wrong! Just look at your ~/.bak!
-    * Replace /usr/local/lib/mailagent/filter with the proper filter path
+    * Replace /usr/lib/mailagent/filter with the proper filter path
       on your machine.
 
 5d] Note that on many systems, you need to ensure your .forward will be
@@ -163,8 +179,8 @@ Subject: ... 5.1 Setting Up Mailagent
 
 7c] Look out in ~/Mail/testing. You should find there the message whose Subject
     line contained the word "test". Then make sure the other message has been
-    delivered to your regular mailbox. (Since no match occurred in your rule
-    file, the mail is left in your mailbox by default).
+    delivered to the folder incoming. (Since no match occurred, the
+    mail is left in the folder specified in the default rule).
 
 7d] TROUBLESHOOTING
     * If your mail was not properly delivered, please make sure your rule file
@@ -342,6 +358,12 @@ By default, mailagent proceeds with a fixed locking scheme (.lock extension)
 plus flock() if asked to do so at Configure time. However, mailagent provides
 support for NFS-secure locks and also can use non-standard locking procedures,
 configurable from within ~/.mailagent (variables "nfslock" and "mboxlock").
+
+Under Debian, locking is not supported since locks require mailagent
+to be sgid mail, and given that arbitary code can be run by any user
+(see the PERL directive), this would be a major security risk).
+
+
 
 However, it cannot support locking on a rule basis (yet!). The author is
 willing to raise the priority of that item if one comes up with a legitimate

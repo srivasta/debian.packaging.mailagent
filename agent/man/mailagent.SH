@@ -194,7 +194,9 @@ has actually four distinct set of features, which can be used simultaneously
 or one at a time. This involves:
 .IP \(bu 5
 An @SH command processor, to remain compatible with the first implementation.
-In this simplest usage, all the mail messages are left in your mailbox,
+In this simplest usage, all the mail messages are left in your mailbox
+(or the catch all folder required on Debian systems: Please see
+.B /usr/share/doc/mailagent/SECURITY for details),
 with special processing raised on messages whose subject is \fICommand\fR.
 Please refer to the section entitled \fBUSING THE DEFAULT RULES\fR if you
 wish to use this feature.
@@ -536,7 +538,11 @@ flock()-style locking succeeded). This variable controls how safe you want
 to be. Set it to OFF to let mailagent continue its mailbox delivery even
 though no locking was done, to ON if you want strict locking, to PARTIAL if
 you can live with partial locking. Messages not saved in a folder are
-dumped to an emergency mailbox. (optional, defaults to ON).
+dumped to an emergency mailbox. (optional, defaults to ON). On Debian
+systems, since \fImailagent\fR can not grab locks,it should always be
+left ON, or else mail garbling may occur. See 
+.I /usr/share/doc/mailagent/SECURITY
+for details.
 .TP
 .I lockwarn
 This variable controls the time after which \fImailagent\fR should
@@ -598,7 +604,9 @@ Available macros are:
 .Ef
 Common locking formats are "%f.lock" and "%D/.%F.lock". Of course, to be able
 to use this feature, mailagent must not have been configured to use
-flock()-style locking only. (optional, defaults to: %f.lock).
+flock()-style locking only. (optional, defaults to: %f.lock). This has
+no effect on Debian systems, since \fImailagent\fR can not get a lock
+anyway, since it is not sgid mail.
 .TP
 .I mhprofile
 The name of the MH profile to be used. This is needed only when attempting
@@ -607,7 +615,8 @@ value \fI~/.mh_profile\fR is used.
 .TP
 .I mmdf
 Set this to ON if you wish to be able to save mail in MMDF-style mailboxes.
-(suggested: OFF, unless you use MMDF or MH).
+(suggested: OFF, unless you use MMDF or MH). This is invalid on a
+Debian system.
 .TP
 .I mmdfbox
 The value of this variable only matters when \fImmdf\fR is on. If set to ON,
@@ -718,8 +727,19 @@ Set this to ON to enable macro substitutions in rule patterns.
 (optional, defaults to: OFF).
 .TP
 .I rules
-The name of the file holding the filtering rules (optional,
-suggested: ~/.rules).
+The name of the file holding the filtering rules (optional on non
+Debian systems, suggested: ~/.rules). On Debian systems, one must have
+a minimal rules file to prevent \fImailagent\fR from trying to put
+messages into 
+.I /var/spool/mail/$USER,
+since mailagent can't lock that directory to prevent mail from being
+garbled. This is because Debian policy requires all entities
+attempting locks on that directory to be 
+.I sgid mail,
+and making \fImailagent\fR sgid anything would be a security
+loophole.
+    { SAVE incoming };
+ is the suggested minimal rules file. 
 .TP
 .I runmax
 Timeout for RUN commands and friends. (optional, defaults to: 3600).
@@ -862,6 +882,8 @@ unusual messages to \fI~/.bak\fR. A sample filter shell script may be found in
 \fILib/mailagent\fR, as well as a C filter program. On some systems, it may
 be necessary to move the '|' character before the leading quote, but don't
 try this unless you have no other choice (i.e. only as a last resort).
+Also, apparently \fBExim\fR takes exeption to the exec, and even
+perhaps to the redirection -- which would be a pity.
 .PP
 It is \fIvery\fR important to redirect error messages to some file within
 your home directory. For one thing, that will get you out of trouble if
@@ -887,9 +909,15 @@ security reasons).
 Note that the \fI.forward\fR file only pipes the mail to the \fIfilter\fR
 program and does not leave any copy in the mailbox. It is up to you to decide
 in the rule file whether you want to trash the mail away or leave it in the
-mailbox. If you do not have a rule file (i.e. you left a blank entry in your
-\fI~/.mailagent\fR, or you named a non-existent file, or your file is simply
-empty), don't worry: the default action is to leave the mail in the mailbox.
+mailbox.(Note that on Debian systems \fImailagent\fR can not lock the
+spool directory, and letting it leave mail in mailbox may cause it to
+get garbled). If you do not have a rule file (i.e. you left a blank
+entry in your \fI~/.mailagent\fR, or you named a non-existent file, or
+your file is simply empty),  the default action is to leave the mail
+in the mailbox, which is not a good idea for Debian machines. Please
+onstall a minimal rules file in any case,
+ { SAVE incoming };
+ is the suggested minimal rules file.
 '''
 .SS "Allowed Commands"
 .PP
@@ -907,8 +935,9 @@ installation. Make sure your \fI.forward\fR is world readable and that the
 \fIfilter\fR world readable).
 Set a log-level of 20 and disable vacation mode (the \fIvacation\fR entry in the
 \fI~/.mailagent\fR should be OFF). Set the name of the rule file to
-an empty file (or a non-existing file for that matter).
-You are ready to proceed...
+an file containing a catch-all rule:
+     { SAVE incoming };
+ You are ready to proceed...
 .PP
 Send yourself a mail and give mailagent time to process your mail. The
 subject of the message should be 'test' (in fact, anything but 'Command').
@@ -924,11 +953,13 @@ analyzing mail
 in mode 'INITIAL' for ALL
 selector 'All' on '<1,->', pattern '/^Subject: [Cc]ommand/'
 matching '/^Subject: [Cc]ommand/' on 'All' (<1,->) was false
-NOTICE no match, leaving in mailbox
+selector 'All'  on '<1,->'
+matching . on 'All' (<1,->) was true
+saving in folder incoming
 XEQ (LEAVE)
 starting LEAVE
-starting SAVE /usr/spool/mail/ram
-LEFT [qm7831] in mailbox
+starting SAVE /home/ram/mail/incoming
+SAVED [qm7831] in folder incoming
 FILTERED [qm7831] from ram (Raphael Manfredi)
 mailagent continues
 mailagent exits
@@ -1115,8 +1146,13 @@ queued mail.
 ''' D e f a u l t   R u l e s
 '''
 .SH "USING THE DEFAULT RULES"
-If you do not want to use the filtering feature of mailagent, then the
-default built-in rules will be used. Those are really simple: all the mails
+If you do not want to use the filtering feature of mailagent, 
+.B (NOTE:
+This may cause mail to be garbled on Debian systems, since
+\fImailagent\fR can not lock the spol directory under Debian policy
+restrictions)
+then the default built-in rules will be used.  Those are really
+simple: all the mails 
 are left in your mailbox and mails with a line "Subject: Command" anywhere in
 the message will be processed. Commands are looked for on lines starting with
 "@SH". The remaining of the line is then given to a shell for execution.
@@ -1247,6 +1283,7 @@ rule file:
 From: root { FORWARD postmaster };
 To: gue@eiffel.fr { POST mail.gue };
 Subject: /metaconfig/ { SAVE dist };
+{ SAVE incoming };
 .Ef
 There are three distinct rules. Rules are applied in sequence, until one
 matches (so the order is important). Any mail coming from \fIroot\fR will be
@@ -1254,7 +1291,7 @@ forwarded to user \fIpostmaster\fR. A mail addressed to \fIgue@eiffel.fr\fR is
 a mail coming from a mailing list. The mail is posted on a local newsgroup
 \fImail.gue\fR. Mails whose subject contains the word "metaconfig" will be
 saved in a folder \fIdist\fR for delayed reading and will not appear in the
-main mailbox. If no rule matched, the mail is left in the mailbox.
+main mailbox. If no rule matched, the mail is left in the folder incoming.
 '''
 .SS "Rule File Syntax"
 .PP
@@ -1795,7 +1832,7 @@ that started the APPLY command). You may nest them, of course.
 .TP
 ASSIGN \fIvar value\fR
 Assign the value to the user-defined variable \fIvar\fR, which may further be
-accessed as \fI%#var\fR for macro substitution or \fI#var\fR in the TR and
+accessed as \fI'%#var'\fR for macro substitution or \fI#var\fR in the TR and
 SUBST commands in place of the variable name. Note that there is no leading
 \fI#\fR in front of the variable name. The \fIvalue\fR you provide is first
 ran through \fIperl\fR to see if it contains some arithmetic operations. If the
@@ -1924,7 +1961,8 @@ expressions, and file inclusion is allowed to get headers from a file.
 .TP
 LEAVE
 Leave incoming mail in the system mailbox. This is the default action if no
-rule matched or if no saving occurred.
+rule matched or if no saving occurred. This is not recommended on
+Debian systems.
 (Fails if mail cannot be saved)
 .TP
 MACRO [\fB\-rdp\fR] \fIname\fR [= (\fIvalue\fR, \fItype\fR)]
@@ -2172,7 +2210,9 @@ error)
 .TP
 STORE \fIfolder\fR
 Save message in the specified folder and leave a copy in the system mailbox.
-The \fIfolder\fR parameter follows the same naming conventions as in SAVE.
+The \fIfolder\fR parameter follows the same naming conventions as in
+SAVE. Again, because of locking issues, leaving mail in the mailbox is
+not recommended on Debian machines.
 (Fails if message cannot be saved either in the \fIfolder\fR or in the mailbox)
 .TP
 STRIP \fIheader_fields_list\fR

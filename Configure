@@ -5000,7 +5000,7 @@ $rm -f intsize intsize.[co] intsize.out
 
 : determine where mail is spooled
 case "$maildir" in
-'') dflt=`./loc . /usr/spool/mail /usr/spool/mail /usr/mail /var/mail`;;
+'') dflt=`./loc . /var/spool/mail /var/spool/mail /usr/spool/mail /usr/mail /var/mail`;;
 *) dflt="$maildir";;
 esac
 echo " "
@@ -5043,7 +5043,7 @@ mailer="$ans"
 : determine where mail is spooled
 case "$mailfile" in
 '')
-	dflt=`./loc . XXX /usr/spool/mail /usr/mail /var/mail`
+	dflt=`./loc . XXX /var/spool/mail /usr/spool/mail /usr/mail /var/mail`
 	case "$dflt" in
 	XXX) dflt='%~/mailbox';;
 	*) dflt="$dflt/%L";;

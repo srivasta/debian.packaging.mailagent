@@ -17,7 +17,7 @@
 ;# mailbox (i.e. those produced by standard mail utilities with a leading From
 ;# line stating sender and date) into the mailagent's queue. This will be
 ;# especially useful on those sites where users are not allowed to have a
-;# .forward file. By using the -f option on the mailbox in /usr/spool/mail,
+;# .forward file. By using the -f option on the mailbox in /var/spool/mail,
 ;# mail will be queued and filtered as if it had come from filter via .forward.
 package mbox;
 
