@@ -1,3 +1,152 @@
+Sat Mar 17 19:29:59 MET 2001   Raphael Manfredi <Raphael_Manfredi@pobox.com>
+
+. Description:
+
+	Added credits for Manoj Srivastava, the Debian packager, for
+	his wonderful work.
+
+	Added two variables: domain and hidenet, in order to address
+	the Debian bug #72737.  The values hardwired at Configure time
+	in mailagent are now used only up to the moment where we have
+	parsed the user configuration.
+
+	Forgot to increment buf in pool_read(), in the C filter.
+	This was an important bug, which had never hit me however.
+	I noticed it by looking a the Debian patches.
+
+	Use the "email" config var verbatim in FORWARD.  It used to
+	determine the Resent-From: by constructing a full email address,
+	but this is wrong.  We should use whatever the user said, and
+	it is up to MTAs to fix the address should it be unqualified.
+
+	Removed unused var in POST.
+
+	Fixed longstanding lie in man; "To: gue@eiffel.fr" now works
+	as advertised in the man page.  It also means you can write:
+
+	    To Cc: user@example.com
+
+	instead of the heavier:
+
+	    To Cc: /^user@example\.com$/
+
+	However, if you wish to use more complex patterns, you still
+	have to use the /^/ anchored form.
+
+	Create a new filter/address test to test various matching
+	patterns on address selectors.
+
+	Try to run tests as nobody when super-user -- from Debian.
+
+	Fixed test rules for UNIQUE, removing spurious REJECT -f.  The
+	error present in the man page had also propagated to the test
+	cases.
+
+. Files changed:
+
+	* agent/files/setup.cf, agent/files/mailagent.cf: Added two
+	variables: domain and hidenet.
+
+	* agent/filter/io.c: Forgot to increment buf in pool_read() -- from
+	Debian.
+
+	* agent/magent.sh: Mydomain and hiddennet now superseded by config
+	vars.  Changed email_addr() and domain_addr() to honour new config
+	vars.
+
+	* agent/man/mailagent.SH: Documented new config vars: domain and
+	hidenet.  Various fixes from bug reports on Debian.
+
+	* agent/pl/actions.pl: Use the "email" config var verbatim in
+	FORWARD.  Removed unused var in POST.
+
+	* agent/pl/builtins.pl: Hostname computed via domain_addr() to honour
+	hidenet.
+
+	* agent/pl/matching.pl: Fixed longstanding lie in man; "To:
+	gue@eiffel.fr" now works.
+
+	* agent/pl/parse.pl: Use the "domain" config var instead of mydomain.
+
+	* agent/pl/read_conf.pl: Computes suitable defaults for new "domain"
+	and "hidenet".
+
+	* agent/pl/rfc822.pl: Use "domain" config var instead of mydomain.
+
+	* agent/test/TEST: Try to run tests as nobody when super-user -- from
+	Debian.
+
+	* agent/test/actions: Fixed test rules for UNIQUE, removing spurious
+	REJECT -f.
+
+	* agent/test/filter/address.t: Created.
+
+	* agent/test/filter/list.t: Unlink files we expect to be created
+	before running command.
+
+	* agent/test/rules: Added new filter/address tests.
+
+Tue Mar 13 14:27:14 MET 2001   Raphael Manfredi <Raphael_Manfredi@pobox.com>
+
+. Description:
+
+	Made fixup of header fields in POST be a warning in the
+	logs, instead of a mere notice.
+
+	Added fix for broken continuations in parse_mail().  I have
+	started receiving messages with invalid header continuations,
+	and this led to failure in POST: the remote news server is
+	much more strict on headers than mail agents.
+
+	Fixed RESYNC, copied continuation fix from parse_mail().
+
+	Added support for SUBST/TR on mail headers: it is now possible
+	to say something like:
+
+	    SUBST Subject: /foo/bar/g;
+
+	to alter header field in place.  See the updated manual page
+	for details.
+
+	Added rule to suppress () and {} in message ids, since again
+	it led to failures when using POST.
+
+	Added test cases for SUBST/TR on header fields.
+
+	The newsgate program now computes the In-Reply-To field via a
+	regexp instead of a split on References to cope with bad
+	References line that dont have a space between message ids.
+
+. Files changed:
+
+	* agent/man/mailagent.SH: Documented SUBST/TR on header fields.
+
+	* agent/pl/actions.pl: Made fixup of header fields in POST be a
+	warning.  Fixed RESYNC, copied continuation fix from parse_mail(). 
+	Added support for SUBST/TR on mail headers.
+
+	* agent/pl/filter.pl: Changed SUBST/TR parameter parsing to support
+	header fields.
+
+	* agent/pl/header.pl: Added rule to suppress () and {} in message ids.
+
+	* agent/pl/history.pl: Message ids are now cleaned-up via
+	msgid_cleanup().
+
+	* agent/pl/parse.pl: Added fix for broken continuations in
+	parse_mail().
+
+	* agent/test/actions: Added test cases for SUBST/TR on header fields.
+
+	* agent/test/cmd/subst.t: Added test cases for SUBST on header fields.
+
+	* agent/test/cmd/tr.t: Added test cases for TR on header fields.
+
+	* misc/news/ml.map: Typo fixes in leading comment.
+
+	* misc/news/newsgate: The in-reply-to field is now computed via a
+	regexp.
+
 Wed Jan 10 18:10:29 MET 2001   Raphael Manfredi <Raphael_Manfredi@pobox.com>
 
 . Description:

@@ -20,7 +20,7 @@ $spitshell >mailagent.$manext <<!GROK!THIS!
 .TH MAILAGENT $manext "Version $VERSION PL$PATCHLEVEL"
 ''' @(#) Manual page for mailagent's filter -- (c) ram February 1991
 '''
-''' $Id: mailagent.SH,v 3.0.1.24 2001/01/10 16:51:38 ram Exp $
+''' $Id: mailagent.SH,v 3.0.1.26 2001/03/17 18:08:30 ram Exp $
 '''
 '''  Copyright (c) 1990-1993, Raphael Manfredi
 '''  
@@ -31,6 +31,13 @@ $spitshell >mailagent.$manext <<!GROK!THIS!
 '''  of the source tree for mailagent 3.0.
 '''
 ''' $Log: mailagent.SH,v $
+''' Revision 3.0.1.26  2001/03/17 18:08:30  ram
+''' patch72: documented new config vars: domain and hidenet
+''' patch72: various fixes from bug reports on Debian
+'''
+''' Revision 3.0.1.25  2001/03/13 13:10:47  ram
+''' patch71: documented SUBST/TR on header fields
+'''
 ''' Revision 3.0.1.24  2001/01/10 16:51:38  ram
 ''' patch69: changed semantics of "tome"
 ''' patch69: updated POST to current practices
@@ -425,6 +432,13 @@ A list of all the available distributions. See the sample held in
 \fILib/mailagent/distribs\fR. Needed by PROCESS only. (suggested:
 \$spool/distribs)
 .TP
+.I domain
+Your domain name, without the leading dot, as in \fIexample.com\fR.
+The value is appended to the value of \fIemail\fR when that variable
+does not have any '@', to construct a fully qualified e-mail address.
+See also the \fIhidenet\fR variable.
+(optional, defaults to the domain name determined at build time).
+.TP
 .I email
 Your electronic mail address. If left unspecified, mailagent will try to
 guess it. This address is used by mailagent when trying to send something
@@ -478,6 +492,15 @@ or activate auto cleaning. The directory is placed in the spool area.
 .I helpdir
 Directory where help files for SERVER commands are kept.
 (suggested: \$spool/help)
+.TP
+.I hidenet
+When set to ON, the value of the variable \fIdomain\fR is the fully qualified
+name used.  When OFF, the hostname is prepended to the \fIdomain\fR.  If
+the hostname is already fully qualified, then the value of \fIdomain\fR is
+ignored.  Assuuming \fIdomain\fR is set to \fIexample.com\fR and the hostname
+is \fIhost\fR, then the fully qualified name will be \fIhost.example.com\fR
+if \fIhidenet\fR is OFF, and \fIexample.com\fR if ON.
+(optional, defaults to whatever was determined at build time)
 .TP
 .I home
 Defines where the home directory is. This must be accurate.
@@ -1310,7 +1333,10 @@ have a From: field whose value is \fIRaphael Manfredi <ram@eiffel.com>\fR, then
 the pattern \fI/Raphael/\fR would match, but not \fI/^Raphael/\fR. Instead,
 \fI/^ram@.*$/\fR would match, but this is more easily done with a single word
 pattern \fIram\fR, for it only focuses on the login name of the address and
-would also match if the address was written as \fIeiffel.com!ram\fR.
+would also match if the address was written as \fIeiffel.com!ram\fR.  A single
+address in Internet form, as in \fIram@eiffel.com\fR is implicitely matching
+on the address part of the field, and you must not escape the '.' as you
+would have to in a regular expression.
 .PP
 This may sound a little complex, but this design is meant to make things
 easier for the user. Here are some other examples:
@@ -1567,7 +1593,7 @@ For example, let's say the user receives cron outputs from various machines
 and wishes to save them on a per-machine basis, differentiating between
 daily outputs and weekly ones. Here is a solution:
 .Ex
-Subject: /output for host (\\\\w+)/	{ ASSIGN host %1; REJECT };
+Subject: /output for host (\\\\w+)/	{ ASSIGN host '%1'; REJECT };
 Subject: /^Daily output/	{ SAVE %#host/daily.%D };
 Subject: /^Weekly output/	{ SAVE %#host/weekly.%m-%d };
 .Ef
@@ -1634,12 +1660,12 @@ while doing pattern matching.
 .PP
 For instance:
 .Ex
-To: /(.*)/, Subject: /Output from (\\\\w+)/ { ASSIGN to %1; SAVE %2 };
+To: /(.*)/, Subject: /Output from (\\\\w+)/ { ASSIGN to '%1'; SAVE %2 };
 .Ef
 will save the To: field in variable 'to' and save the mail in a folder derived
 from the host name specified in the subject. However, if we say:
 .Ex
-Subject: /host (\\\\w+)/, /from (\\\\w+)/ { ASSIGN match %1 };
+Subject: /host (\\\\w+)/, /from (\\\\w+)/ { ASSIGN match '%1' };
 .Ef
 then there will be only one back-reference set, and it will come from the first
 pattern matching if it succeeds, or from the second. Should the second or
@@ -1674,7 +1700,7 @@ There is also a special macro %&, which lists (it's a comma separated list)
 all the selectors specified via a regular expression which indeed matched.
 For instance:
 .Ex
-Re.*: /york/		{ ASSIGN which %& };
+Re.*: /york/		{ ASSIGN which '%&' };
 .Ef
 would assign to \fIwhich\fR the list of all the fields matching the /Re.*/
 pattern which contained 'york', be it a Received: field or a Resent-From:
@@ -2157,18 +2183,43 @@ header field name if you wish, but that is not strictly necessary. Headers
 may be specified via shell-style regular expressions or via "file" inclusion.
 (Does not alter execution status)
 .TP
-SUBST \fIvar expression\fR
+SUBST \fIvar/header expression\fR
 Substitutes the expression on the specified user-defined variable (name
-starting with a #) or back-reference (digit). For instance, 'SUBST #foo /w/y/g'
+starting with a #) or back-reference (digit), or header field (optionally
+ending with ':').  For instance
+.Ex
+SUBST #foo /w/y/g
+.Ef
 would substitute in user-defined variable \fIfoo\fR all the \fIw\fR by \fIy\fR.
 See also ASSIGN and TR.
+
+For substitutions on header fields, like:
+.Ex
+SUBST Subject: /\\\\[foo\\\\\]\\\\s+//;
+.Ef
+matching header lines will be reformatted when the substitution is successful,
+which likely means original continuations will not be preserved.  The target
+of the substitution is the whole header, with continuations normalized to
+one space.  You are therefore guaranteed to be independent from the actual
+header formatting in the original.
+
+Do not forget to issue a RESYNC after a header field SUBST, since some
+routines (like POST) probe into the parsed header hash table to generate
+the saved message.
+
 (Fails if error in \fIexpression\fR)
 .TP
-TR \fIvar translation\fR
-Perform the translation on the specified variable or back-reference. For
-instance, 'TR 1 /A-Z/a-z/' would canonicalize content of reference 1 into
-lowercase. See also ASSIGN and SUBST.
-(Fails if error in \fItranslation\fR)
+TR \fIvar/header translation\fR
+Perform the translation on the specified variable, back-reference or header
+field. For instance
+.Ex
+TR 1 /A-Z/a-z/
+.Ef
+would canonicalize content of reference 1 into
+lowercase.
+Successfully transliterated headers are reformatted, even when their overall
+size is not changed.
+See also ASSIGN and SUBST.  (Fails if error in \fItranslation\fR)
 .TP
 UMASK [\fB\-l\fR] \fImode\fR
 Changes the process's umask to the specified \fImode\fR, which can be decimal,
@@ -2771,12 +2822,12 @@ and you want to save one instance of the message in each folder, but still
 guard against duplicates. You may say:
 .Ex
 To Cc: unix-wizards	{
-	UNIQUE (wizards); REJECT -f;
+	UNIQUE (wizards);
 	SAVE wizards;
 	REJECT;
 };
 To Cc: majordomo-users	{
-	UNIQUE (majordomo); REJECT -f;
+	UNIQUE (majordomo);
 	SAVE majordomo;
 	REJECT;
 };
@@ -2788,17 +2839,17 @@ messages cross-posted to both \fIdist-users\fR and \fIagent-users\fR, but
 have a separate copy if also cross-posted to \fImajordomo-users\fR, then say:
 .Ex
 To Cc: majordomo-users	{
-	UNIQUE (majordomo); REJECT -f;
+	UNIQUE (majordomo);
 	SAVE majordomo;
 	REJECT;
 };
 To Cc: dist-users {
-	UNIQUE (dist, agent); REJECT -f;
+	UNIQUE (dist, agent);
 	SAVE dist-users;
 	REJECT;
 };
 To Cc: agent-users {
-	UNIQUE (dist, agent); REJECT -f;
+	UNIQUE (dist, agent);
 	SAVE dist-users;
 	REJECT;
 };

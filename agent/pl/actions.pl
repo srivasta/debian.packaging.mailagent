@@ -1,4 +1,4 @@
-;# $Id: actions.pl,v 3.0.1.19 2001/01/10 16:52:58 ram Exp $
+;# $Id: actions.pl,v 3.0.1.21 2001/03/17 18:10:47 ram Exp $
 ;#
 ;#  Copyright (c) 1990-1993, Raphael Manfredi
 ;#  
@@ -9,6 +9,15 @@
 ;#  of the source tree for mailagent 3.0.
 ;#
 ;# $Log: actions.pl,v $
+;# Revision 3.0.1.21  2001/03/17 18:10:47  ram
+;# patch72: use the "email" config var verbatim in FORWARD
+;# patch72: removed unused var in POST
+;#
+;# Revision 3.0.1.20  2001/03/13 13:13:15  ram
+;# patch71: made fixup of header fields in POST be a warning
+;# patch71: fixed RESYNC, copied continuation fix from parse_mail()
+;# patch71: added support for SUBST/TR on mail headers
+;#
 ;# Revision 3.0.1.19  2001/01/10 16:52:58  ram
 ;# patch69: replaced calls to fake_date() by mta_date()
 ;# patch69: rewrote the POST command, and added the -b switch
@@ -649,7 +658,7 @@ sub send_message {
 # The "FORWARD" command
 sub forward {
 	local($addresses) = @_;			# Address(es) mail should be forwarded to
-	local($address) = &email_addr;	# Address of user
+	local($address) = $cf'email;	# Address of user
 	# Any address included withing "" is in fact a file name where actual
 	# forwarding addresses are found.
 	$addresses =
@@ -719,7 +728,6 @@ sub post {
 	local($newsgroups) = @_;		# Newsgroup(s) mail should be posted to
 	local($localdist) = $opt'sw_l;	# Local distribution if POST -l
 	local($wantbiff) = $opt'sw_b;	# Biffing activated upon success
-	local($address) = &email_addr;	# Address of user
 	unless (open(NEWS,"|$cf'sendnews $cf'newsopt -h")) {
 		&add_log("ERROR cannot run $cf'sendnews to post message: $!")
 			if $loglvl;
@@ -810,8 +818,8 @@ sub post {
 			# But we also need to fix places using those message IDs, i.e.
 			# the References line, to preserve correct threading (see below).
 			my $fixup = &header'msgid_cleanup(\$msgid);
-			&add_log("NOTICE fixed Message-Id line for news")
-				if $loglvl > 6 && $fixup;
+			&add_log("WARNING fixed Message-Id line for news")
+				if $loglvl > 5 && $fixup;
 		} else {
 			&add_log("WARNING bad Message-Id line, faking one") if $loglvl > 5;
 			$msgid = &gen_message_id;
@@ -894,8 +902,8 @@ sub post {
 	$refs = $replyid unless $refs ne '';
 	if ($refs ne '') {
 		my $fixup = &header'msgid_cleanup(\$refs);
-		&add_log("NOTICE fixed References line for news")
-			if $loglvl > 6 && $fixup;
+		&add_log("WARNING fixed References line for news")
+			if $loglvl > 5 && $fixup;
 		print NEWS "References: $refs\n";	# One big happy line
 	}
 
@@ -1376,10 +1384,13 @@ sub header_resync {
 	local($value);							# Value of current field
 	foreach (split(/\n/, $Header{'All'})) {
 		if ($in_header) {					# Still in header of message
-			$in_header = 0 if /^$/;			# End of header
+			if (/^$/) {						# End of header
+				$in_header = 0;
+				next;
+			}
 			if (/^\s/) {					# It is a continuation line
 				s/^\s+/ /;					# Swallow multiple spaces
-				$Header{$last_header} .= "\n$_" if $last_header ne '';
+				$Header{$last_header} .= $_ if $last_header ne '';
 			} elsif (/^([\w-]+):\s*(.*)/) {	# We found a new header
 				$value = $2;				# Bug in perl 4.0 PL19
 				$last_header = &header'normalize($1);
@@ -1392,6 +1403,17 @@ sub header_resync {
 				}
 			} elsif (/^From\s+(\S+)/) {		# The very first From line
 				$first_from = $1;
+			} else {
+				# Did not identify a header field nor a continuation
+				# Maybe there was a wrong header split somewhere?
+				if ($last_header eq '') {
+					&add_log("ERROR ignoring header garbage: $_")
+						if $loglvl > 1;
+				} else {
+					&add_log("ERROR missing continuation for $last_header")
+						if $loglvl > 1;
+					$Header{$last_header} .= " " . $_;
+				}
 			}
 		} else {
 			$lines++;						# One more line in body
@@ -1472,7 +1494,95 @@ sub annotate_header {
 	0;
 }
 
-# The "TR" and "SUBST" commands
+
+# Utilitity routine for alter_field()
+# Performs $op on $bufref, the value of the header field $header, and insert
+# result in the head (pointed to by $headref), or the original raw buffer if
+# there was no change.
+# Returns whether there was a change or not, undef on eval() error.
+sub runop_on_field {
+	my ($header, $op, $bufref, $raw_bufref, $headref) = @_;
+
+	&add_log("running $op for $header: " . $$bufref) if $loglvl > 19;
+	my $changed = eval "\$\$bufref =~ $op";
+	if ($@) {
+		&add_log("ERROR operation $op failed: $@") if $loglvl > 1;
+		return undef;		# Abort further processing
+	}
+	&add_log("changed buffer: " . $$bufref) if $changed && $loglvl > 19;
+	$$headref .= $changed ?
+		&header'format("$header: " . $$bufref) :
+		("$header: " . $$raw_bufref);
+	$$headref .= "\n";
+
+	return $changed ? 1 : 0;
+}
+
+# The "TR" and "SUBST" commands targetted to header field.
+# The operation (s/// or tr//) is performed on the header field.
+# If a match occurrs, the whole header is reformatted.
+# Returns failure status (0 means OK)
+sub alter_field {
+	my ($header_field, $op) = @_;
+	$header_field = &header'normalize($header_field);
+
+	my $head = ' ' x length $Header{'Head'};
+	$head = '';
+	my $last_header = '';		# Non-empty indicates header field to process
+	my $buffer;					# Holds value of field to process
+	my $raw_buffer;				# Holds raw lines of field to process
+	my $ever_changed = 0;
+
+	foreach (split(/\n/, $Header{'Head'})) {
+		if (/^\s/) {
+			if ($last_header eq '') {
+				$head .= $_ . "\n";
+			} else {
+				$raw_buffer .= "\n$_";		# In case there's no change
+				s/^\s+/ /;
+				$buffer .= $_;				# What we'll run $op on
+			}
+		} elsif (my ($field, $value) = /^([\w-]+)\s*:\s*(.*)/) {
+
+			# Perform operation on $buffer if previous header matched.
+			if ($last_header ne '') {
+				my $changed = runop_on_field($last_header, $op,
+					\$buffer, \$raw_buffer, \$head);
+				return 1 unless defined $changed;	# Abort, because $op failed
+				$ever_changed++ if $changed;
+				$last_header = '';
+			}
+
+			if (&header'normalize($field) eq $header_field) {
+				$last_header = $field;			# Indicates a match
+				$raw_buffer = $buffer = $value;
+			} else {
+				$head .= $_ . "\n";
+			}
+		} else {
+			$head .= $_ . "\n";
+		}
+	}
+
+	# Perform operation on $buffer if last header seen matched.
+	if ($last_header ne '') {
+		my $changed = runop_on_field($last_header, $op,
+			\$buffer, \$raw_buffer, \$head);
+		return 1 unless defined $changed;	# Abort, because $op failed
+		$ever_changed++ if $changed;
+	}
+
+	# Resynchronize pseudo-headers if there was any change
+	if ($ever_changed) {
+		$Header{'All'} = $head . "\n" . $Header{'Body'};
+		$Header{'Head'} = $head;
+	}
+
+	&add_log("changed $ever_changed $header_field line" .
+		($ever_changed == 1 ? '' : 's') . " with $op") if $loglvl > 6;
+}
+
+# The "TR" and "SUBST" commands -- main entry point
 sub alter_value {
 	local($variable, $op) = @_;	# Variable and operation to performed
 	local($lvalue);				# Perl variable to be modified
@@ -1487,6 +1597,9 @@ sub alter_value {
 	} elsif ($variable =~ /^\d\d?$/) {
 		$variable = int($variable) - 1;
 		$lvalue = '$Backref[' . $variable . ']';
+	} elsif ($variable =~ /^([\w-]+):?$/) {
+		my $field = $1;						# Dataloading will change $1
+		return alter_field($field, $op);	# More complex, handle separately
 	} else {
 		&add_log("ERROR incorrect variable name '$variable'") if $loglvl > 1;
 		return 1;
