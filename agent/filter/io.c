@@ -217,8 +217,8 @@ struct pool {
 private int queued = 0;			/* True when mail queued safely */
 private struct mail mail;		/* Where mail is expected to lie */
 
-extern char *malloc();			/* Memory allocation */
-extern char *realloc();			/* Re-allocation of memory pool */
+extern void *malloc();			/* Memory allocation */
+extern void *realloc();			/* Re-allocation of memory pool */
 extern char *logname();			/* User's login name */
 extern char *strsave();			/* Save string somewhere in core */
 extern int loglvl;				/* Logging level */

@@ -41,8 +41,8 @@ private uint32 hashcode();			/* The hahsing function */
 private int prime();				/* Is a number a prime one? */
 private uint32 nprime();			/* Find next prime number */
 
-extern char *malloc();				/* Memory allocation */
-extern char *calloc();				/* Character allocation */
+extern void *malloc();				/* Memory allocation */
+extern void *calloc();				/* Character allocation */
 extern char *strsave();				/* Save string in memory */
 
 public int ht_create(ht, n)

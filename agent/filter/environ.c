@@ -56,7 +56,7 @@
  */
 private struct htable henv;			/* The associative array for env */
 
-extern char *malloc();				/* Memory allocation */
+extern void *malloc();				/* Memory allocation */
 extern char *strsave();				/* String saving */
 
 public void print_env(fd, envp)

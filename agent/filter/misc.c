@@ -42,7 +42,7 @@
 #include "sysexits.h"
 #include "confmagic.h"
 
-extern char *malloc();				/* Memory allocation */
+extern void *malloc();				/* Memory allocation */
 
 public char *strsave(string)
 char *string;

@@ -77,8 +77,8 @@ main()
 	char pack[MAX_LEN];
 	char fields[MAX_LEN];
 	char buf[MAX_LEN];
-	int user_off = (int) utmp->ut_name;		/* Offset of ut_name[] */
-	int line_off = (int) utmp->ut_line;		/* Offset of ut_line[] */
+	size_t user_off = (size_t) utmp->ut_name;		/* Offset of ut_name[] */
+	size_t line_off = (size_t) utmp->ut_line;		/* Offset of ut_line[] */
 	int user_len = sizeof(utmp->ut_name);	/* Length of ut_name[] array */
 	int line_len = sizeof(utmp->ut_line);	/* Length of ut_line[] array */
 	int last_off = 0;						/* Last offset in pack format */
