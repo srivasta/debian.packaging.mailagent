@@ -89,7 +89,7 @@ public char *progname = "ram";	/* Program name */
 public Pid_t progpid = 0;		/* Program PID */
 
 extern Time_t time();			/* Time in seconds since the Epoch */
-extern char *malloc();			/* Memory allocation */
+extern void *malloc();			/* Memory allocation */
 extern char *strsave();			/* Save string in memory */
 
 /* VARARGS2 */
