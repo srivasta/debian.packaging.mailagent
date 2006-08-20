@@ -327,6 +327,12 @@ sub relay_list {
 	local($host, $real);
 	local($islast) = 1;				# First line we see is the "last" inserted
 	local($received);				# Received line, verbatim
+        # The regexp /\.X$/i where X is any of offical top level domains at
+        # http://data.iana.org/TLD/tlds-alpha-by-domain.txt on 15 Aug 2006 plus the
+        # extra domain "private".
+        # The regexp is the translation into Perl syntax of the result of calling Emacs's `regexp-opt'
+        # on the list of acceptable TLDs.
+        local($tlds_rx) = qr'\.A(?:ERO|RPA|[C-GIL-OQ-UWXZ])|B(?:IZ|[ABD-JMNORSTVWYZ])|C(?:AT|O(?:M|OP)|[ACDF-IK-ORUVXYZ])|D[EJKMOZ]|E(?:DU|[CEGR-U])|F[IJKMOR]|G(?:OV|[ABD-ILMNP-UWY])|H[KMNRTU]|I(?:N(?:FO|T)|[DEL-OQ-T])|J(?:OBS|[EMOP])|K[EGHIMNRWYZ]|L[ABCIKR-VY]|M(?:IL|OBI|USEUM|[ACDGHK-Z])|N(?:AME|ET|[ACEFGILOPRUZ])|O(?:M|RG)|P(?:R(?:IVATE|O)|[AE-HK-NRSTWY])|QA|R[EOUW]|S[A-EG-ORTUVYZ]|T(?:RAVEL|[CDFGHJ-PRTVWZ])|U[AGKMSYZ]|V[ACEGINU]|W[FS]|Y[ETU]|Z[AMW]$'i;
 	local($i);
 	local($_);
 
@@ -341,7 +347,7 @@ sub relay_list {
 			) {
 				$host = $1;
 				$host .= ".$cf::domain"
-					if $host =~ /^\w/ && $host !~ /\.\w{2,4}$/;
+                                    if $host =~ /^\w/ && $host !~ $tlds_rx;
 				push(@hosts, $host);
 			} else {
 				&add_log("WARNING no by in first Received: line '$received'")
@@ -413,7 +419,7 @@ sub relay_list {
 		# if the "real" host name we attempted to guess is an IP address
 		# or looks like a fully qualified domain name.
 
-		$host = $real if $real =~ /\.\w{2,4}$/ || $real =~ /^\[[\d.]+\]$/;
+		$host = $real if $real =~ $tlds_rx || $real =~ /^\[[\d.]+\]$/;
 
 		if ($host eq '') {
 			&add_log("NOTICE no relaying origin in Received: line '$received'")
@@ -453,7 +459,7 @@ sub relay_list {
 
 		unless (
 			$host =~ /^\[[\d.]+\]$/							||
-			$host =~ /^[\w-.]+\.\w{2,4}$/					||
+			$host =~ /^[\w-.]+${tlds_rx}/					||
 			$host =~ /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/
 		) {
 			next if $host =~ /^[\w-]+$/;	# No message for unqualified hosts
