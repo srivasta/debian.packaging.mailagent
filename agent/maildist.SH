@@ -20,9 +20,9 @@ $startperl
 	eval "exec perl -S \$0 \$*"
 		if \$running_under_some_shell;
 
-# $Id: maildist.SH,v 3.0.1.5 1996/12/24 14:06:44 ram Exp $
+# $Id: maildist.SH 1 2006-08-24 13:24:12Z rmanfredi $
 #
-#  Copyright (c) 1990-1993, Raphael Manfredi
+#  Copyright (c) 1990-2006, Raphael Manfredi
 #  
 #  You may redistribute only under the terms of the Artistic License,
 #  as specified in the README file that comes with the distribution.
@@ -31,7 +31,7 @@ $startperl
 #  of the source tree for mailagent 3.0.
 #
 # $Log: maildist.SH,v $
-# Revision 3.0.1.5  1996/12/24 14:06:44  ram
+# Revision 3.0.1.5  1996/12/24  14:06:44  ram
 # patch45: silently discard hostile addresses
 # patch45: added command forwarding support
 #

@@ -1,6 +1,6 @@
-;# $Id: eval.pl,v 3.0.1.2 1995/01/03 18:07:10 ram Exp $
+;# $Id: eval.pl 1 2006-08-24 13:24:12Z rmanfredi $
 ;#
-;#  Copyright (c) 1990-1993, Raphael Manfredi
+;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
 ;#  You may redistribute only under the terms of the Artistic License,
 ;#  as specified in the README file that comes with the distribution.
@@ -9,7 +9,7 @@
 ;#  of the source tree for mailagent 3.0.
 ;#
 ;# $Log: eval.pl,v $
-;# Revision 3.0.1.2  1995/01/03 18:07:10  ram
+;# Revision 3.0.1.2  1995/01/03  18:07:10  ram
 ;# patch24: simplified hash table initialization -- code still unused
 ;#
 ;# Revision 3.0.1.1  1994/09/22  14:18:11  ram

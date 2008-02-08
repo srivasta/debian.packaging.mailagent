@@ -1,6 +1,6 @@
-;# $Id: parse.pl,v 3.0.1.16 2001/03/17 18:13:15 ram Exp $
+;# $Id: parse.pl 3 2008-01-17 09:58:33Z rmanfredi $
 ;#
-;#  Copyright (c) 1990-1993, Raphael Manfredi
+;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
 ;#  You may redistribute only under the terms of the Artistic License,
 ;#  as specified in the README file that comes with the distribution.
@@ -232,12 +232,10 @@ sub header_check {
 	# There is usually one Apparently-To line per address. Remove all new lines
 	# in the header line and replace them with ','. Likewise for To: and Cc:.
 	# although it is far less likely to occur.
-	local($*) = 1;
 	foreach $field ('Apparently-To', 'To', 'Cc') {
-		$Header{$field} =~ s/\n/,/g;	# Remove new-lines
-		$Header{$field} =~ s/,$/\n/;	# Restore last new-line
+		$Header{$field} =~ s/\n/,/gm;	# Remove new-lines
+		$Header{$field} =~ s/,$/\n/m;	# Restore last new-line
 	}
-	$* = 0;
 
 	# If no To: field, then maybe there is an Apparently-To: instead. If so,
 	# make them identical. Otherwise, assume the mail was directed to the user.

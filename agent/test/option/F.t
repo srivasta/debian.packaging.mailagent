@@ -1,8 +1,8 @@
 # -F : force processing on seen mail
 
-# $Id: F.t,v 3.0.1.1 1994/01/26 09:36:08 ram Exp $
+# $Id: F.t,v 3.0.1.1 1994/01/26 09:36:08 ram Exp ram $
 #
-#  Copyright (c) 1990-1993, Raphael Manfredi
+#  Copyright (c) 1990-2006, Raphael Manfredi
 #  
 #  You may redistribute only under the terms of the Artistic License,
 #  as specified in the README file that comes with the distribution.
@@ -11,7 +11,7 @@
 #  of the source tree for mailagent 3.0.
 #
 # $Log: F.t,v $
-# Revision 3.0.1.1  1994/01/26 09:36:08  ram
+# Revision 3.0.1.1  1994/01/26  09:36:08  ram
 # patch5: created
 #
 

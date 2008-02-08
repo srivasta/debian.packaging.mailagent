@@ -16,9 +16,9 @@ case "$0" in
 esac
 echo "Extracting agent/files/help/newpower (with variable substitutions)"
 $spitshell >/dev/null <<!GROK!THIS!
-# $Id: newpower.SH,v 3.0 1993/11/29 13:47:57 ram Exp $
+# $Id: newpower.SH 1 2006-08-24 13:24:12Z rmanfredi $
 #
-#  Copyright (c) 1990-1993, Raphael Manfredi
+#  Copyright (c) 1990-2006, Raphael Manfredi
 #  
 #  You may redistribute only under the terms of the Artistic License,
 #  as specified in the README file that comes with the distribution.
@@ -27,7 +27,7 @@ $spitshell >/dev/null <<!GROK!THIS!
 #  of the source tree for mailagent 3.0.
 #
 # $Log: newpower.SH,v $
-# Revision 3.0  1993/11/29 13:47:57  ram
+# Revision 3.0  1993/11/29  13:47:57  ram
 # Baseline for mailagent 3.0 netwide release.
 #
 !GROK!THIS!

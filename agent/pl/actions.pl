@@ -1,6 +1,6 @@
-;# $Id: actions.pl,v 3.0.1.21 2001/03/17 18:10:47 ram Exp $
+;# $Id: actions.pl 3 2008-01-17 09:58:33Z rmanfredi $
 ;#
-;#  Copyright (c) 1990-1993, Raphael Manfredi
+;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
 ;#  You may redistribute only under the terms of the Artistic License,
 ;#  as specified in the README file that comes with the distribution.
@@ -830,11 +830,12 @@ sub post {
 	# Protect Sender: lines in the original message and clean-up header
 	local($last_was_header);		# Set to true when header is skipped
 
-	# Need at most one MIME header, lest article might be rejected
-	my %mime = map { lc($_) => 0 } qw(
+	# Need at most one of the following headers, lest article might be rejected
+	my %single = map { lc($_) => 0 } qw(
 		Mime-Version
 		Content-Transfer-Encoding
 		Content-Type
+		Reply-To
 	);
 
 	foreach (split(/\n/, $Header{'Head'})) {
@@ -862,17 +863,18 @@ sub post {
 			/^Return-Receipt-To:/i	||		# Sendmail's acknowledgment
 			/^Received:/i			||		# We want to remove received
 			/^Precedence:/i			||
+			/^X-Complaints-To:/i	||		# INN2 does not like this field
 			/^Errors-To:/i					# Error report redirection
 		) {
 			$last_was_header = 1;			# Mark we discarded the line
 			next;							# Line is skipped
 		}
-		if (/^([\w-]+):/ && exists $mime{"\L$1"}) {
+		if (/^([\w-]+):/ && exists $single{"\L$1"}) {
 			my $field = lc($1);
-			if ($mime{$field}++) {
+			if ($single{$field}++) {
 				my $nfield = &header'normalize($field);
 				&add_log("WARNING stripping dup $nfield header")
-					if $loglvl > 5 && $mime{$field} == 2;
+					if $loglvl > 5 && $single{$field} == 2;
 				$last_was_header = 1;		# Mark we discarded the line
 				next;						# Line is skipped
 			}
@@ -1626,6 +1628,9 @@ sub perl {
 	unless (chdir $cf'home) {
 		&add_log("WARNING cannot chdir to $cf'home: $!") if $loglvl > 5;
 	}
+
+	$script =~ s/^\s*~/$cf'home/;	# ~ substitution
+	$script =~ s/\b~/$cf'home/g;	# ~ substitution as first letter in word
 
 	# Set up the @ARGV array, by parsing the $script variable with &shellwords.
 	# Note that the @ARGV array is held in the main package, but since the

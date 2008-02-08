@@ -1,8 +1,8 @@
 # Test MH-style folders
 
-# $Id: mh.t,v 3.0.1.1 1995/01/25 15:33:59 ram Exp $
+# $Id: mh.t,v 3.0.1.1 1995/01/25 15:33:59 ram Exp ram $
 #
-#  Copyright (c) 1990-1993, Raphael Manfredi
+#  Copyright (c) 1990-2006, Raphael Manfredi
 #  
 #  You may redistribute only under the terms of the Artistic License,
 #  as specified in the README file that comes with the distribution.
@@ -11,7 +11,7 @@
 #  of the source tree for mailagent 3.0.
 #
 # $Log: mh.t,v $
-# Revision 3.0.1.1  1995/01/25 15:33:59  ram
+# Revision 3.0.1.1  1995/01/25  15:33:59  ram
 # patch27: added checks for Msg-Protect and PROTECT
 #
 # Revision 3.0  1993/11/29  13:50:09  ram

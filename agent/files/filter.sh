@@ -1,8 +1,8 @@
 #!/bin/sh
 
-# $Id: filter.sh,v 3.0.1.4 1999/01/13 18:03:19 ram Exp $
+# $Id: filter.sh,v 3.0.1.4 1999/01/13 18:03:19 ram Exp ram $
 #
-#  Copyright (c) 1990-1993, Raphael Manfredi
+#  Copyright (c) 1990-2006, Raphael Manfredi
 #  
 #  You may redistribute only under the terms of the Artistic License,
 #  as specified in the README file that comes with the distribution.
@@ -11,7 +11,7 @@
 #  of the source tree for mailagent 3.0.
 #
 # $Log: filter.sh,v $
-# Revision 3.0.1.4  1999/01/13 18:03:19  ram
+# Revision 3.0.1.4  1999/01/13  18:03:19  ram
 # patch64: agent.wait is now stored in the spool rather than in queue
 #
 # Revision 3.0.1.3  1995/08/07  16:06:52  ram

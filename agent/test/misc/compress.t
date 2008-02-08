@@ -1,8 +1,8 @@
 # Test compression feature
 
-# $Id: compress.t,v 3.0.1.1 1995/01/25 15:33:37 ram Exp $
+# $Id: compress.t,v 3.0.1.1 1995/01/25 15:33:37 ram Exp ram $
 #
-#  Copyright (c) 1990-1993, Raphael Manfredi
+#  Copyright (c) 1990-2006, Raphael Manfredi
 #  
 #  You may redistribute only under the terms of the Artistic License,
 #  as specified in the README file that comes with the distribution.
@@ -11,7 +11,7 @@
 #  of the source tree for mailagent 3.0.
 #
 # $Log: compress.t,v $
-# Revision 3.0.1.1  1995/01/25 15:33:37  ram
+# Revision 3.0.1.1  1995/01/25  15:33:37  ram
 # patch27: ported to perl 5.0 PL0
 #
 # Revision 3.0  1993/11/29  13:50:08  ram
@@ -39,6 +39,7 @@ open(COMPRESS, '>.compress') || print "1\n";
 print COMPRESS <<EOF || print "2\n";
 a[lm]*
 $user
+test*
 EOF
 close COMPRESS || print "3\n";
 

@@ -1,6 +1,6 @@
-;# $Id: header.pl,v 3.0.1.3 2001/03/13 13:14:01 ram Exp $
+;# $Id: header.pl 1 2006-08-24 13:24:12Z rmanfredi $
 ;#
-;#  Copyright (c) 1990-1993, Raphael Manfredi
+;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
 ;#  You may redistribute only under the terms of the Artistic License,
 ;#  as specified in the README file that comes with the distribution.

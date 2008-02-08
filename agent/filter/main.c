@@ -11,9 +11,9 @@
 */
 
 /*
- * $Id: main.c,v 3.0.1.6 1997/02/20 11:36:56 ram Exp $
+ * $Id: main.c 4 2008-01-17 10:04:24Z rmanfredi $
  *
- *  Copyright (c) 1990-1993, Raphael Manfredi
+ *  Copyright (c) 1990-2006, Raphael Manfredi
  *  
  *  You may redistribute only under the terms of the Artistic License,
  *  as specified in the README file that comes with the distribution.
@@ -22,7 +22,7 @@
  *  of the source tree for mailagent 3.0.
  *
  * $Log: main.c,v $
- * Revision 3.0.1.6  1997/02/20 11:36:56  ram
+ * Revision 3.0.1.6  1997/02/20  11:36:56  ram
  * patch55: now uses getopt() to parse command line switches
  * patch55: new -o switch to redirect output
  *
@@ -78,7 +78,6 @@ private int set_real_gid();	/* Reset real gid */
 private void no_setid();	/* Option not allowed when running set[ug]id */
 
 extern void env_home();		/* Only for tests */
-extern int errno;
 
 
 public void main(argc, argv, envp)

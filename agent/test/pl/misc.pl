@@ -1,8 +1,8 @@
 # Common actions at the top of each misc test
 
-;# $Id: misc.pl,v 3.0.1.1 1994/07/01 15:11:55 ram Exp $
+;# $Id: misc.pl 1 2006-08-24 13:24:12Z rmanfredi $
 ;#
-;#  Copyright (c) 1990-1993, Raphael Manfredi
+;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
 ;#  You may redistribute only under the terms of the Artistic License,
 ;#  as specified in the README file that comes with the distribution.
@@ -11,7 +11,7 @@
 ;#  of the source tree for mailagent 3.0.
 ;#
 ;# $Log: misc.pl,v $
-;# Revision 3.0.1.1  1994/07/01 15:11:55  ram
+;# Revision 3.0.1.1  1994/07/01  15:11:55  ram
 ;# patch8: fixed RCS leading comment string
 ;#
 ;# Revision 3.0  1993/11/29  13:50:26  ram

@@ -8,6 +8,11 @@ Jmakefile                  Description of the main Makefile
 MANIFEST                   This list of files
 Makefile.SH                A makefile to run subsidiary makefiles
 README                     Basic instructions
+U/                         Specific metaconfig units
+U/End.U
+U/Myinit.U
+U/mboxlock.U
+U/utmp.U
 agent/                     Where mailagent support files are located
 agent/Jmakefile            High level description of Makefile
 agent/Makefile.SH          Makefile which builds and installs mailagent
@@ -239,6 +244,7 @@ agent/test/cmd/unknown.t       Make sure unknown command defaults correctly
 agent/test/cmd/vacation.t      Test VACATION command
 agent/test/cmd/write.t         Test WRITE command
 agent/test/filter/             Testing the filtering capabilities
+agent/test/filter/address.t    Test various match patterns on address fields
 agent/test/filter/backref.t    Check backreferences
 agent/test/filter/case.t       Normalized header case tests
 agent/test/filter/default.t    Check default behaviour when mail not saved

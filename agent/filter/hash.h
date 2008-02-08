@@ -11,9 +11,9 @@
 */
 
 /*
- * $Id: hash.h,v 3.0 1993/11/29 13:48:09 ram Exp $
+ * $Id: hash.h 1 2006-08-24 13:24:12Z rmanfredi $
  *
- *  Copyright (c) 1990-1993, Raphael Manfredi
+ *  Copyright (c) 1990-2006, Raphael Manfredi
  *  
  *  You may redistribute only under the terms of the Artistic License,
  *  as specified in the README file that comes with the distribution.
@@ -22,7 +22,7 @@
  *  of the source tree for mailagent 3.0.
  *
  * $Log: hash.h,v $
- * Revision 3.0  1993/11/29 13:48:09  ram
+ * Revision 3.0  1993/11/29  13:48:09  ram
  * Baseline for mailagent 3.0 netwide release.
  *
  */

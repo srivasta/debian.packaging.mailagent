@@ -1,6 +1,6 @@
-;# $Id: analyze.pl,v 3.0.1.9 1999/07/12 13:49:39 ram Exp $
+;# $Id: analyze.pl 3 2008-01-17 09:58:33Z rmanfredi $
 ;#
-;#  Copyright (c) 1990-1993, Raphael Manfredi
+;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
 ;#  You may redistribute only under the terms of the Artistic License,
 ;#  as specified in the README file that comes with the distribution.
@@ -9,7 +9,7 @@
 ;#  of the source tree for mailagent 3.0.
 ;#
 ;# $Log: analyze.pl,v $
-;# Revision 3.0.1.9  1999/07/12 13:49:39  ram
+;# Revision 3.0.1.9  1999/07/12  13:49:39  ram
 ;# patch66: moved localization of the %Variable hash for APPLY
 ;#
 ;# Revision 3.0.1.8  1997/09/15  15:13:15  ram
@@ -108,15 +108,12 @@ sub analyze_mail {
 		local(@filter) = split(/\n/, $header);	# Look for each X-Filter
 		local($address) = &email_addr;			# Our e-mail address
 		local($done) = 0;						# Already processed ?
-		local($*) = 0;
 		local($_);
 		foreach (@filter) {						# Maybe we'll find ourselves
 			if (/mailagent.*for (\S+)/) {		# Mark left by us ?
 				$done = 1 if $1 eq $address;	# Yes, we did that
-				$* = 1;
 				# Remove that X-Filter line, LEAVE will add one anyway
-				$Header{'Head'} =~ s/^X-Filter:\s*mailagent.*for $address\n//;
-				$* = 0;
+				$Header{'Head'} =~ s/^X-Filter:\s*mailagent.*for $address\n//m;
 				last;
 			}
 		}

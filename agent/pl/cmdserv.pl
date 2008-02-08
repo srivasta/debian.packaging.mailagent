@@ -1,6 +1,6 @@
-;# $Id: cmdserv.pl,v 3.0.1.7 1999/07/12 13:50:49 ram Exp $
+;# $Id: cmdserv.pl 1 2006-08-24 13:24:12Z rmanfredi $
 ;#
-;#  Copyright (c) 1990-1993, Raphael Manfredi
+;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
 ;#  You may redistribute only under the terms of the Artistic License,
 ;#  as specified in the README file that comes with the distribution.
@@ -9,7 +9,7 @@
 ;#  of the source tree for mailagent 3.0.
 ;#
 ;# $Log: cmdserv.pl,v $
-;# Revision 3.0.1.7  1999/07/12 13:50:49  ram
+;# Revision 3.0.1.7  1999/07/12  13:50:49  ram
 ;# patch66: factorized servshell handling in function
 ;#
 ;# Revision 3.0.1.6  1998/07/28  17:02:15  ram

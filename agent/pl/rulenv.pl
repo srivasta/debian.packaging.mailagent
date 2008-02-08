@@ -1,6 +1,6 @@
-;# $Id: rulenv.pl,v 3.0.1.3 1995/08/07 16:24:06 ram Exp $
+;# $Id: rulenv.pl 1 2006-08-24 13:24:12Z rmanfredi $
 ;#
-;#  Copyright (c) 1990-1993, Raphael Manfredi
+;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
 ;#  You may redistribute only under the terms of the Artistic License,
 ;#  as specified in the README file that comes with the distribution.
@@ -9,7 +9,7 @@
 ;#  of the source tree for mailagent 3.0.
 ;#
 ;# $Log: rulenv.pl,v $
-;# Revision 3.0.1.3  1995/08/07 16:24:06  ram
+;# Revision 3.0.1.3  1995/08/07  16:24:06  ram
 ;# patch37: new support for biff and biffmsg variable environment
 ;# patch37: fixed environment setup code
 ;#

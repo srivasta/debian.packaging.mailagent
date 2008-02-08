@@ -1,6 +1,6 @@
-;# $Id: stats.pl,v 3.0.1.4 1997/02/20 11:46:51 ram Exp $
+;# $Id: stats.pl 1 2006-08-24 13:24:12Z rmanfredi $
 ;#
-;#  Copyright (c) 1990-1993, Raphael Manfredi
+;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
 ;#  You may redistribute only under the terms of the Artistic License,
 ;#  as specified in the README file that comes with the distribution.
@@ -9,7 +9,7 @@
 ;#  of the source tree for mailagent 3.0.
 ;#
 ;# $Log: stats.pl,v $
-;# Revision 3.0.1.4  1997/02/20 11:46:51  ram
+;# Revision 3.0.1.4  1997/02/20  11:46:51  ram
 ;# patch55: typo fixes and print() call cleanup to avoid run-time warnings
 ;#
 ;# Revision 3.0.1.3  1997/01/31  18:08:09  ram

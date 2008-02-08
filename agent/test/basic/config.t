@@ -1,8 +1,8 @@
 # This MUST be the first test ever run
 
-# $Id: config.t,v 3.0.1.8 1999/01/13 18:16:19 ram Exp $
+# $Id: config.t,v 3.0.1.8 1999/01/13 18:16:19 ram Exp ram $
 #
-#  Copyright (c) 1990-1993, Raphael Manfredi
+#  Copyright (c) 1990-2006, Raphael Manfredi
 #  
 #  You may redistribute only under the terms of the Artistic License,
 #  as specified in the README file that comes with the distribution.
@@ -11,7 +11,7 @@
 #  of the source tree for mailagent 3.0.
 #
 # $Log: config.t,v $
-# Revision 3.0.1.8  1999/01/13 18:16:19  ram
+# Revision 3.0.1.8  1999/01/13  18:16:19  ram
 # patch64: test for non-writable agent.wait file
 #
 # Revision 3.0.1.7  1997/02/20  11:48:11  ram

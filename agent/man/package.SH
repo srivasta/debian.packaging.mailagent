@@ -20,9 +20,9 @@ $spitshell >package.$manext <<!GROK!THIS!
 .TH PACKAGE $manext
 ''' @(#) Manual page for mailagent's package command
 '''
-''' $Id: package.SH,v 3.0.1.4 1999/07/12 13:47:00 ram Exp $
+''' $Id: package.SH 1 2006-08-24 13:24:12Z rmanfredi $
 '''
-'''  Copyright (c) 1990-1993, Raphael Manfredi
+'''  Copyright (c) 1990-2006, Raphael Manfredi
 '''  
 '''  You may redistribute only under the terms of the Artistic License,
 '''  as specified in the README file that comes with the distribution.
@@ -33,7 +33,7 @@ $spitshell >package.$manext <<!GROK!THIS!
 '''  Original Author: Graham Stoney, 1993
 '''
 ''' $Log: package.SH,v $
-''' Revision 3.0.1.4  1999/07/12 13:47:00  ram
+''' Revision 3.0.1.4  1999/07/12  13:47:00  ram
 ''' patch66: updated my e-mail address
 '''
 ''' Revision 3.0.1.3  1996/12/24  14:44:21  ram

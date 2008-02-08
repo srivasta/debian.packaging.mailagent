@@ -1,8 +1,8 @@
 # -l: list message queue (special)
 
-# $Id: l.t,v 3.0.1.1 1994/09/22 14:41:21 ram Exp $
+# $Id: l.t,v 3.0.1.1 1994/09/22 14:41:21 ram Exp ram $
 #
-#  Copyright (c) 1990-1993, Raphael Manfredi
+#  Copyright (c) 1990-2006, Raphael Manfredi
 #  
 #  You may redistribute only under the terms of the Artistic License,
 #  as specified in the README file that comes with the distribution.
@@ -11,7 +11,7 @@
 #  of the source tree for mailagent 3.0.
 #
 # $Log: l.t,v $
-# Revision 3.0.1.1  1994/09/22 14:41:21  ram
+# Revision 3.0.1.1  1994/09/22  14:41:21  ram
 # patch12: now checks that callout messages are properly listed
 #
 # Revision 3.0  1993/11/29  13:50:18  ram

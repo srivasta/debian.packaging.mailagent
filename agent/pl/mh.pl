@@ -1,6 +1,6 @@
-;# $Id: mh.pl,v 3.0.1.5 1996/12/24 14:56:37 ram Exp $
+;# $Id: mh.pl 1 2006-08-24 13:24:12Z rmanfredi $
 ;#
-;#  Copyright (c) 1990-1993, Raphael Manfredi
+;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
 ;#  You may redistribute only under the terms of the Artistic License,
 ;#  as specified in the README file that comes with the distribution.
@@ -9,7 +9,7 @@
 ;#  of the source tree for mailagent 3.0.
 ;#
 ;# $Log: mh.pl,v $
-;# Revision 3.0.1.5  1996/12/24 14:56:37  ram
+;# Revision 3.0.1.5  1996/12/24  14:56:37  ram
 ;# patch45: processing of MH profile is now case-insensitive
 ;#
 ;# Revision 3.0.1.4  1995/08/07  16:20:19  ram

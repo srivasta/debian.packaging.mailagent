@@ -1,6 +1,6 @@
-;# $Id: lexical.pl,v 3.0.1.4 1997/01/31 18:07:55 ram Exp $
+;# $Id: lexical.pl 1 2006-08-24 13:24:12Z rmanfredi $
 ;#
-;#  Copyright (c) 1990-1993, Raphael Manfredi
+;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
 ;#  You may redistribute only under the terms of the Artistic License,
 ;#  as specified in the README file that comes with the distribution.
@@ -9,7 +9,7 @@
 ;#  of the source tree for mailagent 3.0.
 ;#
 ;# $Log: lexical.pl,v $
-;# Revision 3.0.1.4  1997/01/31 18:07:55  ram
+;# Revision 3.0.1.4  1997/01/31  18:07:55  ram
 ;# patch54: esacape metacharacter '{' in regexps for perl5.003_20
 ;#
 ;# Revision 3.0.1.3  1995/02/03  18:01:58  ram

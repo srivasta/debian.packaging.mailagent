@@ -1,6 +1,6 @@
-;# $Id: runcmd.pl,v 3.0.1.8 2001/01/10 16:57:23 ram Exp $
+;# $Id: runcmd.pl 1 2006-08-24 13:24:12Z rmanfredi $
 ;#
-;#  Copyright (c) 1990-1993, Raphael Manfredi
+;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
 ;#  You may redistribute only under the terms of the Artistic License,
 ;#  as specified in the README file that comes with the distribution.

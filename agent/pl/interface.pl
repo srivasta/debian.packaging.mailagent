@@ -1,6 +1,6 @@
-;# $Id: interface.pl,v 3.0.1.6 1998/03/31 15:23:00 ram Exp $
+;# $Id: interface.pl 1 2006-08-24 13:24:12Z rmanfredi $
 ;#
-;#  Copyright (c) 1990-1993, Raphael Manfredi
+;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
 ;#  You may redistribute only under the terms of the Artistic License,
 ;#  as specified in the README file that comes with the distribution.
@@ -9,7 +9,7 @@
 ;#  of the source tree for mailagent 3.0.
 ;#
 ;# $Log: interface.pl,v $
-;# Revision 3.0.1.6  1998/03/31 15:23:00  ram
+;# Revision 3.0.1.6  1998/03/31  15:23:00  ram
 ;# patch59: added hook for the new ON command
 ;#
 ;# Revision 3.0.1.5  1997/02/20  11:45:12  ram

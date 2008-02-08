@@ -18,9 +18,9 @@ echo "Extracting agent/man/maildist.$manext (with variable substitutions)"
 $rm -f maildist.$manext
 $spitshell >maildist.$manext <<!GROK!THIS!
 .so man$manext/mailhelp.$manext
-''' $Id: maildist.SH,v 3.0.1.3 1998/07/28 17:00:19 ram Exp $
+''' $Id: maildist.SH 1 2006-08-24 13:24:12Z rmanfredi $
 '''
-'''  Copyright (c) 1990-1993, Raphael Manfredi
+'''  Copyright (c) 1990-2006, Raphael Manfredi
 '''  
 '''  You may redistribute only under the terms of the Artistic License,
 '''  as specified in the README file that comes with the distribution.
@@ -29,7 +29,7 @@ $spitshell >maildist.$manext <<!GROK!THIS!
 '''  of the source tree for mailagent 3.0.
 '''
 ''' $Log: maildist.SH,v $
-''' Revision 3.0.1.3  1998/07/28 17:00:19  ram
+''' Revision 3.0.1.3  1998/07/28  17:00:19  ram
 ''' patch62: fixed typo on .so line
 '''
 ''' Revision 3.0.1.2  1996/12/24  14:41:41  ram
