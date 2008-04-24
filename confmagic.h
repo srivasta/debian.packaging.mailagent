@@ -6,7 +6,7 @@
  * If you wish to get rid of this magic, remove this file and rerun metaconfig
  * without the -M option.
  *
- *  $Id: confmagic.h,v 3.0 1993/11/29 13:50:29 ram Exp $
+ *  $Id$
  */
 
 #ifndef _confmagic_h_

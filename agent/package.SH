@@ -20,9 +20,9 @@ $startperl
 	eval "exec perl -S \$0 \$*"
 		if \$running_under_some_shell;
 
-# $Id: package.SH,v 3.0.1.9 1997/01/07 18:30:34 ram Exp $
+# $Id$
 #
-#  Copyright (c) 1990-1993, Raphael Manfredi
+#  Copyright (c) 1990-2006, Raphael Manfredi
 #  
 #  You may redistribute only under the terms of the Artistic License,
 #  as specified in the README file that comes with the distribution.
@@ -33,7 +33,7 @@ $startperl
 #  Original Author: Graham Stoney, 1993
 #
 # $Log: package.SH,v $
-# Revision 3.0.1.9  1997/01/07 18:30:34  ram
+# Revision 3.0.1.9  1997/01/07  18:30:34  ram
 # patch52: the "no change" optimization was overzealous
 #
 # Revision 3.0.1.8  1996/12/26  10:46:55  ram

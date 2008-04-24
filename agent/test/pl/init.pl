@@ -1,8 +1,8 @@
 # Set up mailagent and filter paths
 
-;# $Id: init.pl,v 3.0.1.3 1999/01/13 18:16:59 ram Exp $
+;# $Id$
 ;#
-;#  Copyright (c) 1990-1993, Raphael Manfredi
+;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
 ;#  You may redistribute only under the terms of the Artistic License,
 ;#  as specified in the README file that comes with the distribution.
@@ -11,7 +11,7 @@
 ;#  of the source tree for mailagent 3.0.
 ;#
 ;# $Log: init.pl,v $
-;# Revision 3.0.1.3  1999/01/13 18:16:59  ram
+;# Revision 3.0.1.3  1999/01/13  18:16:59  ram
 ;# patch64: cleanup agent.wait file since now always produced
 ;#
 ;# Revision 3.0.1.2  1995/08/07  16:28:52  ram

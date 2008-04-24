@@ -1,6 +1,6 @@
-;# $Id: options.pl,v 3.0.1.2 1995/08/07 16:21:11 ram Exp $
+;# $Id$
 ;#
-;#  Copyright (c) 1990-1993, Raphael Manfredi
+;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
 ;#  You may redistribute only under the terms of the Artistic License,
 ;#  as specified in the README file that comes with the distribution.
@@ -9,7 +9,7 @@
 ;#  of the source tree for mailagent 3.0.
 ;#
 ;# $Log: options.pl,v $
-;# Revision 3.0.1.2  1995/08/07 16:21:11  ram
+;# Revision 3.0.1.2  1995/08/07  16:21:11  ram
 ;# patch37: fixed syntax error when restoring previous option values
 ;#
 ;# Revision 3.0.1.1  1995/01/03  18:14:03  ram

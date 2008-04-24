@@ -1,6 +1,6 @@
-;# $Id: compress.pl,v 3.0.1.1 1995/09/15 14:03:35 ram Exp $
+;# $Id$
 ;#
-;#  Copyright (c) 1990-1993, Raphael Manfredi
+;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
 ;#  You may redistribute only under the terms of the Artistic License,
 ;#  as specified in the README file that comes with the distribution.
@@ -9,7 +9,7 @@
 ;#  of the source tree for mailagent 3.0.
 ;#
 ;# $Log: compress.pl,v $
-;# Revision 3.0.1.1  1995/09/15 14:03:35  ram
+;# Revision 3.0.1.1  1995/09/15  14:03:35  ram
 ;# patch43: can now handle compression with various compressors
 ;# patch43: (code contributed by Kevin Johnson <kjj@pondscum.phx.mcd.mot.com>)
 ;#
@@ -54,7 +54,8 @@ sub init {
 		next if /^\s*$/;			# And blank lines
 		$_ = &'perl_pattern($_);	# Shell pattern to perl one
 		s/^~/$cf'home/;				# ~ substitution
-		$_ = '.*/'.$_ unless m|^/|;	# Focus on basename unless absolute path
+		# Focus on basename unless absolute path
+		$_ = '(?>.*/)'.$_ unless m|^/|;
 		push(@compress, $_);		# Record pattern
 	}
 	close COMPRESS;

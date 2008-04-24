@@ -57,7 +57,7 @@ $spitshell >>Makefile <<'!NO!SUBS!'
 
 # $X-Id: Jmakefile,v 3.0.1.1 1994/10/29 17:44:36 ram Exp ram $
 #
-#  Copyright (c) 1990-1993, Raphael Manfredi
+#  Copyright (c) 1990-2006, Raphael Manfredi
 #  
 #  You may redistribute only under the terms of the Artistic License,
 #  as specified in the README file that comes with the distribution.

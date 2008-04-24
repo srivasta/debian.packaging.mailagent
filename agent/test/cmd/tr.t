@@ -1,8 +1,8 @@
 # The TR command
 
-# $Id: tr.t,v 3.0.1.1 2001/03/13 13:16:19 ram Exp $
+# $Id: tr.t,v 3.0.1.1 2001/03/13 13:16:19 ram Exp ram $
 #
-#  Copyright (c) 1990-1993, Raphael Manfredi
+#  Copyright (c) 1990-2006, Raphael Manfredi
 #  
 #  You may redistribute only under the terms of the Artistic License,
 #  as specified in the README file that comes with the distribution.

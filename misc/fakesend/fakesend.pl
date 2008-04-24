@@ -1,6 +1,6 @@
-# $Id: fakesend.pl,v 3.0.1.1 1998/03/31 15:29:28 ram Exp $
+# $Id$
 #
-#  Copyright (c) 1990-1993, Raphael Manfredi
+#  Copyright (c) 1990-2006, Raphael Manfredi
 #  
 #  You may redistribute only under the terms of the Artistic License,
 #  as specified in the README file that comes with the distribution.

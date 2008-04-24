@@ -1,6 +1,6 @@
-;# $Id: read_conf.pl,v 3.0.1.11 2001/03/17 18:13:41 ram Exp $
+;# $Id$
 ;#
-;#  Copyright (c) 1990-1993, Raphael Manfredi
+;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
 ;#  You may redistribute only under the terms of the Artistic License,
 ;#  as specified in the README file that comes with the distribution.
@@ -111,13 +111,12 @@ sub parse {
 
 	if ($@ ne '') {				# Parsing error detected
 		local($error) = $@;		# Logged error
-		local($*) = 1;
 		$error = (split(/\n/, $error))[0];		# Keep only first line
 		# Dump error message on stderr, as well as faulty configuration file.
 		# The original is restored out of the perl form to avoid surprise.
-		$eval =~ s/^\$.* =~ s\|~\|.*\n//g;		# Remove added ~ substitutions
-		$eval =~ s/^\$//g;						# Remove leading '$'
-		$eval =~ s/ = "(.*)";/: $1/g;			# Keep only variable value
+		$eval =~ s/^\$.* =~ s\|~\|.*\n//gm;		# Remove added ~ substitutions
+		$eval =~ s/^\$//gm;						# Remove leading '$'
+		$eval =~ s/ = "(.*)";/: $1/gm;			# Keep only variable value
 		chop($eval);
 		print STDERR <<EOM;
 **** Syntax error in configuration:
