@@ -1,8 +1,8 @@
 # -I: install configuration and perform sanity checks.
 
-# $Id: I.t,v 3.0.1.2 1996/12/24 15:03:36 ram Exp $
+# $Id: I.t,v 3.0.1.2 1996/12/24 15:03:36 ram Exp ram $
 #
-#  Copyright (c) 1990-1993, Raphael Manfredi
+#  Copyright (c) 1990-2006, Raphael Manfredi
 #  
 #  You may redistribute only under the terms of the Artistic License,
 #  as specified in the README file that comes with the distribution.
@@ -11,7 +11,7 @@
 #  of the source tree for mailagent 3.0.
 #
 # $Log: I.t,v $
-# Revision 3.0.1.2  1996/12/24 15:03:36  ram
+# Revision 3.0.1.2  1996/12/24  15:03:36  ram
 # patch45: fixed test for fast CPUs
 #
 # Revision 3.0.1.1  1995/02/16  14:39:06  ram

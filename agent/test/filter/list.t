@@ -1,8 +1,8 @@
 # This tests mathching on list selectors like To or Newsgroups.
 
-# $Id: list.t,v 3.0.1.3 2001/03/17 18:16:05 ram Exp $
+# $Id: list.t,v 3.0.1.3 2001/03/17 18:16:05 ram Exp ram $
 #
-#  Copyright (c) 1990-1993, Raphael Manfredi
+#  Copyright (c) 1990-2006, Raphael Manfredi
 #  
 #  You may redistribute only under the terms of the Artistic License,
 #  as specified in the README file that comes with the distribution.

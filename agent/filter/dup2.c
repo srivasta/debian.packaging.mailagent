@@ -3,9 +3,9 @@
  */
 
 /*
- * $Id: dup2.c,v 3.0.1.1 1997/02/20 11:34:52 ram Exp $
+ * $Id$
  *
- *  Copyright (c) 1990-1993, Raphael Manfredi
+ *  Copyright (c) 1990-2006, Raphael Manfredi
  *  
  *  You may redistribute only under the terms of the Artistic License,
  *  as specified in the README file that comes with the distribution.
@@ -16,7 +16,7 @@
  * Original Author: Larry Wall <lwall@netlabs.com>
  *
  * $Log: dup2.c,v $
- * Revision 3.0.1.1  1997/02/20 11:34:52  ram
+ * Revision 3.0.1.1  1997/02/20  11:34:52  ram
  * patch55: created
  *
  * Revision 3.0.1.1  1994/01/24  13:58:37  ram

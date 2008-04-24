@@ -16,9 +16,9 @@ case "$0" in
 esac
 echo "Extracting agent/files/help/user (with variable substitutions)"
 $spitshell >/dev/null <<!GROK!THIS!
-# $Id: user.SH,v 3.0 1993/11/29 13:48:01 ram Exp $
+# $Id$
 #
-#  Copyright (c) 1990-1993, Raphael Manfredi
+#  Copyright (c) 1990-2006, Raphael Manfredi
 #  
 #  You may redistribute only under the terms of the Artistic License,
 #  as specified in the README file that comes with the distribution.
@@ -27,7 +27,7 @@ $spitshell >/dev/null <<!GROK!THIS!
 #  of the source tree for mailagent 3.0.
 #
 # $Log: user.SH,v $
-# Revision 3.0  1993/11/29 13:48:01  ram
+# Revision 3.0  1993/11/29  13:48:01  ram
 # Baseline for mailagent 3.0 netwide release.
 #
 !GROK!THIS!

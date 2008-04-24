@@ -1,8 +1,8 @@
 # The ON command
 
-# $Id: on.t,v 3.0.1.1 1998/03/31 15:29:01 ram Exp $
+# $Id: on.t,v 3.0.1.1 1998/03/31 15:29:01 ram Exp ram $
 #
-#  Copyright (c) 1990-1993, Raphael Manfredi
+#  Copyright (c) 1990-2006, Raphael Manfredi
 #  
 #  You may redistribute only under the terms of the Artistic License,
 #  as specified in the README file that comes with the distribution.
@@ -11,7 +11,7 @@
 #  of the source tree for mailagent 3.0.
 #
 # $Log: on.t,v $
-# Revision 3.0.1.1  1998/03/31 15:29:01  ram
+# Revision 3.0.1.1  1998/03/31  15:29:01  ram
 # patch59: created
 #
 

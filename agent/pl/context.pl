@@ -1,6 +1,6 @@
-;# $Id: context.pl,v 3.0.1.3 1997/02/20 11:43:42 ram Exp $
+;# $Id$
 ;#
-;#  Copyright (c) 1990-1993, Raphael Manfredi
+;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
 ;#  You may redistribute only under the terms of the Artistic License,
 ;#  as specified in the README file that comes with the distribution.
@@ -9,7 +9,7 @@
 ;#  of the source tree for mailagent 3.0.
 ;#
 ;# $Log: context.pl,v $
-;# Revision 3.0.1.3  1997/02/20 11:43:42  ram
+;# Revision 3.0.1.3  1997/02/20  11:43:42  ram
 ;# patch55: removed the 'do' workaround for perl5.001
 ;#
 ;# Revision 3.0.1.2  1995/08/07  16:18:45  ram

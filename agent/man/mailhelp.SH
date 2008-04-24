@@ -20,9 +20,9 @@ $spitshell >mailhelp.$manext <<!GROK!THIS!
 .TH MAILHELP $manext ram
 ''' @(#) Manual page for mailagent's commands -- (c) ram February 1991
 '''
-''' $Id: mailhelp.SH,v 3.0.1.3 1999/07/12 13:46:52 ram Exp $
+''' $Id$
 '''
-'''  Copyright (c) 1990-1993, Raphael Manfredi
+'''  Copyright (c) 1990-2006, Raphael Manfredi
 '''  
 '''  You may redistribute only under the terms of the Artistic License,
 '''  as specified in the README file that comes with the distribution.
@@ -31,7 +31,7 @@ $spitshell >mailhelp.$manext <<!GROK!THIS!
 '''  of the source tree for mailagent 3.0.
 '''
 ''' $Log: mailhelp.SH,v $
-''' Revision 3.0.1.3  1999/07/12 13:46:52  ram
+''' Revision 3.0.1.3  1999/07/12  13:46:52  ram
 ''' patch66: updated my e-mail address
 '''
 ''' Revision 3.0.1.2  1996/12/24  14:41:59  ram

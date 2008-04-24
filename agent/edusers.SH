@@ -20,9 +20,9 @@ $startperl
 	eval "exec perl -S \$0 \$*"
 		if \$running_under_some_shell;
 
-# $Id: edusers.SH,v 3.0.1.3 1995/08/07 16:06:24 ram Exp $
+# $Id$
 #
-#  Copyright (c) 1990-1993, Raphael Manfredi
+#  Copyright (c) 1990-2006, Raphael Manfredi
 #  
 #  You may redistribute only under the terms of the Artistic License,
 #  as specified in the README file that comes with the distribution.
@@ -31,7 +31,7 @@ $startperl
 #  of the source tree for mailagent 3.0.
 #
 # $Log: edusers.SH,v $
-# Revision 3.0.1.3  1995/08/07 16:06:24  ram
+# Revision 3.0.1.3  1995/08/07  16:06:24  ram
 # patch37: added support for locking on filesystems with short filenames
 #
 # Revision 3.0.1.2  1995/03/21  12:50:11  ram

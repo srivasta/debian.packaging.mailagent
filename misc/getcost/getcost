@@ -5,7 +5,7 @@
 ###############################################################################
 #
 # File:         getcost
-# RCS:          $Header: /home/ram/home/projects/mailagent/misc/getcost/RCS/getcost,v 3.0.1.2 1999/07/12 13:59:33 ram Exp $
+# RCS:          $Header: /home/ram/home/projects/mailagent/misc/getcost/RCS/getcost,v 3.0.1.2 1999/07/12 13:59:33 ram Exp ram $
 # Description: SPAM scoring program
 #		Version 3.0
 # Authors:      Darryl Okahata (with additions from Raphael Manfredi)
@@ -532,6 +532,7 @@ EOF
 	\$copy = \$line;
 	\$stripped = 0;
 	while (\$copy =~ $pattern) {
+		last unless length \$copy;
 		my (\$before, \$match, \$after) = (\$`, \$&, \$');
 		&update(
 			\$stripped ? "...\$before\$match\$after" : \$line,

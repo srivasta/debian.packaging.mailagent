@@ -1,8 +1,8 @@
 # Make sure filter queues messages correctly
 
-# $Id: filter.t,v 3.0.1.3 1999/01/13 18:16:41 ram Exp $
+# $Id: filter.t,v 3.0.1.3 1999/01/13 18:16:41 ram Exp ram $
 #
-#  Copyright (c) 1990-1993, Raphael Manfredi
+#  Copyright (c) 1990-2006, Raphael Manfredi
 #  
 #  You may redistribute only under the terms of the Artistic License,
 #  as specified in the README file that comes with the distribution.
@@ -11,7 +11,7 @@
 #  of the source tree for mailagent 3.0.
 #
 # $Log: filter.t,v $
-# Revision 3.0.1.3  1999/01/13 18:16:41  ram
+# Revision 3.0.1.3  1999/01/13  18:16:41  ram
 # patch64: agent.wait file moved from queue to spool dir
 #
 # Revision 3.0.1.2  1995/08/07  16:27:05  ram

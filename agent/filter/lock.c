@@ -11,9 +11,9 @@
 */
 
 /*
- * $Id: lock.c,v 3.0.1.5 1997/09/15 15:02:18 ram Exp $
+ * $Id$
  *
- *  Copyright (c) 1990-1993, Raphael Manfredi
+ *  Copyright (c) 1990-2006, Raphael Manfredi
  *  
  *  You may redistribute only under the terms of the Artistic License,
  *  as specified in the README file that comes with the distribution.
@@ -22,7 +22,7 @@
  *  of the source tree for mailagent 3.0.
  *
  * $Log: lock.c,v $
- * Revision 3.0.1.5  1997/09/15 15:02:18  ram
+ * Revision 3.0.1.5  1997/09/15  15:02:18  ram
  * patch57: added more generic file_lock() and file_unlock() routines
  *
  * Revision 3.0.1.4  1995/08/07  16:10:04  ram
@@ -72,7 +72,6 @@
 private char lockfile[MAX_STRING];		/* Location of main filter lock file */
 private int locked = 0;					/* Did we lock successfully? */
 
-extern int errno;						/* System error status */
 extern Time_t time();					/* Current time */
 
 public int filter_lock(dir)

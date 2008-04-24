@@ -1,8 +1,8 @@
 # The PASS command
 
-# $Id: pass.t,v 3.0.1.2 1994/10/10 10:26:01 ram Exp $
+# $Id: pass.t,v 3.0.1.2 1994/10/10 10:26:01 ram Exp ram $
 #
-#  Copyright (c) 1990-1993, Raphael Manfredi
+#  Copyright (c) 1990-2006, Raphael Manfredi
 #  
 #  You may redistribute only under the terms of the Artistic License,
 #  as specified in the README file that comes with the distribution.
@@ -11,7 +11,7 @@
 #  of the source tree for mailagent 3.0.
 #
 # $Log: pass.t,v $
-# Revision 3.0.1.2  1994/10/10 10:26:01  ram
+# Revision 3.0.1.2  1994/10/10  10:26:01  ram
 # patch19: added various escapes in strings for perl5 support
 #
 # Revision 3.0.1.1  1994/04/25  15:25:22  ram

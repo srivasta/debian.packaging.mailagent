@@ -18,9 +18,9 @@ case "$0" in
 esac
 echo "Extracting agent/pl/utmp/utmp.pl (with variable substitutions)"
 $cat >utmp.pl <<!GROK!THIS!
-;# $Id: utmp_pl.sh,v 3.0.1.2 1995/01/03 18:18:48 ram Exp $
+;# $Id: utmp_pl.sh,v 3.0.1.2 1995/01/03 18:18:48 ram Exp ram $
 ;#
-;#  Copyright (c) 1990-1993, Raphael Manfredi
+;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
 ;#  You may redistribute only under the terms of the Artistic License,
 ;#  as specified in the README file that comes with the distribution.
@@ -29,7 +29,7 @@ $cat >utmp.pl <<!GROK!THIS!
 ;#  of the source tree for mailagent 3.0.
 ;#
 ;# $Log: utmp_pl.sh,v $
-;# Revision 3.0.1.2  1995/01/03 18:18:48  ram
+;# Revision 3.0.1.2  1995/01/03  18:18:48  ram
 ;# patch24: make sure old utmp list is gone when reloading from /etc/utmp
 ;#
 ;# Revision 3.0.1.1  1994/10/29  18:13:28  ram
