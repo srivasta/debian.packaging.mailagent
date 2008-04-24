@@ -18,139 +18,139 @@ echo "Extracting agent/man/mailagent.$manext (with variable substitutions)"
 $rm -f mailagent.$manext
 $spitshell >mailagent.$manext <<!GROK!THIS!
 .TH MAILAGENT $manext "Version $VERSION PL$PATCHLEVEL"
-''' @(#) Manual page for mailagent's filter -- (c) ram February 1991
-'''
-''' $Id$
-'''
-'''  Copyright (c) 1990-2006, Raphael Manfredi
-'''  
-'''  You may redistribute only under the terms of the Artistic License,
-'''  as specified in the README file that comes with the distribution.
-'''  You may reuse parts of this distribution only within the terms of
-'''  that same Artistic License; a copy of which may be found at the root
-'''  of the source tree for mailagent 3.0.
-'''
-''' $Log: mailagent.SH,v $
-''' Revision 3.0.1.26  2001/03/17 18:08:30  ram
-''' patch72: documented new config vars: domain and hidenet
-''' patch72: various fixes from bug reports on Debian
-'''
-''' Revision 3.0.1.25  2001/03/13 13:10:47  ram
-''' patch71: documented SUBST/TR on header fields
-'''
-''' Revision 3.0.1.24  2001/01/10 16:51:38  ram
-''' patch69: changed semantics of "tome"
-''' patch69: updated POST to current practices
-''' patch69: documented biffing macros for news article
-'''
-''' Revision 3.0.1.23  1999/07/12  13:46:20  ram
-''' patch66: variables are now propagated back and forth through APPLY
-''' patch66: updated my e-mail address
-'''
-''' Revision 3.0.1.22  1999/01/13  18:10:52  ram
-''' patch64: added %Y macro for 4-digit year output
-''' patch64: agent.wait file moved from Queue to Spool
-'''
-''' Revision 3.0.1.21  1998/07/28  16:59:10  ram
-''' patch62: documented new "servshell" variable
-'''
-''' Revision 3.0.1.20  1998/03/31  14:40:01  ram
-''' patch59: added "vacfixed" and "tofake" configuration parameters
-''' patch59: new ON command to issue commands on certain days only
-''' patch59: the SERVER "set" command can now list defined variables
-''' patch59: added an example of alternate VACATION message selection
-'''
-''' Revision 3.0.1.19  1997/09/15  15:07:18  ram
-''' patch57: new -t and -f options for BEGIN and NOP
-''' patch57: all command options should now be output in bold
-''' patch57: documented _CALLOUT_ working state for callout queue
-'''
-''' Revision 3.0.1.18  1997/02/20  11:40:44  ram
-''' patch55: documents new execsafe, groupsafe and lockwarn variables
-''' patch55: the C filter can now redirect output via -o
-''' patch55: made it explicit that /pattern/i is legal
-'''
-''' Revision 3.0.1.17  1997/01/07  18:29:18  ram
-''' patch52: documented new execsafe configuration variable
-'''
-''' Revision 3.0.1.16  1996/12/24  14:12:58  ram
-''' patch45: examples are now shown in constant-width font if possible
-''' patch45: big emphasis about security issues, for RUN commands & filter
-''' patch45: new Relayed: pseudo header computations
-''' patch45: documented the %-H biffing macro with more details
-''' patch45: updated my e-mail address
-'''
-''' Revision 3.0.1.15  1995/09/15  13:56:30  ram
-''' patch43: folder compression can now deal with various compressors
-''' patch43: added locksafe, compspecs and comptag config variables
-''' patch43: many typo fixes
-'''
-''' Revision 3.0.1.14  1995/08/31  16:27:44  ram
-''' patch42: escaped various dollars to avoid shell substitution, grrr...
-'''
-''' Revision 3.0.1.13  1995/08/07  16:14:23  ram
-''' patch37: new biffing features and configuration variables
-''' patch37: new BIFF filtering command to dynamically configure biffing
-'''
-''' Revision 3.0.1.12  1995/03/21  12:56:05  ram
-''' patch35: sample vacation message now contains a Precedence: header
-'''
-''' Revision 3.0.1.11  1995/02/16  14:28:45  ram
-''' patch32: documents new -I switch and new fromfake config variable
-''' patch32: random cleanup, mainly suppressing spurious "the" articles
-'''
-''' Revision 3.0.1.10  1995/01/25  15:17:42  ram
-''' patch27: new option letter 't' for mailagent -s
-''' patch27: new commands BEEP and PROTECT
-''' patch27: new macro %a for biff messages
-'''
-''' Revision 3.0.1.9  1995/01/03  18:01:53  ram
-''' patch24: new -u option for ANNOTATE documented
-''' patch24: fixed example on the shell server command (power checking)
-''' patch24: removed quotes for SERVER -d to accommodate new option parsing
-''' patch24: added a -l switch to VACATION and extended its arguments
-''' patch24: new section documenting Rule Environment variables
-'''
-''' Revision 3.0.1.8  1994/10/29  17:41:41  ram
-''' patch20: documents the six new config variables for biffing
-''' patch20: new section dedicated to built-in mail biffing
-'''
-''' Revision 3.0.1.7  1994/10/10  10:23:36  ram
-''' patch19: typo fix
-'''
-''' Revision 3.0.1.6  1994/10/04  17:41:47  ram
-''' patch17: documents new email and mboxlock config parameters
-''' patch17: documents ~/agent.trace file and callout queue file name
-''' patch17: new %e macro available to get user's e-mail address
-''' patch17: mentions that the msgpath variable is read-only
-'''
-''' Revision 3.0.1.5  1994/09/22  13:57:09  ram
-''' patch12: documents new config parameters callout and linkdirs
-''' patch12: new filtering actions AFTER and DO
-''' patch12: variable msgpath is now defined within a PERL escape
-''' patch12: mention that PERL escape variables are available to new commands
-'''
-''' Revision 3.0.1.4  1994/07/01  14:56:20  ram
-''' patch8: documents new eleven configuration variables
-''' patch8: sub-section on timeouts has been expanded
-''' patch8: emphasize .forward optimization danger with sendmail
-''' patch8: new UMASK command
-'''
-''' Revision 3.0.1.3  1994/04/25  15:15:56  ram
-''' patch7: documented new 'fromesc' config variable
-''' patch7: forgot to insert the new -F option in the synopsis line
-'''
-''' Revision 3.0.1.2  1994/01/26  09:29:24  ram
-''' patch5: documents new tag feature for UNIQUE and RECORD
-''' patch5: documents new -F option
-''' patch5: random typo fixes
-'''
-''' Revision 3.0.1.1  1993/12/15  09:03:44  ram
-''' patch3: typo and minor fixes
-'''
-''' Revision 3.0  1993/11/29  13:48:27  ram
-''' Baseline for mailagent 3.0 netwide release.
-'''
+.\" @(#) Manual page for mailagent's filter -- (c) ram February 1991
+.\"
+.\" $Id$
+.\"
+.\"  Copyright (c) 1990-2006, Raphael Manfredi
+.\"  
+.\"  You may redistribute only under the terms of the Artistic License,
+.\"  as specified in the README file that comes with the distribution.
+.\"  You may reuse parts of this distribution only within the terms of
+.\"  that same Artistic License; a copy of which may be found at the root
+.\"  of the source tree for mailagent 3.0.
+.\"
+.\" $Log: mailagent.SH,v $
+.\" Revision 3.0.1.26  2001/03/17 18:08:30  ram
+.\" patch72: documented new config vars: domain and hidenet
+.\" patch72: various fixes from bug reports on Debian
+.\"
+.\" Revision 3.0.1.25  2001/03/13 13:10:47  ram
+.\" patch71: documented SUBST/TR on header fields
+.\"
+.\" Revision 3.0.1.24  2001/01/10 16:51:38  ram
+.\" patch69: changed semantics of "tome"
+.\" patch69: updated POST to current practices
+.\" patch69: documented biffing macros for news article
+.\"
+.\" Revision 3.0.1.23  1999/07/12  13:46:20  ram
+.\" patch66: variables are now propagated back and forth through APPLY
+.\" patch66: updated my e-mail address
+.\"
+.\" Revision 3.0.1.22  1999/01/13  18:10:52  ram
+.\" patch64: added %Y macro for 4-digit year output
+.\" patch64: agent.wait file moved from Queue to Spool
+.\"
+.\" Revision 3.0.1.21  1998/07/28  16:59:10  ram
+.\" patch62: documented new "servshell" variable
+.\"
+.\" Revision 3.0.1.20  1998/03/31  14:40:01  ram
+.\" patch59: added "vacfixed" and "tofake" configuration parameters
+.\" patch59: new ON command to issue commands on certain days only
+.\" patch59: the SERVER "set" command can now list defined variables
+.\" patch59: added an example of alternate VACATION message selection
+.\"
+.\" Revision 3.0.1.19  1997/09/15  15:07:18  ram
+.\" patch57: new -t and -f options for BEGIN and NOP
+.\" patch57: all command options should now be output in bold
+.\" patch57: documented _CALLOUT_ working state for callout queue
+.\"
+.\" Revision 3.0.1.18  1997/02/20  11:40:44  ram
+.\" patch55: documents new execsafe, groupsafe and lockwarn variables
+.\" patch55: the C filter can now redirect output via -o
+.\" patch55: made it explicit that /pattern/i is legal
+.\"
+.\" Revision 3.0.1.17  1997/01/07  18:29:18  ram
+.\" patch52: documented new execsafe configuration variable
+.\"
+.\" Revision 3.0.1.16  1996/12/24  14:12:58  ram
+.\" patch45: examples are now shown in constant-width font if possible
+.\" patch45: big emphasis about security issues, for RUN commands & filter
+.\" patch45: new Relayed: pseudo header computations
+.\" patch45: documented the %-H biffing macro with more details
+.\" patch45: updated my e-mail address
+.\"
+.\" Revision 3.0.1.15  1995/09/15  13:56:30  ram
+.\" patch43: folder compression can now deal with various compressors
+.\" patch43: added locksafe, compspecs and comptag config variables
+.\" patch43: many typo fixes
+.\"
+.\" Revision 3.0.1.14  1995/08/31  16:27:44  ram
+.\" patch42: escaped various dollars to avoid shell substitution, grrr...
+.\"
+.\" Revision 3.0.1.13  1995/08/07  16:14:23  ram
+.\" patch37: new biffing features and configuration variables
+.\" patch37: new BIFF filtering command to dynamically configure biffing
+.\"
+.\" Revision 3.0.1.12  1995/03/21  12:56:05  ram
+.\" patch35: sample vacation message now contains a Precedence: header
+.\"
+.\" Revision 3.0.1.11  1995/02/16  14:28:45  ram
+.\" patch32: documents new -I switch and new fromfake config variable
+.\" patch32: random cleanup, mainly suppressing spurious "the" articles
+.\"
+.\" Revision 3.0.1.10  1995/01/25  15:17:42  ram
+.\" patch27: new option letter 't' for mailagent -s
+.\" patch27: new commands BEEP and PROTECT
+.\" patch27: new macro %a for biff messages
+.\"
+.\" Revision 3.0.1.9  1995/01/03  18:01:53  ram
+.\" patch24: new -u option for ANNOTATE documented
+.\" patch24: fixed example on the shell server command (power checking)
+.\" patch24: removed quotes for SERVER -d to accommodate new option parsing
+.\" patch24: added a -l switch to VACATION and extended its arguments
+.\" patch24: new section documenting Rule Environment variables
+.\"
+.\" Revision 3.0.1.8  1994/10/29  17:41:41  ram
+.\" patch20: documents the six new config variables for biffing
+.\" patch20: new section dedicated to built-in mail biffing
+.\"
+.\" Revision 3.0.1.7  1994/10/10  10:23:36  ram
+.\" patch19: typo fix
+.\"
+.\" Revision 3.0.1.6  1994/10/04  17:41:47  ram
+.\" patch17: documents new email and mboxlock config parameters
+.\" patch17: documents ~/agent.trace file and callout queue file name
+.\" patch17: new %e macro available to get user's e-mail address
+.\" patch17: mentions that the msgpath variable is read-only
+.\"
+.\" Revision 3.0.1.5  1994/09/22  13:57:09  ram
+.\" patch12: documents new config parameters callout and linkdirs
+.\" patch12: new filtering actions AFTER and DO
+.\" patch12: variable msgpath is now defined within a PERL escape
+.\" patch12: mention that PERL escape variables are available to new commands
+.\"
+.\" Revision 3.0.1.4  1994/07/01  14:56:20  ram
+.\" patch8: documents new eleven configuration variables
+.\" patch8: sub-section on timeouts has been expanded
+.\" patch8: emphasize .forward optimization danger with sendmail
+.\" patch8: new UMASK command
+.\"
+.\" Revision 3.0.1.3  1994/04/25  15:15:56  ram
+.\" patch7: documented new 'fromesc' config variable
+.\" patch7: forgot to insert the new -F option in the synopsis line
+.\"
+.\" Revision 3.0.1.2  1994/01/26  09:29:24  ram
+.\" patch5: documents new tag feature for UNIQUE and RECORD
+.\" patch5: documents new -F option
+.\" patch5: random typo fixes
+.\"
+.\" Revision 3.0.1.1  1993/12/15  09:03:44  ram
+.\" patch3: typo and minor fixes
+.\"
+.\" Revision 3.0  1993/11/29  13:48:27  ram
+.\" Baseline for mailagent 3.0 netwide release.
+.\"
 .de Ex		\" Start of Example
 .sp
 .in +5
@@ -186,7 +186,7 @@ There is a set of options which may be used when you invoke
 \fImailagent\fR yourself. Please refer to the \fBOPTIONS\fR section for
 a complete description. You may use the \fB\-h\fR option to get a cryptic
 usage reminder.
-'''
+.\"
 .SS Product Overview
 .PP
 .I Mailagent
@@ -225,7 +225,7 @@ It is possible to extend the mailagent filtering commands by implementing
 them in \fIperl\fR and then having them automagically loaded when used. Those
 extended commands will behave exactly like built in ones, as documented
 in the \fBEXTENDING FILTERING COMMANDS\fR section.
-'''
+.\"
 .SS Learning From Examples
 .PP
 It is quite possible that you will find this manual page too complex for you.
@@ -234,9 +234,9 @@ material. If you wish, you may start by looking at the examples held in the
 distribution source tree under \fIagent/examples\fR. This directory contains
 two examples of rule files (look at the README file first) and are verbosely
 commented.
-'''
-''' G e t t i n g   S t a r t e d
-'''
+.\"
+.\" G e t t i n g   S t a r t e d
+.\"
 .SH "GETTING STARTED"
 .PP
 First, you need to install a minimum configuration and see how it works. It
@@ -245,7 +245,7 @@ not work as advertised...
 .PP
 To start the installation, you have to set up a \fI~/.mailagent\fR file which is
 the main configuration file, and choose the right \fIfilter\fR program.
-'''
+.\"
 .SS "Choosing The Filter Program"
 .PP
 The distribution comes with two filter programs. One written in shell and one
@@ -283,7 +283,7 @@ As of version 3.0 PL44, I advise you to prefer the C version if you are
 concerned about security. If you are in a position where multiple architectures
 can process your \fI.forward\fR, then a shell wrapper selecting the proper
 executable based on the architecture will be required.
-'''
+.\"
 .SS "Configuring Mailagent"
 .PP
 If \fImailagent\fR is in your path, you may automatically configure a default
@@ -848,7 +848,7 @@ force one unique message (optional, defaults to: OFF).
 The minimum time elapsed between two vacation messages to a given address
 (suggested: 1d).
 .PD
-'''
+.\"
 .SS "Available Logging Levels"
 .PP
 The following log levels can be used while running mailagent:
@@ -867,7 +867,7 @@ The following log levels can be used while running mailagent:
 19	Verbose
 20	Lot more verbose
 .Ef
-'''
+.\"
 .SS "Plugging Mailagent"
 .PP
 Once you have configured mailagent in a \fI~/.mailagent\fR (where \fI~\fR
@@ -918,14 +918,14 @@ in the mailbox, which is not a good idea for Debian machines. Please
 onstall a minimal rules file in any case,
  { SAVE incoming };
  is the suggested minimal rules file.
-'''
+.\"
 .SS "Allowed Commands"
 .PP
 The allowed command file (as specified by the \fIcomfile\fR variable in
 your \fI~/.mailagent\fR) contains all the recognized and allowed commands.
 The file \fIcommands\fR held in directory \fILib/mailagent\fR should be
 copied as-is into your Spool directory.
-'''
+.\"
 .SS "Testing Your Installation"
 .PP
 Now, assuming you have set a proper \fI~/.mailagent\fR file and edited the

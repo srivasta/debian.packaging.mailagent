@@ -18,38 +18,38 @@ echo "Extracting agent/man/package.$manext (with variable substitutions)"
 $rm -f package.$manext
 $spitshell >package.$manext <<!GROK!THIS!
 .TH PACKAGE $manext
-''' @(#) Manual page for mailagent's package command
-'''
-''' $Id$
-'''
-'''  Copyright (c) 1990-2006, Raphael Manfredi
-'''  
-'''  You may redistribute only under the terms of the Artistic License,
-'''  as specified in the README file that comes with the distribution.
-'''  You may reuse parts of this distribution only within the terms of
-'''  that same Artistic License; a copy of which may be found at the root
-'''  of the source tree for mailagent 3.0.
-'''
-'''  Original Author: Graham Stoney, 1993
-'''
-''' $Log: package.SH,v $
-''' Revision 3.0.1.4  1999/07/12  13:47:00  ram
-''' patch66: updated my e-mail address
-'''
-''' Revision 3.0.1.3  1996/12/24  14:44:21  ram
-''' patch45: examples are now shown in constant-width font if possible
-''' patch45: mentions command forwarding
-'''
-''' Revision 3.0.1.2  1995/08/07  16:14:46  ram
-''' patch37: updated my e-mail address
-'''
-''' Revision 3.0.1.1  1994/09/22  13:59:03  ram
-''' patch12: documents the edusers script and fuzzy address matching
-'''
-''' Revision 3.0  1993/11/29  13:48:31  ram
-''' Baseline for mailagent 3.0 netwide release.
-'''
-''' 
+.\" @(#) Manual page for mailagent's package command
+.\"
+.\" $Id$
+.\"
+.\"  Copyright (c) 1990-2006, Raphael Manfredi
+.\"  
+.\"  You may redistribute only under the terms of the Artistic License,
+.\"  as specified in the README file that comes with the distribution.
+.\"  You may reuse parts of this distribution only within the terms of
+.\"  that same Artistic License; a copy of which may be found at the root
+.\"  of the source tree for mailagent 3.0.
+.\"
+.\"  Original Author: Graham Stoney, 1993
+.\"
+.\" $Log: package.SH,v $
+.\" Revision 3.0.1.4  1999/07/12  13:47:00  ram
+.\" patch66: updated my e-mail address
+.\"
+.\" Revision 3.0.1.3  1996/12/24  14:44:21  ram
+.\" patch45: examples are now shown in constant-width font if possible
+.\" patch45: mentions command forwarding
+.\"
+.\" Revision 3.0.1.2  1995/08/07  16:14:46  ram
+.\" patch37: updated my e-mail address
+.\"
+.\" Revision 3.0.1.1  1994/09/22  13:59:03  ram
+.\" patch12: documents the edusers script and fuzzy address matching
+.\"
+.\" Revision 3.0  1993/11/29  13:48:31  ram
+.\" Baseline for mailagent 3.0 netwide release.
+.\"
+.\" 
 .de Ex		\" Start of Example
 .sp
 .in +5
