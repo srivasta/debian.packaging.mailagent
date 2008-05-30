@@ -17,7 +17,7 @@ esac
 echo "Extracting agent/edusers (with variable substitutions)"
 $spitshell >edusers <<!GROK!THIS!
 $startperl
-	eval "exec perl -S \$0 \$*"
+	eval 'exec perl -S \$0 \${1+"\$@"}'
 		if \$running_under_some_shell;
 
 # $Id$
@@ -43,6 +43,7 @@ $startperl
 
 \$mversion = '$VERSION';
 \$patchlevel = '$PATCHLEVEL';
+\$revision = '$REVISION';
 \$defeditor = '$defeditor';
 \$phostname = '$phostname';
 \$long_filenames = '$d_flexfnam' eq 'define';
