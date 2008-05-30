@@ -763,7 +763,7 @@ sub post {
 		my $when = &header'parsedate($str);
 		my $now = time;
 		my $date;
-		my $AGEMAX = 14 * 86400;		# 14 days
+		my $AGEMAX = 10 * 86400;		# 10 days
 		my $THRESH = 86400;				# 1 day
 		my $WARN_THRESH = 600;			# 10 minutes
 		if ($when < 0) {
@@ -881,6 +881,9 @@ sub post {
 		}
 		next if /^\s/ && $last_was_header;	# Skip removed header continuations
 		$last_was_header = 0;				# We decided to keep header line
+		# Ensure that we always put a single space after the field name
+		# (before possibly emitting a newline for the continuation)
+		s/^([\w-]+):(\S)/$1: $2/ || s/^([\w-]+):$/$1: /;
 		print NEWS $_, "\n";
 	}
 
