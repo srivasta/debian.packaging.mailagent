@@ -241,6 +241,9 @@ while ($ARGV[0] =~ /^-/) {
 		print STDERR "$prog_name $mversion PL$patchlevel\n";
 		exit 0;
 	}
+	elsif ($_ eq '-U') {	# Do not allow UNIQUE to reject / abort
+		++$disable_unique;
+	}
 	elsif ($_ eq '-TEST') {	# Mailagent run via TEST (undocumented feature)
 		++$test_mode;
 	}
@@ -367,6 +370,8 @@ if ($mbox_mail) {
 # message will be skipped anyway, so it's not that critical.
 #
 
+my $process_queue = 1;
+
 if (!$run_queue) {				# Do not enter here if -q
 	if (0 != &pmail($file_name, 0)) {
 		&add_log("ERROR while processing main message--queing it") if $loglvl;
@@ -374,26 +379,32 @@ if (!$run_queue) {				# Do not enter here if -q
 		unlink $lockfile;
 		exit 0;					# Do not continue
 	} 
+
+	# If invoked from a tty and not in test mode, do not process queue
+	$process_queue = 0 if -t STDOUT && !$test_mode; 
 }
 
-unless ($test_mode) {
-	# Fork a child: we have to take care of the filter script which is waiting
-	# for us to finish processing of the delivered mail.
-	&fork_child() unless $run_queue;
+if ($process_queue) {
+	unless ($test_mode) {
+		# Fork a child: we have to take care of the filter script which is
+		# waiting for us to finish processing of the delivered mail.
+		&fork_child() unless $run_queue;
 
-	# From now on, we are in the child process... Don't sleep at all if logging
-	# level is greater that 11 or if $run_queue is true. Logging level of 12
-	# and higher are for debugging and should not be used on a permanent basis
-	# anyway.
+		# From now on, we are in the child process...
+		# Don't sleep at all if logging level is greater that 11
+		# or if $run_queue is true. Logging level of 12 and higher are
+		# for debugging and should not be used on a permanent basis
+		# anyway.
 
-	$sleep = 1;					# Give others a chance to queue their mail
-	$sleep = 0 if $loglvl > 11 || $run_queue;
+		$sleep = 1;					# Give others a chance to queue their mail
+		$sleep = 0 if $loglvl > 11 || $run_queue;
 
-	do {						# Eventually process the queue
-		sleep 30 if $sleep;		# Wait in case new mail arrives
-	} while (&pqueue);
-} else {
-	&pqueue;					# Process the queue once in test mode
+		do {						# Eventually process the queue
+			sleep 30 if $sleep;		# Wait in case new mail arrives
+		} while (&pqueue);
+	} else {
+		&pqueue;					# Process the queue once in test mode
+	}
 }
 
 # Mailagent is exiting. Remove lock file as early as possible to avoid a
@@ -411,7 +422,7 @@ exit 0;
 # Print usage and exit
 sub usage {
 	print STDERR <<EOF;
-Usage: $prog_name [-dhilqtFIV] [-s{umaryt}] [-f file] [-e rules] [-c config]
+Usage: $prog_name [-dhilqtFIVU] [-s{umaryt}] [-f file] [-e rules] [-c config]
        [-L level] [-r file] [-o def] [mailfile]
   -c : specify alternate configuration file.
   -d : dump filter rules (special).
@@ -429,6 +440,7 @@ Usage: $prog_name [-dhilqtFIV] [-s{umaryt}] [-f file] [-e rules] [-c config]
   -I : install configuration and perform sanity checks.
   -L : force logging level.
   -V : print version number and exits.
+  -U : prevent UNIQUE from rejecting an already processed Message-ID.
 EOF
 	exit 1;
 }
@@ -686,10 +698,10 @@ sub mailbox_name {
 	# override value computed by Configure.
 	$maildir = $cf'maildrop if $cf'maildrop ne '';
 	# If Configure gave a valid 'maildir', use it. Otherwise compute one now.
-	unless ($maildir ne '' && -d "$maildir") {
+	unless ($maildir ne '' && -d $maildir) {
 		$maildir = "/usr/spool/mail";		# Default spooling area
-		-d "/usr/mail" && ($maildir = "/usr/mail");
-		-d "$maildir" || ($maildir = "$cf'home");
+		-d $maildir || (-d "/usr/mail" && ($maildir = "/usr/mail"));
+		-d $maildir || ($maildir = $cf'home);
 	}
 	local($mbox) = $cf'user;					# Default mailbox file name
 	$mbox = $cf'mailbox if $cf'mailbox ne '';	# Priority to config variable
