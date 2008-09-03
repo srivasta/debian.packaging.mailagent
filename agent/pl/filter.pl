@@ -225,7 +225,9 @@ sub run_abort {
 
 # Run the RESYNC command
 sub run_resync {
-	&header_resync;				# Resynchronize the %Header array
+	# Headers pertaining to body encoding could have changed.
+	&header_check_body_encoding;	# Check and recode if possible
+	&header_resync;					# Resynchronize the %Header array
 	&add_log("RESYNCED [$mfile]") if $loglvl > 4;
 	0;
 }
@@ -237,7 +239,7 @@ sub run_begin {
 	return 0 if $opt'sw_f && !$lastcmd;		# -f means change only if false
 	$newstate = 'INITIAL' unless $newstate;
 	$wmode = $newstate;			# $wmode comes from analyze_mail
-	&add_log("BEGUN new state $newstate") if $loglvl > 4;
+	&add_log("BEGUN [$mfile] state $newstate") if $loglvl > 4;
 	0;
 }
 
@@ -248,8 +250,12 @@ sub run_record {
 	$mode =~ s|^(\w*)\s*\(([^()]*)\).*|$1| && ($tags = $2);
 	local($failed) = 0;
 	if (&history_tag($tags)) {	# Message already seen
-		$wmode = '_SEEN_';		# Enter special mode ($wmode from analyze_mail)
-		&add_log("NOTICE entering seen mode") if $loglvl > 5;
+		if ($mode eq '') {
+			&add_log("NOTICE entering seen mode")
+				if $loglvl > 5 && $wmode ne '_SEEN_';
+			# Enter special mode ($wmode from analyze_mail)
+			$wmode = '_SEEN_';
+		}
 		&alter_execution('x', $mode);
 		$failed = 1;			# Make sure it "fails"
 	}
@@ -321,7 +327,8 @@ sub run_run {
 # Run the PIPE command
 sub run_pipe {
 	local($program) = @_;		# Program to run
-	local($failed) = &shell_command($program, $MAIL_INPUT, $NO_FEEDBACK);
+	my $mail = $opt'sw_b ? $MAIL_INPUT_BINARY : $MAIL_INPUT;
+	local($failed) = &shell_command($program, $mail, $NO_FEEDBACK);
 	unless ($failed) {
 		&add_log("PIPED [$mfile] to '$program'") if $loglvl > 4;
 	}
@@ -351,7 +358,9 @@ sub run_pass {
 # Run the FEED command
 sub run_feed {
 	local($program) = @_;		# Program to run
-	local($failed) = &shell_command($program, $MAIL_INPUT, $FEEDBACK);
+	my $mail = $opt'sw_b ? $MAIL_INPUT_BINARY : $MAIL_INPUT;
+	my $feedback = $opt'sw_e ? $FEEDBACK_ENCODING : $FEEDBACK;
+	local($failed) = &shell_command($program, $mail, $feedback);
 	unless ($failed) {
 		&add_log("FED [$mfile] through '$program'") if $loglvl > 4;
 	}
@@ -866,8 +875,8 @@ sub run_saving {
 sub alter_execution {
 	local($option, $mode) = @_;	# Option, mode we have to change to
 	if ($mode ne '') {
+		&add_log("entering new state $mode") if $loglvl > 6 && $wmode ne $mode;
 		$wmode = $mode;
-		&add_log("entering new state $wmode") if $loglvl > 6;
 	}
 	if ($option eq 'x') {		# Backward compatibility at 3.0 PL24
 		$option = '-c' if $opt'sw_c;
