@@ -10,7 +10,10 @@ case $CONFIG in
 	fi
 	. $TOP/config.sh
 	;;
+*)
+	TOP=..;;
 esac
+revision=`awk '/^#define[ 	]*REVISION/ {print $3}' < $TOP/revision.h`
 case "$0" in
 */*) cd `expr X$0 : 'X\(.*\)/'` ;;
 esac
@@ -54,7 +57,7 @@ $startperl
 
 \$mversion = '$VERSION';
 \$patchlevel = '$PATCHLEVEL';
-\$revision = '$REVISION';
+\$revision = '$revision';
 !GROK!THIS!
 
 $spitshell >>maildist <<'!NO!SUBS!'

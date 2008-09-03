@@ -670,6 +670,7 @@ sub forward {
 			if $loglvl;
 		return 1;
 	}
+	local $SIG{PIPE} = 'IGNORE';	# sendmail failure caught at close() time
 	local(@addr) = split(' ', $addresses);
 	print MAILER &header'format("Resent-From: $address"), "\n";
 	local($to) = "Resent-To: " . join(', ', @addr);
@@ -683,7 +684,17 @@ sub forward {
 	}
 	print MAILER $FILTER, "\n";
 	print MAILER "\n";
-	print MAILER $Header{'Body'};
+	# If sendmail is used and there is no -i flag in the options, we need to
+	# escape dots on a line by themselves.
+	if ($cf'sendmail =~ /\bsendmail\b/ && $cf'mailopt !~ /-i\b/) {
+		my $body = $Header{'Body'};
+		$body =~ s/^\./../gm;
+		print MAILER $body;
+		&add_log("WARNING sendmail used -- you should add -i to mailopt")
+			if $loglvl > 2;
+	} else {
+		print MAILER $Header{'Body'};
+	}
 	close MAILER;
 	local($failed) = $?;		# Status of forwarding
 	if ($failed) {
@@ -706,6 +717,7 @@ sub bounce {
 			if $loglvl;
 		return 1;
 	}
+	local $SIG{PIPE} = 'IGNORE';	# sendmail failure caught at close() time
 	# Protect Sender: lines in the original message
 	foreach (split(/\n/, $Header{'Head'})) {
 		next if /^From\s+(\S+)/;
@@ -714,7 +726,17 @@ sub bounce {
 	}
 	print MAILER $FILTER, "\n";
 	print MAILER "\n";
-	print MAILER $Header{'Body'};
+	# If sendmail is used and there is no -i flag in the options, we need to
+	# escape dots on a line by themselves.
+	if ($cf'sendmail =~ /\bsendmail\b/ && $cf'mailopt !~ /-i\b/) {
+		my $body = $Header{'Body'};
+		$body =~ s/^\./../gm;
+		print MAILER $body;
+		&add_log("WARNING sendmail used -- you should add -i to mailopt")
+			if $loglvl > 2;
+	} else {
+		print MAILER $Header{'Body'};
+	}
 	close MAILER;
 	local($failed) = $?;		# Status of forwarding
 	if ($failed) {
@@ -744,7 +766,7 @@ sub post {
 	my ($faddr, $fcom) = &parse_address($Header{'From'});
 	$fcom = '"' . $fcom . '"' if $fcom =~ /[@.\(\)<>,:!\/=;]/;
 	if ($fcom ne '') {
-		print NEWS "From: $fcom <$faddr>\n";	# One line
+		print NEWS header'news_fmt("From: $fcom <$faddr>\n");
 	} else {
 		print NEWS "From: $faddr\n";
 	}
@@ -801,7 +823,7 @@ sub post {
 	} else {
 		my $subject = $Header{'Subject'};
 		$subject =~ tr/\n/ /;				# Multiples instances collapsed
-		print NEWS "Subject: $subject\n";
+		print NEWS header'news_fmt("Subject: $subject\n");
 	}
 
 	# If no proper Message-ID is present, generate one
@@ -861,13 +883,26 @@ sub post {
 			/^X-Trace:/i			||		# idem
 			/^Newsgroups:/i			||		# Reply from news reader
 			/^Return-Receipt-To:/i	||		# Sendmail's acknowledgment
-			/^Received:/i			||		# We want to remove received
+			/^Received:/i			||		# We want to remove this MTA trace
+			/^Delivered-To:/i		||		# idem
 			/^Precedence:/i			||
 			/^X-Complaints-To:/i	||		# INN2 does not like this field
 			/^Errors-To:/i					# Error report redirection
 		) {
 			$last_was_header = 1;			# Mark we discarded the line
 			next;							# Line is skipped
+		}
+		# Skip any RFC-822 header that is not purely made up of [\w-]+
+		# as it is not possible it can be meaningful to the news system.
+		if (/^([!-9;-~\w-]+):/) {
+			my $header = $1;
+			unless ($header =~ /^[\w-]+$/) {
+				&add_log("NOTICE droping RFC-822 header \"$header\" for news")
+					if $loglvl > 5;
+				$last_was_header = 1;		# Mark we discarded the line
+				next;						# Line is skipped
+			}
+			# All headers will now match /^[\w-]+:/
 		}
 		if (/^([\w-]+):/ && exists $single{"\L$1"}) {
 			my $field = lc($1);
@@ -883,8 +918,12 @@ sub post {
 		$last_was_header = 0;				# We decided to keep header line
 		# Ensure that we always put a single space after the field name
 		# (before possibly emitting a newline for the continuation)
-		s/^([\w-]+):(\S)/$1: $2/ || s/^([\w-]+):$/$1: /;
-		print NEWS $_, "\n";
+		if (s/^([\w-]+):(\S)/$1: $2/ || s/^([\w-]+):$/$1: /) {
+			my $header = $1;
+			&add_log("NOTICE added space after \"$header:\", for news")
+				if $loglvl > 5;
+		}
+		print NEWS header'news_fmt($_), "\n";
 	}
 
 	# For correct threading, we need a References: line.
@@ -909,14 +948,17 @@ sub post {
 		my $fixup = &header'msgid_cleanup(\$refs);
 		&add_log("WARNING fixed References line for news")
 			if $loglvl > 5 && $fixup;
-		print NEWS "References: $refs\n";	# One big happy line
+		# INN does not like an empty References: line, even if properly
+		# followed by continuations.  Therefore, cheat to force the message
+		# to have at least one ref on the line.
+		print NEWS header'news_fmt("References: $refs\n");
 	}
 
 	# Any address included withing "" means addresses are stored in a file
 	$newsgroups = &complete_list($newsgroups, 'newsgroup');
 	$newsgroups =~ s/\s/,/g;	# Cannot have spaces between them
 	$newsgroups =~ tr/,/,/s;	# Squash down consecutive ','
-	print NEWS "Newsgroups: $newsgroups\n";
+	print NEWS header'news_fmt("Newsgroups: $newsgroups\n");
 	print NEWS "Distribution: local\n" if $localdist;
 	print NEWS $FILTER, "\n";	# Avoid loops: inews may forward to sendmail
 	print NEWS "\n";
@@ -1178,6 +1220,24 @@ sub alarm_clock {
 	die "alarm call\n";				# Longjmp to shell_command
 }
 
+# Print whole mail to supplied fd, without any Content-Transfer-Encoding.
+sub print_binary_mail {
+	my ($fd) = @_;
+	my $skip = 0;
+	foreach my $line (split(/\n/, $Header{'Head'})) {
+		if ($line =~ /^\s/) {
+			print $fd $line, "\n" unless $skip;
+		} else {
+			$skip = 0;
+			my ($field) = $line =~ /^([\w-]+):/;
+			$skip = lc($field) eq "content-transfer-encoding";
+			print $fd $line, "\n" unless $skip;
+		}
+	}
+	print $fd "\n";
+	print $fd ${$Header{'=Body='}};		# No content transfer-encoding
+}
+
 # Execute the command, ran in an eval to protect against SIGPIPE signals
 sub execute_command {
 	local($program, $input, $feedback) = @_;
@@ -1199,8 +1259,8 @@ sub execute_command {
 		close READ if $input == $NO_INPUT;	# Close stdin if needed
 		unless (open(STDOUT, ">$trace")) {	# Where output goes
 			&add_log("WARNING couldn't create $trace: $!") if $loglvl > 5;
-			if ($feedback == $FEEDBACK) {	# Need trace if feedback
-				kill 'SIGPIPE', getppid;	# Parent still waiting
+			if ($feedback != $NO_FEEDBACK) {	# Need trace if feedback
+				kill 'SIGPIPE', getppid;		# Parent still waiting
 				exit 1;
 			}
 		}
@@ -1222,10 +1282,12 @@ sub execute_command {
 	select(STDOUT);
 
 	# Now feed the program with the mail
-	if ($input == $BODY_INPUT) {			# Pipes body
-		print WRITE $Header{'Body'};
+	if ($input == $BODY_INPUT) {			# Pipes *decoded* body
+		print WRITE ${$Header{'=Body='}};
 	} elsif ($input == $MAIL_INPUT) {		# Pipes the whole mail
 		print WRITE $Header{'All'};
+	} elsif ($input == $MAIL_INPUT_BINARY) {	# Remove any transfer encoding
+		print_binary_mail(\*WRITE);			
 	} elsif ($input == $HEADER_INPUT) {		# Pipes the header
 		print WRITE $Header{'Head'};
 	}
@@ -1237,7 +1299,7 @@ sub execute_command {
 		# Log execution failure and return to shell_command via die if some
 		# feedback was to be done.
 		&add_log("ERROR execution failed for '$program'") if $loglvl > 1;
-		if ($feedback == $FEEDBACK) {		# We wanted feedback
+		if ($feedback != $NO_FEEDBACK) {	# We wanted feedback
 			&mail_back;						# Mail back any output
 			unlink "$trace";				# Remove output of command
 			die "feedback\n";				# Longjmp to shell_command
@@ -1258,8 +1320,8 @@ sub execute_command {
 sub handle_output {
 	if ($feedback == $NO_FEEDBACK) {
 		&mail_back;						# Mail back any output
-	} elsif ($feedback == $FEEDBACK) {
-		&feed_back;						# Feed result back into %Header
+	} else {
+		&feed_back($feedback);			# Feed result back into %Header
 	}
 }
 
@@ -1311,6 +1373,7 @@ EOM
 # Feed back output of a command in the %Header data structure.
 # Uses some local variables from execute_command
 sub feed_back {
+	my ($feedback) = @_;
 	unless (open(TRACE, "$trace")) {
 		&add_log("ERROR couldn't feed back from $trace: $!") if $loglvl > 1;
 		unlink "$trace";				# Maybe I should leave it around
@@ -1351,6 +1414,49 @@ sub feed_back {
 	close TRACE;
 	$Header{'Body'} = $temp unless $input == $HEADER_INPUT;
 	$Header{'All'} = $Header{'Head'} . "\n" . $Header{'Body'};
+	if ($input == $BODY_INPUT) {
+		# Was fed *decoded* body, got a decoded body back.
+		# Headers have not changed, recoding will happen as in the original
+		&body_recode;
+	} elsif ($input == $MAIL_INPUT) {
+		# Headers could have changed and we need to reparse them in order
+		# to know how/whether we should decode the body.
+		&header_resync;
+		&body_check;	# Update $Header{'=Body='} to point to *decoded* body
+		if ($feedback == $FEEDBACK_ENCODING) {
+			&header_resync if &body_recode_optimally;
+		}
+	} elsif ($input == $HEADER_INPUT) {
+		# Headers pertaining to body encoding could have changed.
+		&header_check_body_encoding;		# Check and recode if possible
+		&header_resync;						# Resynchronize %Header
+	} elsif ($input == $MAIL_INPUT_BINARY) {
+		# Was fed a *decoded* body, got at possibly decoded body back.
+		my $old_encoding = lc($Header{'Content-Transfer-Encoding'});
+		&header_resync;
+		&body_check;	# Update $Header{'=Body='} to point to *decoded* body
+		if ($feedback == $FEEDBACK_ENCODING) {
+			# Scan the decoded body and determine the optimal content
+			# transfer encoding, recoding the body as needed and updating
+			# the headers should they change.
+			&header_resync if &body_recode_optimally;
+		} else {
+			# Adjust encoding if needed (they did not supply the -e to FEED)
+			my $current_encoding = lc($Header{'Content-Transfer-Encoding'});
+			my %encoded = map { $_ => 1 } qw(base64 quoted-printable);
+			# We need to recode if there is presently no encoding but there was
+			# one originally.  They could have properly re-encoded the body,
+			# which is why we have to check for the current encoding.
+			if (!$encoded{$current_encoding} && $encoded{$old_encoding}) {
+				alter_header("Content-Transfer-Encoding", $HD_STRIP);
+				header_append(header'format(
+					"Content-Transfer-Encoding: $old_encoding\n"));
+				body_recode_with($old_encoding);
+			}
+		}
+	} else {
+		&add_log("ERROR BUG in feed_back: unknown input value \"$input\"");
+	}
 }
 
 # Feed output back into $Back variable (used by BACK command). Typically, the
@@ -1374,57 +1480,15 @@ sub xeq_back {
 }
 
 # The "RESYNC" command
-# Resynchronizes the %Header entries by reparsing the 'All' entry
+# Resynchronizes the %Header entries by reparsing the 'Head' entry
 sub header_resync {
 	# Clean up all the non-special entries
 	foreach $key (keys %Header) {
 		next if $Pseudokey{$key};		# Skip pseudo-header entries
 		delete $Header{$key};
 	}
-	# There is some code duplication with parse_mail()
-	local($lines) = 0;
-	local($first_from);						# First From line records sender
-	local($last_header);					# Current normalized header field
-	local($in_header) = 1;					# Bug in the range operator
-	local($value);							# Value of current field
-	foreach (split(/\n/, $Header{'All'})) {
-		if ($in_header) {					# Still in header of message
-			if (/^$/) {						# End of header
-				$in_header = 0;
-				next;
-			}
-			if (/^\s/) {					# It is a continuation line
-				s/^\s+/ /;					# Swallow multiple spaces
-				$Header{$last_header} .= $_ if $last_header ne '';
-			} elsif (/^([\w-]+):\s*(.*)/) {	# We found a new header
-				$value = $2;				# Bug in perl 4.0 PL19
-				$last_header = &header'normalize($1);
-				# Multiple headers like 'Received' are separated by a new-
-				# line character. All headers end on a non new-line.
-				if ($Header{$last_header} ne '') {
-					$Header{$last_header} .= "\n$value";
-				} else {
-					$Header{$last_header} .= $value;
-				}
-			} elsif (/^From\s+(\S+)/) {		# The very first From line
-				$first_from = $1;
-			} else {
-				# Did not identify a header field nor a continuation
-				# Maybe there was a wrong header split somewhere?
-				if ($last_header eq '') {
-					&add_log("ERROR ignoring header garbage: $_")
-						if $loglvl > 1;
-				} else {
-					&add_log("ERROR missing continuation for $last_header")
-						if $loglvl > 1;
-					$Header{$last_header} .= " " . $_;
-				}
-			}
-		} else {
-			$lines++;						# One more line in body
-		}
-	}
-	&header_check($first_from, $lines);	# Sanity checks
+	my $first_from = header_parse($Header{'Head'}, \%Header, 0);
+	&header_check($first_from, undef);	# Sanity checks
 }
 
 # The "STRIP" and "KEEP" commands (case insensitive)
@@ -1452,7 +1516,7 @@ sub alter_header {
 		}
 		$line = $_;					# Save original
 		# Make sure header field name is normalized before attempting a match
-		s/^([\w-]+):/&header'normalize($1).':'/e;
+		s/^([!-9;-~\w-]+):/&header'normalize($1).':'/e;
 		unless (/^\s/) {			# If not a continuation line
 			$last_was_altered = 0;	# Reset header alteration flag
 			$matched = 0;			# Assume no match
@@ -1475,6 +1539,9 @@ sub alter_header {
 	}
 	$Header{'Head'} = join("\n", @newhead) . "\n";
 	$Header{'All'} = $Header{'Head'} . "\n" . $Header{'Body'};
+
+	# Headers pertaining to body encoding could have changed.
+	&header_check_body_encoding;	# Check, but no resync
 }
 
 # The "ANNOTATE" command
@@ -1807,8 +1874,8 @@ sub alter_flow {
 	return 0 if $opt'sw_t && $lastcmd != 0;
 	return 0 if $opt'sw_f && $lastcmd == 0;
 	if ($mode ne '') {
+		&add_log("entering new state $mode") if $loglvl > 6 && $mode ne $wmode;
 		$wmode = $mode;
-		&add_log("entering new state $wmode") if $loglvl > 6;
 	}
 	&perform;						# This was dynamically bound
 }

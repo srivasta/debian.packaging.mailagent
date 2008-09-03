@@ -17,7 +17,7 @@ esac
 echo "Extracting agent/man/mailagent.$manext (with variable substitutions)"
 $rm -f mailagent.$manext
 $spitshell >mailagent.$manext <<!GROK!THIS!
-.TH MAILAGENT $manext "Version $VERSION PL$PATCHLEVEL"
+.TH MAILAGENT $manext "Version $VERSION-$REVISION"
 .\" @(#) Manual page for mailagent's filter -- (c) ram February 1991
 .\"
 .\" $Id$
@@ -366,8 +366,7 @@ The path to a file describing the format biffing should use. If not set,
 a default hardwired format is used. Season to taste. (suggested: ~/.biffmsg).
 .TP
 .I biffnice
-When \fIbiffmh\fR is turned ON, this option controls whether the compacted
-message should be reformatted to nicely fit into 80 columns.
+Whether the message should be reformatted to nicely fit into the terminal.
 (optional, defaults to OFF, suggested: ON when \fIbiffmh\fR is also ON).
 .TP
 .I biffnl
@@ -575,7 +574,7 @@ mailagent will use the value determined by Configure.
 .TP
 .I mailopt
 Options to be passed to the mailer (see \fIsendmail\fR). (optional, suggested:
--odq, when using sendmail).
+-odq -i, when using sendmail).
 .TP
 .I maxcmds
 Maximum number of commands that are allowed to be executed by a SERVER command
@@ -1026,9 +1025,9 @@ for local processing, to avoid an excessive workload on the \fImailhost\fR
 machine, especially if it is a dedicated NFS server. If you are a system
 administrator installing \fImailagent\fR and expect many people to use it,
 keep this in mind.
-'''
-''' O p t i o n s
-'''
+.\"
+.\" O p t i o n s
+.\"
 .SH OPTIONS
 There is a limited set of options which may be used when calling the
 mailagent directly. Only one special option at a time may be specified.
@@ -1154,9 +1153,9 @@ program waits for a mail on its standard input. If an argument is provided, it
 is the name of a file holding one mail to be processed. This is the normal
 calling procedure from the filter, the argument being the location of the
 queued mail.
-'''
-''' D e f a u l t   R u l e s
-'''
+.\"
+.\" D e f a u l t   R u l e s
+.\"
 .SH "USING THE DEFAULT RULES"
 If you do not want to use the filtering feature of mailagent, 
 .B (NOTE:
@@ -1178,7 +1177,7 @@ should return a zero exit status).
 .PP
 If you do not want to use the default rules, you may skip the remaining of this
 section.
-'''
+.\"
 .SS "Configuring Help"
 .PP
 The help text mailagent will send to people must be copied from
@@ -1195,7 +1194,7 @@ files back (parameter \fImaxsize\fR in your \fI~/.mailagent\fR file\fR).
 .PP
 You may use the default help file or design one that will give even more
 details to the poor user.
-'''
+.\"
 .SS "Distribution Files"
 .PP
 The two files \fIproglist\fR and \fIdistribs\fR held in \fILib/mailagent\fR
@@ -1247,7 +1246,7 @@ directory.
 .PP
 You may include comments in both files: all lines starting with a leading
 # will be ignored.
-'''
+.\"
 .SS "Testing Your Mail Agent"
 .PP
 It is now time to make sure your mailagent works. Send yourself the following
@@ -1282,9 +1281,9 @@ your mailagent's configuration. Retry with a log level set to 20 and look
 at the issued log messages in your Log directory. Make sure that the file
 listed in the \fIplsave\fR entry of your \fI~/.mailagent\fR is correctly
 updated after a \fImaillist\fR has been run.
-'''
-''' F i l t e r i n g   R u l e s
-'''
+.\"
+.\" F i l t e r i n g   R u l e s
+.\"
 .SH "USING THE FILTER"
 The \fImailagent\fR can also be used as a filter: mail is parsed and some
 actions are taken based on simple \fIlex\fR-like rules. Actions range from
@@ -1304,7 +1303,7 @@ a mail coming from a mailing list. The mail is posted on a local newsgroup
 \fImail.gue\fR. Mails whose subject contains the word "metaconfig" will be
 saved in a folder \fIdist\fR for delayed reading and will not appear in the
 main mailbox. If no rule matched, the mail is left in the folder incoming.
-'''
+.\"
 .SS "Rule File Syntax"
 .PP
 Here is a non-formal description of the rule file. Parsing of the file is done
@@ -1491,7 +1490,7 @@ From:
 Note the use of the file inclusion: all the users listed in file \fIusers\fR
 will have their mail left in the system mailbox. The usual rules apply for
 these loaded patterns.
-'''
+.\"
 .SS "Selector Combination"
 .PP
 A single rule may have a various set of selectors. For instance, in the
@@ -1588,7 +1587,7 @@ From: !ram, !root
 # Matches if \fIram\fR is listed in the \fITo\fR OR the \fICc\fR line
 To Cc: ram
 .Ef
-'''
+.\"
 .SS "Minimal Header"
 .PP
 A minimal set of selectors are guaranteed to be set, regardless of the
@@ -1606,6 +1605,13 @@ terminology. If you don't know what that is, simply ignore it.
 .I From:
 User who wrote the mail. If this line is missing, uses the address found in
 the first From line.
+.TP
+.I Length:
+The physical length of the body, in bytes, once content-transfer-encoding
+(if any) has been removed.
+.TP
+.I Lines:
+The amount of lines in the body (decoded, if necessary).
 .TP
 .I To:
 The main recipient(s) of the message. If this line is missing but a set of
@@ -1630,7 +1636,7 @@ Where any reply should be sent. If no \fIReply-To:\fR field is present, then
 the \fIReturn-Path\fR is used (with <> stripped out), or the \fIFrom:\fR
 line is parsed to extract the e-mail address of the author.
 .PD
-'''
+.\"
 .SS "Variables"
 .PP
 The mailagent supports user-defined variables, which are globals. They are
@@ -1695,7 +1701,7 @@ There is currently no way for erasing a variable from the database. But if
 you do not use the variable any more, it will be removed when its age
 becomes greater than the maximum age specified by the \fIagemax\fR configuration
 variable.
-'''
+.\"
 .SS "Regular Expressions"
 .PP
 All the regular expressions follow the V8 syntax, as in \fIperl\fR, with all
@@ -1762,7 +1768,7 @@ then it might be worth knowing that all the set of matching selectors are
 recorded within %&, each set terminated with a ';'. If a negated selector is
 used, then %& will record all the fields which did not contain the pattern,
 assuming the selection succeeded (otherwise nothing is recorded).
-'''
+.\"
 .SS "Available Actions"
 .PP
 The following actions are available as filtering commands. Case is irrelevant
@@ -1943,12 +1949,50 @@ the mail as saved. If no further action involving saving is done, then the
 mail will never show up in the mailbox.
 (Never fails)
 .TP
-FEED \fIprogram\fR
+FEED [\fB-be\fR] \fIprogram\fR
 Feed the whole message to a program and get the output back as the new
-message. The header structure used by the rules is not updated: an explicit
-RESYNC is necessary. Hence the program appears as a filter for the whole
-message.  It does not tag the message as having been saved.
+message. Hence the program appears as a filter for the whole
+message.  It does not tag the message as having been saved.  A RESYNC
+is automatically done upon return.
 (Returns the status of \fIprogram\fR)
+.sp
+.B WARNING:
+Your program must be able to properly parse a MIME message and must deal
+with transfer-encoded bodies by itself.  To make the program task simpler,
+you can supply the
+.B -b
+switch wich will let mailagent decode the whole body for you, suppressing
+any Content-Transfer-Encoding header (implying "binary").  This is an invalid
+message format for sending the message, but it makes processing easier.
+You still have to parse the MIME parts yourself though.
+.sp
+Using
+.B -b
+does not prevent your program from outputing a valid message back, one
+that can be possibly sent on the network so you have two options:
+either you do not supply any Content-Transfer-Encoding in the headers,
+and mailagent will recode the body for you using the initial transfer
+encoding present in the message (a relatively safe option if you make only
+changes in the body at well-defined spots without introducing 8-bit chars),
+or you can supply the Content-Transfer-Encoding yourself and perform the
+body encoding manually.
+.sp
+To be completely safe and minimize the work in your program, the
+.B -e
+switch will let mailagent analyse the message body you are returning and
+select the proper transfer encoding automatically.  Since this
+will cause the whole body to be analysed, and it can be potentially huge,
+that behaviour must be explicitly asked for. If you need
+.B -e
+then you probably want
+.B -b
+as well (you can supply both by saying
+.B -be
+naturally).
+.sp
+If you do not supply any switch,
+mailagent will give you the message as-is and will get your message
+as-is without any additional magic.
 .TP
 FORWARD \fIaddress(es)\fR
 Forward mail to the specified address(es). This acts as if a save had been
@@ -1963,6 +2007,18 @@ Give the body of the message to the specified program by feeding its standard
 input. Any output is mailed to the user who runs the \fImailagent\fR.
 Note that the message is not tagged as having been saved.
 (Returns the status of \fIprogram\fR)
+.sp
+.B NOTE:
+If the message had a body that was encoded for transport (using one of
+the base64 or quoted-printable transfer encoding), mailagent will
+transparently decode it and supply a version that can be properly handled.
+In other words, the program does not need to care about the body being
+encoded in the message, as it will get a plain one. (Since no headers
+are supplied, this is the only possible option).
+.sp
+Caution though for MIME messages: you should use PIPE for them to give a
+chance to the program to properly handle the body, but then it needs to be
+fully MIME-aware.
 .TP
 KEEP \fIheader_fields_list\fR
 Keeps only the corresponding lines in the header of the mail. For instance,
@@ -2041,6 +2097,17 @@ Feed the body of the message to the specified program and get a new body
 back from the output of the program.
 Note that the message is not tagged as having been saved.
 (Returns the status of \fIprogram\fR)
+.sp
+.B NOTE:
+If the message had a body that was encoded for transport (using one of
+the base64 or quoted-printable transfer encoding), mailagent will
+transparently decode it and supply a version that can be properly handled.
+The body generated by the program will then be automatically encoded back
+using the same transfer encoding.
+.sp
+Caution though for MIME messages: you should use FEED for them to give a
+chance to the program to properly handle the body, but then it needs to be
+fully MIME-aware.
 .TP
 PERL \fIscript\fR [\fIarguments\fR]
 Escape to a perl \fIscript\fR to perform some actions on the message. This
@@ -2048,13 +2115,23 @@ is fully described further in the manpage, and is very different from a
 \fIRUN perl script\fR command. (Returns failure if the script did not compile
 or returned a non-zero status).
 .TP
-PIPE \fIprogram\fR
+PIPE [\fB-b\fR] \fIprogram\fR
 Pipe the whole message to the specified program, but do not get anything
 back. Any output is mailed to the user who runs the \fImailagent\fR.
 The message is not tagged as having been saved in any case, so you must
 explicitly DELETE it if piping was enough and it did not fail: "REJECT -f"
 is your friend here to avoid unwanted deletion.
 (Returns the status of \fIprogram\fR)
+.sp
+.B WARNING:
+Your program must be able to properly parse a MIME message and must deal
+with transfer-encoded bodies by itself.  To make the program task simpler,
+you can supply the
+.B -b
+switch wich will let mailagent decode the whole body for you, suppressing
+any Content-Transfer-Encoding header (implying "binary").  This is an invalid
+message format for sending the message, but it makes processing easier.
+You still have to parse the MIME parts yourself though.
 .TP
 POST [\fB\-lb\fR] \fInewsgroup(s)\fR
 Post the message to the specified newsgroup(s) after having cleaned-up the
@@ -2104,11 +2181,18 @@ over the \fIMsg-Protect\fR field from your ~/.mh_profile file.
 (Does not alter execution status)
 .TP
 PURIFY \fIprogram\fR
-Feed the header into a program and get new header back. No RESYNC is done.
+Feed the header into a program and get new header back. RESYNC is done
+automatically upon return.
 This may be used to indeed purify the header by removing all the verbose
 stuff added by so many mail transport agents (X-400 like lines for instance).
 Obviously, this does not flag the message as having been saved.
 (Returns the status of \fIprogram\fR)
+.sp
+If your program removes the Content-Transfer-Encoding header in a MIME message,
+mailagent will properly transform the message to have a non-encoded body.
+If you change the value of the Content-Transfer-Encoding header, mailagent
+will also correctly recode the body for you.  The only supported encodings
+are base64 and quoted-printable.
 .TP
 QUEUE
 Queue mail again. A successful queuing counts as if mail has been saved.
@@ -2161,8 +2245,17 @@ no further match occur.
 .TP
 RESYNC
 Re-synchronize header used for matching with the header of the mail. This is
-probably useful only when a FEED command was run.
+probably useful only when a SUBST or ANNOTATE command was run.
 (Does not alter execution status)
+.sp
+.B NOTE:
+At RESYNC time, mailagent will check whether the Content-Transfer-Encoding
+header was changed and will transparently recode the body if required, so
+that the whole message remains valid despite header mangling. It will also
+take care of updating Content-Length if required.  Whenever you do change
+these important headers via SUBST or ANNOTATE, be sure to call RESYNC before
+disposing of the message or you run the risk of saving a corrupted version
+that will not be properly understood by your mail user agent.
 .TP
 RUN \fIprogram\fR
 Run the specified program and mail any output to the user who runs
@@ -2337,7 +2430,7 @@ previous one. This is useful to store output of system commands ran by
 \fIcron\fR. Don't try to use it with an MH folder or a directory folder or
 it will behave like SAVE.
 (Fails if message cannot be written)
-'''
+.\"
 .SS "Execution Status"
 .PP
 Almost all the actions modify a variable which keeps track of the execution
@@ -2358,7 +2451,7 @@ It is unfortunate that ONCE or SELECT commands cannot make the difference
 between a non-execution and a successful execution of the specified command.
 There may be a change in the way this scheme works, but it should remain
 backward compatible.
-'''
+.\"
 .SS "Perl Escape"
 .PP
 By using the PERL command, you have the ability to perform filtering and other
@@ -2519,6 +2612,8 @@ data structure, so modifying the values will influence the filtering process.
 For instance, the SAVE command writes the \fIHead\fR, the \fIX-Filter:\fR line,
 the end of header (a single newline) and then the \fIBody\fR (this is an
 example only, not a documented feature :-).
+The \fI=Body=\fR key is special: it is a Perl reference to a scalar containing
+the body with any content transfer encoding removed.
 .PP
 Note that the \fI\$msgpath\fR variable holds only a snapshot of the folder path
 at the time where the PERL escape
@@ -2531,7 +2626,7 @@ mailagent and directly calling the routines you need. If it is not documented
 in the manual page, it may be changed without notice by any further patch.
 (And this does not say that documented features may not change also... It's
 just more unlikely, and patches would clearly state that, of course.)
-'''
+.\"
 .SS "Program Environment"
 .PP
 All the programs started by mailagent via RUN and friends inherit the
@@ -2544,7 +2639,7 @@ set PATH (if you are using the shell filter).
 All the programs are executed from within the \fIhome\fR directory. This
 includes scripts started via the PERL command and mail hooks. The latter will
 be described in detail further down.
-'''
+.\"
 .SS "File inclusion"
 .PP
 Some commands like FORWARD or KEEP allow you to specify a file name between
@@ -2558,7 +2653,7 @@ will be reported.
 The file should list each parameter (be it an address, a header or a pattern)
 on a line by itself. Shell-style comments (#) are allowed within that file and
 leading white spaces are trimmed (but not trailing spaces).
-'''
+.\"
 .SS "Macros Substitutions"
 .PP
 All the commands go through a macro substitution mechanism before being
@@ -2589,7 +2684,7 @@ The internet domain name extracted out of the \fIFrom:\fR field (\fIb.c\fR
 in \fIu@a.b.c\fR), converted to lower-case.
 .TP
 %L
-Length of the body part, in bytes
+Length of the body part, in bytes, with content-transfer-encoding removed.
 .TP
 %N
 Full name of the sender (login name if none)
@@ -2652,7 +2747,7 @@ Hour of the day (00-23)
 Message ID, if available (otherwise, this is a null string)
 .TP
 %l
-Number of lines in the message
+Number of lines in the message, once content-transfer-encoding has been removed
 .TP
 %m
 Month of the year (01-12)
@@ -2681,7 +2776,7 @@ Year (last two digits)
 %[To]
 Value of the header field (here To:)
 .PD
-'''
+.\"
 .SS "User-defined Macros"
 .PP
 The mailagent lets you define your own macros in two ways: at the filter
@@ -2761,7 +2856,7 @@ At the filter level, the MACRO command has three options. By default,
 the command defines a new macro by using \fIpush\fR, and the other
 options each let you access one of the other interface functions.
 Note that macro definitions persist across APPLY commands.
-'''
+.\"
 .SS "User-defined Logging"
 .PP
 Most of the time when writing a new mailagent filtering command or an
@@ -2798,7 +2893,7 @@ option will not be honored in that case. This may or may not be useful to you.
 If you call \fI&main'usr_log\fR with a non-existent logfile name, logging
 is redirected to the default system-wide logfile defined in your
 \fI~/.mailagent\fR.
-'''
+.\"
 .SS "Dynamically Loading New Code"
 .PP
 In you perl routines (user-defined commands, perl hooks, etc...), you may
@@ -2834,7 +2929,7 @@ The routine returns \fIundef\fR if the file cannot be loaded
 (non-existent file, most probably), \fB0\fR if the file was loaded but
 contained a syntax error or did not define the specified function, and \fB1\fR
 for success.
-'''
+.\"
 .SS "Using Once Commands"
 .PP
 The ONCE constructs lets you specify a given command to be run once every
@@ -2868,7 +2963,7 @@ but that would be likely to be less efficient, as the first hashing would be
 done on a fixed word, hence all the timestamps would be located in the file
 \fIHash/m/e\fR (where \fIHash\fR is the name of your hashing directory, which
 is the \fIhash\fR parameter in the configuration file).
-'''
+.\"
 .SS "Using Tags in Record and Unique"
 .PP
 Both the RECORD and UNIQUE commands let you specify a comma-separated tag list
@@ -2918,7 +3013,7 @@ To Cc: agent-users {
 If you have some rule using UNIQUE without any
 tags, it will match when at least one instance of the message has been
 recorded, no matter what tag (if any at all) was used in the first place.
-'''
+.\"
 .SS "Specifying A Period"
 .PP
 The period parameter of the ONCE commands or the \fIvacperiod\fR parameter
@@ -2951,7 +3046,7 @@ year (365 days)
 All the periods are converted internally in seconds, although you do not
 really care... Examples of valid periods range from "1m" to "136y" on a 32 bits
 machine (why ?).
-'''
+.\"
 .SS "Timeouts"
 .PP
 In order to avoid having a \fImailagent\fR waiting for a command forever, a
@@ -2990,7 +3085,7 @@ lock. If you want a secure locking policy, make sure
 times
 .I lockdelay
 is greater than \fIlockhold\fR, that parameter being "large" enough.
-'''
+.\"
 .SS "Avoiding Loops"
 .PP
 The \fImailagent\fR leaves an "X-Filter:" header on each filtered message,
@@ -3016,7 +3111,7 @@ do
 add that header line.  You can add one via ANNOTATE if you wish to prevent
 loops, in case the program to which you are feeding the message might
 return it to you in some strange way.
-'''
+.\"
 .SS "Message Files"
 .PP
 The text of the message to be sent back (for MESSAGE or NOTIFY) is read from
@@ -3229,13 +3324,13 @@ concerned).
 For those hooks which are finally ran by perl, the special @INC array has
 mailagent's own private library path prepended to it, so that \fIrequire\fR
 first looks in this place.
-'''
-''' F o l d e r s
-'''
+.\"
+.\" F o l d e r s
+.\"
 .SH "FOLDERS"
 A folder is a file or a directory which can be the target of a delivery by the
 mailagent, that is to say the argument of SAVE-like commands.
-'''
+.\"
 .SS "Folder Format"
 .PP
 By default, mails are written into folders according to the standard UNIX-style
@@ -3271,7 +3366,7 @@ line is used to specify the base name of the message, then a number is
 appended to give the name of the message file to use. That is, if there is
 no such file, the folder will look like an MH one, without any MH sequence
 file though.
-'''
+.\"
 .SS "Folder Compression"
 .PP
 If you have one or more of the widely available file compression
@@ -3368,9 +3463,9 @@ made automatically to the plain file.
 .PP
 On newly created folders the \fIcomptag\fR configuration variable is
 referenced to determine the compression type to use for the folder.
-'''
-''' M a i l   B i f f i n g
-'''
+.\"
+.\" M a i l   B i f f i n g
+.\"
 .SH MAIL BIFFING
 If you are receiving and processing mail on your own machine, then you have
 access to local mail biffing where \fImailagent\fR can warn you about new
@@ -3404,7 +3499,9 @@ the standard set:
 Same as writing %-H, new line, %-B
 .TP
 %-B
-The body part of the biffing message
+The body part of the biffing message, with content-transfer-encoding removed.
+If the message is a MIME multipart one, the text/plain part is shown.  If only
+a text/html part is available, the HTML markup is stripped for biffing.
 .TP
 %-H
 The header part of the biffing message. If shows only From:, To: Subject: and
@@ -3487,10 +3584,8 @@ New %t for %u has arrived in %f:
 ----%b
 .Ef
 Note that the string \fI...more...\fR appears at the end of the body when
-it has not been completely printed out on the screen, regardless of the
-value of the remaining lines. This means you'll get the \fI...more...\fR
-string even if all the lines from now on are blank and \fIbiffnl\fR is OFF.
-And it's not possible to customize this bit, sorry.
+it has not been completely printed out on the screen and the remaining
+lines are not blank or similar.
 .SS "Trimming Leading Quotation"
 .PP
 It is a standard practice, when replying to a message, to include an
@@ -3560,16 +3655,16 @@ the \fIbiffmh\fR variable to ON.
 Since this compacting is output verbatim on the tty, line breaks will occur
 randomly and this may make reading difficult. You may request an automatic
 reformatting of the compacted body by turning \fIbiffnice\fR to ON and the
-biff output will fit nicely within 80 columns.
+biff output will fit nicely within the terminal.
 .PP
 Unfortunately, it is not possible to customize the amount of columns that
 should be used for formatting: since you may biff to any tty you are logged
 on, that would force \fImailagent\fR to probe the tty for its column size,
 for each possible tty where output may go, and there is no reliable portable
 way of doing that. Sorry.
-'''
-''' E x t e n d i n g   F i l t e r i n g   C o m m a n d s
-'''
+.\"
+.\" E x t e n d i n g   F i l t e r i n g   C o m m a n d s
+.\"
 .SH EXTENDING FILTERING COMMANDS
 Once you've reached the \fIexpert\fR level, and provided you have a fair
 knowledge of \fIperl\fR, you may feel the need for more advanced commands
@@ -3589,7 +3684,7 @@ in an interpreted language like \fIperl\fR. This of course once you have
 convinced yourself that it is a Good Thing to customize and extend a program
 in the same language as the one used for the core, meaning usually a fairly
 low-level language with fewer user-friendly hooks.
-'''
+.\"
 .SS Overview
 .PP
 In order to implement a new command, say FOLD, you will need to do the
@@ -3619,7 +3714,7 @@ you within the \fImailhook\fR package).
 In the following sections, we're going to describe the syntax of the
 \fInewcmd\fR file, and we'll then present some low-level internal variables
 which may be used when implementing new commands.
-'''
+.\"
 .SS New Command File Format
 .PP
 The \fInewcmd\fR file consists of a series of lines, each line describing
@@ -3656,7 +3751,7 @@ FOLD  ~/mail/cmds/fold.pl  fold  no  yes
 .Ef
 to allow FOLD even in _SEEN_ state and have it executed without modifying
 the current value of the \fIlast-command-status\fR variable.
-'''
+.\"
 .SS Writing An Implementation
 .PP
 Your perl function will be loaded when needed into the special package
@@ -3700,7 +3795,7 @@ safely use \fIdie\fR or call external library routines that use \fIdie\fR.
 If you use \fIrequire\fR, be aware that mailagent is setting up a special
 \fI@INC\fR array by putting its private library path first, so you may place
 all your \fImailagent\fR-related library files in this place.
-'''
+.\"
 .SS Special Variables
 .PP
 The following special variables (some of them marked read-only, meaning you
@@ -3760,7 +3855,7 @@ the suitable X-Filter line that should be appended in \fBall\fR the mail you
 send via mailagent, in order to avoid loops. Also when you save mails
 to a folder, it's wise adding this line in case a problem arises: you may
 then identify the culprit.
-'''
+.\"
 .SS Rule Environment
 .PP
 An action might have a legitimate desire of altering the environment for
@@ -3807,7 +3902,7 @@ its processing to initialize the \fIenv\fR package, and \fI&env'cleanup\fR
 at the end before returning. Before running the actions specified on a rule
 match, \fI&apply_rules\fR calls \fI&env'restore\fR to ensure a coherent
 view of the environment while running the actions for that particular rule.
-'''
+.\"
 .SS Altering Control Flow
 .PP
 When you want to alter control flow to perform a REJECT, a RESTART or an
@@ -3831,7 +3926,7 @@ The preferred way is to invoke the \fImailhook\fR interface functions,
 \fI&mailhook'begin\fR, \fI&mailhook'reject\fR, etc..., and that will work
 even if you redefine those functions yourself. Besides, that's the only
 interface which is likely not to be changed by new versions.
-'''
+.\"
 .SS General Purpose Routines
 .PP
 The following is a list of all the general routines you may wish to call when
@@ -3932,11 +4027,15 @@ A Period\fR to get valid period strings.
 Run a shell command and return a failure status (0 for OK). The input parameter
 may be one of the following constants (defined in the \fImain\fR package):
 \$NO_INPUT to close standard input, \$BODY_INPUT to pipe the body of the
-current message, \$MAIL_INPUT to pipe the whole mail and \$HEADER_INPUT to
+current message, \$MAIL_INPUT to pipe the whole mail as-is,
+\$MAIL_INPUT_BINARY to pipe the whole mail after having removed any
+content transfer-encoding and \$HEADER_INPUT to
 pipe the message header. The feedback parameter may be one of \$FEEDBACK or
 \$NO_FEEDBACK depending whether or not you wish to use the standard output
 to alter the corresponding part of the message. If no feedback is wanted, the
-output of the command is mailed back to the user.
+output of the command is mailed back to the user.  The \$FEEDBACK_ENCODING
+is handled like \$FEEDBACK but will tell mailagent to look at the best
+suitable body encoding when the input is the whole message.
 .TP
 .I &main'parse_address(rfc822-address)
 Parse an RFC822 e-mail address and return a two-elements array containing the
@@ -3956,7 +4055,7 @@ once finished, and ABORT is perl's \fIdie\fR.
 You may also use the three functions from the \fIextern\fR package which
 manipulate persistent variables (already documented in the section dealing
 with variables) as well as the user-defined macro routines.
-'''
+.\"
 .SS Example
 .PP
 Writing your own commands is not easy, since it requires some basic knowledge
@@ -4015,7 +4114,7 @@ it has been bounced. Indeed, should the SENDBACK action be the only one
 action to be run, we do not want mailagent to LEAVE the mail in the
 mailbox because it has never been saved (this default behavior being
 a precaution only -- better safe than sorry).
-'''
+.\"
 .SS Conclusion
 .PP
 If along the way you imagine some useful commands which could be made
@@ -4035,9 +4134,9 @@ code, the mailagent providing a fixed and reliable frame and the external
 program providing the service. One immediate extension would be mailing
 list handling, using this mechanism to interface with some mailing list
 management software written in perl.
-'''
-''' G e n e r i c   M a i l   S e r v e r
-'''
+.\"
+.\" G e n e r i c   M a i l   S e r v e r
+.\"
 .SH GENERIC MAIL SERVER
 .PP
 One nice thing about mailagent is that it provides you with the basic tools to
@@ -4052,7 +4151,7 @@ equivalent. There is no notion of modes, with separate command sets for
 each mode or limited name-space visibility, at least for now, so it is not
 easy (albeit possible) to implement an ftpmail server, for instance, since
 this implies the notion of mode.
-'''
+.\"
 .SS Overview
 In order to implement a mail server command (say send \fIfile\fR, which
 would send an arbitrary file from the file system in a separate mail message),
@@ -4091,7 +4190,7 @@ Start using the command... which of course is the nicest part in this scheme!
 In the following sections, we'll learn about the syntax of the \fIcomserver\fR
 file, what \fIpowers\fR are, how the session transcript is built, what the
 command environment is, etc...
-'''
+.\"
 .SS Builtin Commands Overview
 .PP
 The mail server has a limited set of builtin commands, dealing with user
@@ -4152,7 +4251,7 @@ number of command that can be issued in one single message.
 In case you think this \fImailagent\fR feature is dangerous for your account,
 do not create the \fIroot\fR and \fIsecurity\fR powers, and do not write
 any sensitive commands.
-'''
+.\"
 .SS Builtin Commands Definition
 .PP
 Now let's have a look at those builtin commands. Passwords of sensitive
@@ -4261,7 +4360,7 @@ use of that information. If no command is specified, the new identity is
 assumed until changed by another \fIuser\fR command and all the powers
 currently held by the user are released. If no \fIe-mail\fR address
 is given, the original user ID is restored.
-'''
+.\"
 .SS Command Environment
 .PP
 There are six types of commands and variables that can be specified in server
@@ -4364,7 +4463,7 @@ clearance mechanism.
 .I user
 The effective user ID, originally the same as the uid, but may be changed
 via the \fIuser\fR builtin command.
-'''
+.\"
 .SS Session Transcript
 .PP
 A session transcript is mailed back automatically to the user who requested
@@ -4387,7 +4486,7 @@ commands, authentication based on that information is really weak. A more
 "secure" authentication is provided by the server powers, which is
 password-based. Unfortunately, the clear password has to be transmitted in the
 message itself and could be eavesdropped.
-'''
+.\"
 .SS Recording New Commands and Variables
 .PP
 Server commands and variables are defined in the \fIcomserver\fR file defined
@@ -4442,7 +4541,7 @@ function to call to execute the command; if none is specified, the name of
 the command itself is called. Shell commands may use that field to supply
 additional options, which will be inserted right after the command name and
 before any other user-supplied arguments. Others should leave this alone.
-'''
+.\"
 .SS Special Command Types
 .PP
 There are currently two special command types.
@@ -4461,7 +4560,7 @@ same name as the command itself. For example, assuming a command \fIshoot\fR,
 its help file would be expected in \fIhelpdir/shoot\fR. If no file is found
 there, mailagent looks in its public library ($privlibexp) for an help file.
 Help is provided only when the help file exists and is not zero-sized.
-'''
+.\"
 .SS Creating the Root Power
 .PP
 In order to bootstrap the server, you need to create the root power. All the
@@ -4554,7 +4653,7 @@ should be prohibited and access to \fIcron\fR forbidden in order to avoid
 automatic mail processing (since it would be possible to have cron invoke
 a \fImailagent\fR process \-or any other program for that matter\- to process
 the incoming mail in a comparable way).
-'''
+.\"
 .SS Example
 .PP
 Here is an example showing the steps involved in creating a \fIshell\fR
@@ -4698,7 +4797,7 @@ End of processing (.signature)
 The first invocation of the \fIshell\fR command fails since we lack the
 \fIshell\fR power. The string "Permission denied." is echoed by the
 command itself into file descriptor #3 and makes it to the transcript.
-'''
+.\"
 .SS Conclusion
 .PP
 The generic mail server implemented in mailagent can be used to
