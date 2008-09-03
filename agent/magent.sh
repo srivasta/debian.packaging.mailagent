@@ -14,6 +14,7 @@ esac
 case "$0" in
 */*) cd `expr X$0 : 'X\(.*\)/'` ;;
 esac
+revision=`awk '/^#define[ 	]*REVISION/ {print $3}' < $TOP/revision.h`
 echo "Extracting agent/magent (with variable substitutions)"
 $spitshell >magent <<!GROK!THIS!
 $startperl
@@ -129,7 +130,7 @@ $startperl
 # Current version number and patchlevel
 \$mversion = '$VERSION';
 \$patchlevel = '$PATCHLEVEL';
-\$revision = '$REVISION';
+\$revision = '$revision';
 
 # Want to lock mailboxes with flock ?
 \$lock_by_flock = '$lock_by_flock';
@@ -501,8 +502,10 @@ sub init_constants {
 	$BODY_INPUT = 1;			# Give body of mail as stdin
 	$MAIL_INPUT = 2;			# Pipe the whole mail
 	$HEADER_INPUT = 3;			# Pipe the header only
+	$MAIL_INPUT_BINARY = 4;		# Whole mail in binary (no transfer encoding)
 	$NO_FEEDBACK = 0;			# No feedback wanted
 	$FEEDBACK = 1;				# Feed result of command back into %Header
+	$FEEDBACK_ENCODING = 2;		# Same as $FEEDBACK, but probe body for encoding
 	
 	# The filter message
 	local($address) = &email_addr;
@@ -529,7 +532,7 @@ sub init_constants {
 sub patch_constants {
 	local($address) = &email_addr;	# Will prefer cf vars to hardwired ones
 	$FILTER =
-		"X-Filter: mailagent [version $mversion PL$patchlevel] for $address";
+		"X-Filter: mailagent [version $mversion-$revision] for $address";
 }
 
 # Initializes environment. All the variables are initialized in XENV array
@@ -545,9 +548,10 @@ sub init_env {
 # List of special header keys which do not represent a true header field.
 sub init_pseudokey {
 	%Pseudokey = (
-		'Body', 1,
-		'Head', 1,
-		'All', 1
+		'Body', 1,			# Body of message
+		'Head', 1,			# Header of message
+		'All', 1,			# Concatenation of Header, "\n", Body
+		'=Body=', 1,		# Reference to body with decoded transfer encoding
 	);
 }
 
@@ -752,7 +756,8 @@ sub fork_child {
 # Report any eval error and returns 1 if error detected.
 sub eval_error {
 	if ($@ ne '') {
-		$@ =~ s/ in file \(eval\) at line \d+//;
+		$@ =~ s/ in file \(eval\) at line \d+//;	# Older perls
+		$@ =~ s/ at \(eval \d+\) line \d+\.//;		# Modern perl 5.x
 		chop($@);
 		&add_log("ERROR $@") if $loglvl > 1;
 	}
@@ -822,5 +827,8 @@ $grep -v '^;#' pl/biff.pl >>magent
 $grep -v '^;#' pl/rulenv.pl >>magent
 $grep -v '^;#' pl/options.pl >>magent
 $grep -v '^;#' pl/install.pl >>magent
+$grep -v '^;#' pl/base64.pl >>magent
+$grep -v '^;#' pl/qp.pl >>magent
+$grep -v '^;#' pl/termios/termios.pl >>magent
 chmod 755 magent
 $eunicefix magent
