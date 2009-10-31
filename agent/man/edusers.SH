@@ -20,7 +20,7 @@ $spitshell >edusers.$manext <<!GROK!THIS!
 .TH EDUSERS $manext
 ''' @(#) Manual page for mailagent's edusers command
 '''
-''' $Id$
+''' $Id: edusers.SH 1 2006-08-24 13:24:12Z rmanfredi $
 '''
 '''  Copyright (c) 1990-2006, Raphael Manfredi
 '''  

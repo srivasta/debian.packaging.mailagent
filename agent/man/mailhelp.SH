@@ -20,7 +20,7 @@ $spitshell >mailhelp.$manext <<!GROK!THIS!
 .TH MAILHELP $manext ram
 ''' @(#) Manual page for mailagent's commands -- (c) ram February 1991
 '''
-''' $Id$
+''' $Id: mailhelp.SH 1 2006-08-24 13:24:12Z rmanfredi $
 '''
 '''  Copyright (c) 1990-2006, Raphael Manfredi
 '''  

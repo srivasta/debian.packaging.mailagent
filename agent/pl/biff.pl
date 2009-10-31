@@ -1,4 +1,4 @@
-;# $Id$
+;# $Id: biff.pl 56 2008-07-01 07:33:24Z rmanfredi $
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  

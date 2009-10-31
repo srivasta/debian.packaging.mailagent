@@ -3,7 +3,7 @@
  */
 
 /*
- * $Id$
+ * $Id: termios_ph.c 53 2008-06-27 17:02:06Z rmanfredi $
  *
  *  Copyright (c) 2008, Raphael Manfredi
  *  
