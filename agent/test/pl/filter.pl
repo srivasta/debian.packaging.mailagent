@@ -1,6 +1,6 @@
 # Common actions at the top of each filtering test
 
-;# $Id$
+;# $Id: filter.pl 1 2006-08-24 13:24:12Z rmanfredi $
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  

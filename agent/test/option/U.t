@@ -1,6 +1,6 @@
 # -U : disable reject / abort of first UNIQUE and REJECT.
 
-# $Id$
+# $Id: U.t 11 2008-05-28 15:10:12Z rmanfredi $
 #
 #  Copyright (c) 1990-2006, Raphael Manfredi
 #  

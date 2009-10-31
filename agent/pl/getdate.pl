@@ -47,7 +47,7 @@
 ;# Below are logging information for this package as included in the
 ;# mailagent program.
 ;#
-;# $Id$
+;# $Id: getdate.pl 1 2006-08-24 13:24:12Z rmanfredi $
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  

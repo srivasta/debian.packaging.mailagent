@@ -11,7 +11,7 @@
 */
 
 /*
- * $Id$
+ * $Id: io.c 58 2008-08-19 08:44:07Z rmanfredi $
  *
  *  Copyright (c) 1990-2006, Raphael Manfredi
  *  

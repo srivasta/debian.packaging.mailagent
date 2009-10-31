@@ -1,4 +1,4 @@
-;# $Id$
+;# $Id: q.pl 3 2008-01-17 09:58:33Z rmanfredi $
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  

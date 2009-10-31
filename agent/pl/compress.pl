@@ -1,4 +1,4 @@
-;# $Id$
+;# $Id: compress.pl 15 2008-05-29 22:13:02Z rmanfredi $
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  

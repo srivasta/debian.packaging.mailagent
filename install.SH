@@ -19,7 +19,7 @@ $spitshell >install <<!GROK!THIS!
 $startsh
 # @(#) Installing script accepting bsd-style arguments
 
-# $Id$
+# $Id: install.SH 5 2008-05-28 08:00:09Z rmanfredi $
 #
 #  Copyright (c) 1990-2006, Raphael Manfredi
 #  

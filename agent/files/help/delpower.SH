@@ -16,7 +16,7 @@ case "$0" in
 esac
 echo "Extracting agent/files/help/delpower (with variable substitutions)"
 $spitshell >/dev/null <<!GROK!THIS!
-# $Id$
+# $Id: delpower.SH 1 2006-08-24 13:24:12Z rmanfredi $
 #
 #  Copyright (c) 1990-2006, Raphael Manfredi
 #  

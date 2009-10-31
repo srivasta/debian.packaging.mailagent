@@ -1,4 +1,4 @@
-;# $Id$
+;# $Id: dbr.pl 30 2008-06-04 15:19:13Z rmanfredi $
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  

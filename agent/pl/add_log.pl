@@ -1,4 +1,4 @@
-;# $Id$
+;# $Id: add_log.pl 36 2008-06-11 10:42:08Z rmanfredi $
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  

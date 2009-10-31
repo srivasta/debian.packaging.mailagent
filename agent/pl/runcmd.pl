@@ -1,4 +1,4 @@
-;# $Id$
+;# $Id: runcmd.pl 46 2008-06-25 16:35:05Z rmanfredi $
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
