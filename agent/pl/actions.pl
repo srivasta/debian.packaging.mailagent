@@ -1,4 +1,4 @@
-;# $Id$
+;# $Id: actions.pl 64 2009-09-02 15:42:07Z rmanfredi $
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
@@ -849,6 +849,15 @@ sub post {
 	}
 	print NEWS "Message-ID: $msgid\n";
 
+	# If there is a Followup-To line, ignore it, unless it says "poster".
+	my $followup = $Header{'Followup-To'};
+	if ($followup =~ /\bposter\b/) {
+		print NEWS "Followup-To: poster\n";
+	} elsif ($followup ne '') {
+		&add_log("WARNING stripped Followup-To: $followup")
+			if $loglvl > 5;
+	}
+
 	# Protect Sender: lines in the original message and clean-up header
 	local($last_was_header);		# Set to true when header is skipped
 
@@ -861,37 +870,38 @@ sub post {
 	);
 
 	foreach (split(/\n/, $Header{'Head'})) {
-		s/^Sender:/Prev-Sender:/i;
-		s/^(To|Cc):/X-$1:/i;				# Keep distribution info
-		s/^(Resent-\w+):/X-$1:/i;
 		next if /^From\s/;					# First From line...
 		if (
 			/^From:/i				||		# This one was cleaned up above
 			/^Subject:/i			||		# This one handled above
 			/^Message-Id:/i			||		# idem
+			/^Followup-To:/i		||		# idem
 			/^Date:/i				||		# idem
 			/^In-Reply-To:/i		||
 			/^References:/i			||		# One will be faked if missing
 			/^Apparently-To:/i		||
 			/^Distribution:/i		||		# No mix-up, please
 			/^Control:/i			||
-			/^X-Server-[\w-]+:/i	||
 			/^Xref:/i				||
 			/^NNTP-Posting-.*:/i	||		# Cleanup for NNTP server
 			/^Originator:/i			||		# Probably from news->mail gateway
-			/^X-Loop:/i				||		# INN does not like this field
-			/^X-Trace:/i			||		# idem
 			/^Newsgroups:/i			||		# Reply from news reader
 			/^Return-Receipt-To:/i	||		# Sendmail's acknowledgment
 			/^Received:/i			||		# We want to remove this MTA trace
 			/^Delivered-To:/i		||		# idem
 			/^Precedence:/i			||
-			/^X-Complaints-To:/i	||		# INN2 does not like this field
+			/^DKIM-Signature:/i		||		# INN2 does not like this field
+			/^Accept-?[\w-]*:/i		||		# INN2 does not like this field
+			/^Auth-?[\w-]*:/i		||		# INN2 does not like this field
+			/^X-[\w-]+:/i			||		# INN2 does not like these fields
 			/^Errors-To:/i					# Error report redirection
 		) {
 			$last_was_header = 1;			# Mark we discarded the line
 			next;							# Line is skipped
 		}
+		s/^Sender:/Prev-Sender:/i;
+		s/^(To|Cc):/X-$1:/i;				# Keep distribution info
+		s/^(Resent-\w+):/X-$1:/i;
 		# Skip any RFC-822 header that is not purely made up of [\w-]+
 		# as it is not possible it can be meaningful to the news system.
 		if (/^([!-9;-~\w-]+):/) {
@@ -916,6 +926,8 @@ sub post {
 		}
 		next if /^\s/ && $last_was_header;	# Skip removed header continuations
 		$last_was_header = 0;				# We decided to keep header line
+		s/^([\w-]+):\s+/$1: /;				# INN2 is picky: wants one space
+
 		# Ensure that we always put a single space after the field name
 		# (before possibly emitting a newline for the continuation)
 		if (s/^([\w-]+):(\S)/$1: $2/ || s/^([\w-]+):$/$1: /) {

@@ -1,4 +1,4 @@
-;# $Id$
+;# $Id: read_conf.pl 44 2008-06-13 21:41:39Z rmanfredi $
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  

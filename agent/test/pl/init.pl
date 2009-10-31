@@ -1,6 +1,6 @@
 # Set up mailagent and filter paths
 
-;# $Id$
+;# $Id: init.pl 1 2006-08-24 13:24:12Z rmanfredi $
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  

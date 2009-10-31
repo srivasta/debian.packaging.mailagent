@@ -19,7 +19,7 @@ $rm -f mailpatch.$manext
 $spitshell >mailpatch.$manext <<!GROK!THIS!
 .so man$manext/mailhelp.$manext
 .\"
-.\" $Id$
+.\" $Id: mailpatch.SH 1 2006-08-24 13:24:12Z rmanfredi $
 .\"
 .\" Copyright (c) 1990-2006, Raphael Manfredi
 .\" 

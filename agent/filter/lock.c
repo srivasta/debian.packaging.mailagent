@@ -11,7 +11,7 @@
 */
 
 /*
- * $Id$
+ * $Id: lock.c 8 2008-05-28 09:27:26Z rmanfredi $
  *
  *  Copyright (c) 1990-2006, Raphael Manfredi
  *  
