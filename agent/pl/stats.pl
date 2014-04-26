@@ -1,4 +1,4 @@
-;# $Id: stats.pl 72 2011-07-06 17:03:08Z rmanfredi $
+;# $Id: stats.pl 73 2011-12-22 22:44:07Z rmanfredi $
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  

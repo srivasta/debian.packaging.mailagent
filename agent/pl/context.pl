@@ -1,4 +1,4 @@
-;# $Id: context.pl 72 2011-07-06 17:03:08Z rmanfredi $
+;# $Id: context.pl 73 2011-12-22 22:44:07Z rmanfredi $
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
@@ -85,7 +85,8 @@ sub save {
 	}
 	&'add_log("saving context file $cf'context") if $'loglvl > 17;
 	local($key, $value, $item);
-	print CONTEXT "# Mailagent context, last updated " . scalar(localtime());
+	print CONTEXT "# Mailagent context, last updated " .
+		scalar(localtime()) . "\n";
 	while (($key, $value) = each %Context) {
 		next unless $value;
 		$item++;
