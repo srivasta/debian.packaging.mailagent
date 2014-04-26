@@ -6383,7 +6383,7 @@ do
 		-e 's/^.*"\(.*\)".*\$/'\$filebase'$_o: \1/' \\
 		-e 's|: \./|: |' \\
 		-e 's|: *$|: '\$srcfile'|' | \\
-	$grep -v '^#' | $sort | $uniq
+	$grep -v '^#' | grep -v '<.*>' |$sort | $uniq
 done
 exit 0
 EOS
