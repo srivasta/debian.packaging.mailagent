@@ -1,4 +1,4 @@
-;# $Id: read_conf.pl 44 2008-06-13 21:41:39Z rmanfredi $
+;# $Id: read_conf.pl 70 2011-05-20 19:44:55Z rmanfredi $
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
@@ -153,7 +153,7 @@ EOM
 	$umask = 077 unless defined $umask;
 	$email = $user unless defined $email;
 	$compspec = "$spool/compressors" unless defined $compspec;
-	$comptag = 'compress' unless defined $comptag;
+	$comptag = 'gzip' unless defined $comptag;
 	$locksafe = 'OFF' unless defined $locksafe;
 	$execsafe = 'OFF' unless defined $execsafe;
 

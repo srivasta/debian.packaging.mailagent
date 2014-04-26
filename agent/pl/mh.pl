@@ -1,4 +1,4 @@
-;# $Id: mh.pl 1 2006-08-24 13:24:12Z rmanfredi $
+;# $Id: mh.pl 69 2011-05-18 12:28:03Z rmanfredi $
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
@@ -123,7 +123,7 @@ sub save_msg {
 
 # Read MH profile, fill in %Profile entries.
 sub profile {
-	return if defined %Profile;
+	return if %Profile;
 	# Make sure there is at least a valid Path entry, in case they made a
 	# mistake and asked for MH folder saving without a valid .mh_profile...
 	local($dflt) = defined($'XENV{'maildir'}) ? $'XENV{'maildir'} : 'Mail';

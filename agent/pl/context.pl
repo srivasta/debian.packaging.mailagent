@@ -1,4 +1,4 @@
-;# $Id: context.pl 1 2006-08-24 13:24:12Z rmanfredi $
+;# $Id: context.pl 72 2011-07-06 17:03:08Z rmanfredi $
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
@@ -76,7 +76,6 @@ sub clean {
 # Save a new context file, if it has changed since we read it.
 sub save {
 	return unless $context_changed; 		# Do not save if no change
-	require 'ctime.pl';
 	local($existed) = -f $cf'context;
 	&'acs_rqst($cf'context) if $existed;	# Lock existing file
 	unless (open(CONTEXT, ">$cf'context")) {

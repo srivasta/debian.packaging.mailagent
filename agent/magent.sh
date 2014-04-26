@@ -478,7 +478,6 @@ sub init_all {
 
 # Constants definitions
 sub init_constants {
-	require 'ctime.pl';
 	# Values for flock(), usually in <sys/file.h>
 	$LOCK_SH = 1;				# Request a shared lock on file
 	$LOCK_EX = 2;				# Request an exclusive lock
@@ -769,6 +768,7 @@ sub eval_error {
 }
 
 !NO!SUBS!
+$grep -v '^;#' pl/ctime.pl >>magent
 $grep -v '^;#' pl/jobnum.pl >>magent
 $grep -v '^;#' pl/read_conf.pl >>magent
 $grep -v '^;#' pl/acs_rqst.pl >>magent

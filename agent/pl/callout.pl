@@ -1,4 +1,4 @@
-;# $Id: callout.pl 1 2006-08-24 13:24:12Z rmanfredi $
+;# $Id: callout.pl 72 2011-07-06 17:03:08Z rmanfredi $
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
@@ -90,7 +90,7 @@ sub load {
 		last;
 	}
 	close CALLOUT;
-	return unless defined %Callout;		# Nothing loaded, empty file...
+	return unless %Callout;		# Nothing loaded, empty file...
 
 	local($next_callout) = (sort keys %Callout)[0];
 	if ($next_callout != $first_callout) {
@@ -111,7 +111,7 @@ sub queue {
 	local($time, $action, $type, $no_input) = @_;
 	&'add_log("queueing callout on $time ($action)") if $'loglvl > 15;
 	$callout_changed++;
-	&load unless defined %Callout;
+	&load unless %Callout;
 	local($qname) = '-';			# File not queued by default
 	if ($type ne $SHELL && !$no_input) {
 		# 'agent' or 'cmd' callouts have input by default, unless $no_input
@@ -140,7 +140,7 @@ sub trigger {
 	local($file) = @_;
 	local($directory, $base) = $file =~ m|(.*)/(.*)|;
 	$file = $directory eq $cf'queue ? $base : $file;
-	&load unless defined %Callout;
+	&load unless %Callout;
 	local($time, $files);
 	foreach $time (keys %Callfile) {
 		$files = $Callfile{$time};
@@ -155,7 +155,7 @@ sub trigger {
 sub run {
 	&'add_log("running callout queue") if $'loglvl > 15;
 	$callout_changed++;
-	&load unless defined %Callout;
+	&load unless %Callout;
 	local(@type, @action, @file);
 	local($type, $action, $file);
 	do {
@@ -214,7 +214,6 @@ sub save {
 		return;
 	}
 
-	require 'ctime.pl';
 	print CALLOUT "# Mailagent callout queue, last updated " . &'ctime(time);
 
 	local(@type, @action, @file);

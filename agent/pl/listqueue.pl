@@ -1,4 +1,4 @@
-;# $Id: listqueue.pl 1 2006-08-24 13:24:12Z rmanfredi $
+;# $Id: listqueue.pl 69 2011-05-18 12:28:03Z rmanfredi $
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
@@ -79,7 +79,7 @@ Filename      Size Queue time  Status    Sender / Recipient list
 	$: = " ,";					# Break recipients on white space or colon
 	format STDOUT =
 @<<<<<<<<<@>>>>>>>@@<<<<<<<<<< @<<<<<<<< @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-$file     $size $star $queued  $status   $sender
+$file,    $size,$star,$queued, $status,  $sender
                                          ^<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                                          $recipient
 ~                                        ^<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

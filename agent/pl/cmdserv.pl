@@ -1,4 +1,4 @@
-;# $Id: cmdserv.pl 1 2006-08-24 13:24:12Z rmanfredi $
+;# $Id: cmdserv.pl 69 2011-05-18 12:28:03Z rmanfredi $
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
@@ -890,7 +890,7 @@ sub run_user {
 	&cmdenv'set_cmd(join(' ', @command));	# Set command environment
 	local($failed) = &dispatch;				# Execute command
 
-	if (defined %powers) {
+	if (%powers) {
 		$cmdenv'powers = $powers;
 		%cmdenv'powers = %powers;
 		print MAILER "Restored powers ($powers).\n";

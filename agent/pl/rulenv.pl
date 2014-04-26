@@ -1,4 +1,4 @@
-;# $Id: rulenv.pl 1 2006-08-24 13:24:12Z rmanfredi $
+;# $Id: rulenv.pl 69 2011-05-18 12:28:03Z rmanfredi $
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
@@ -61,7 +61,7 @@ sub init {
 # Set-up initial environment for rules.
 # This routine is called once for every mail parsed.
 sub setup {
-	&init unless defined %Spec;
+	&init unless %Spec;
 	eval $SETUP if $SETUP ne '';
 	&'add_log("ERROR env'setup: $@") if $@;
 	undef %Var;
@@ -106,7 +106,7 @@ sub undef {
 # If an action is required by the resetting of a variable, it is performed
 # following the directive from the %Spec table.
 sub restore {
-	return unless defined %Var;
+	return unless %Var;
 	local($code) = '';		# Code built to restore original variable values
 	foreach $var (keys %Var) {
 		$code .= "\$$var = \$Var{'$var'};\n";
