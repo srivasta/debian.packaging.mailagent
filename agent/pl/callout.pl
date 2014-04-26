@@ -1,4 +1,4 @@
-;# $Id: callout.pl 72 2011-07-06 17:03:08Z rmanfredi $
+;# $Id: callout.pl 73 2011-12-22 22:44:07Z rmanfredi $
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
@@ -214,7 +214,8 @@ sub save {
 		return;
 	}
 
-	print CALLOUT "# Mailagent callout queue, last updated " . &'ctime(time);
+	print CALLOUT "# Mailagent callout queue, last updated " .
+		scalar(localtime()) . "\n";
 
 	local(@type, @action, @file);
 	local($type, $action, $file);
