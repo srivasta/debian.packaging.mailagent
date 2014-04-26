@@ -20,7 +20,7 @@ $spitshell >mailagent.$manext <<!GROK!THIS!
 .TH MAILAGENT $manext "Version $VERSION-$REVISION"
 ''' @(#) Manual page for mailagent's filter -- (c) ram February 1991
 '''
-''' $Id: mailagent.SH 62 2009-09-02 15:35:24Z rmanfredi $
+''' $Id: mailagent.SH 70 2011-05-20 19:44:55Z rmanfredi $
 '''
 '''  Copyright (c) 1990-2006, Raphael Manfredi
 '''  
@@ -414,7 +414,7 @@ This is an optional parameter. (suggested: \$spool/compressors).
 .TP
 .I comptag
 The default compression tag when creating new folders.
-If not specified, the default is 'compress'.
+If not specified, the default is 'gzip'.
 .TP
 .I comserver
 Name of the file containing authorized SERVER commands and their definition.

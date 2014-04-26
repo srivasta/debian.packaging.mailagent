@@ -1,4 +1,4 @@
-;# $Id: actions.pl 64 2009-09-02 15:42:07Z rmanfredi $
+;# $Id: actions.pl 68 2010-11-07 12:27:01Z rmanfredi $
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
@@ -894,6 +894,7 @@ sub post {
 			/^Accept-?[\w-]*:/i		||		# INN2 does not like this field
 			/^Auth-?[\w-]*:/i		||		# INN2 does not like this field
 			/^X-[\w-]+:/i			||		# INN2 does not like these fields
+			/^Injection-[\w-]+:/i	||		# INN2 does not like these fields
 			/^Errors-To:/i					# Error report redirection
 		) {
 			$last_was_header = 1;			# Mark we discarded the line
