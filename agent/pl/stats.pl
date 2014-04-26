@@ -1,4 +1,4 @@
-;# $Id: stats.pl 73 2011-12-22 22:44:07Z rmanfredi $
+;# $Id: stats.pl 74 2011-12-23 09:46:48Z rmanfredi $
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
@@ -540,11 +540,9 @@ sub print_summary {
 # Print general informations, as found in @Top.
 sub print_general {
 	local($what) = @_;
-	local($last) = localtime($lasttime);
-	local($now) = localtime($current_time);
+	local($last) = scalar localtime($lasttime);
+	local($now) = scalar localtime($current_time);
 	local($n, $s);
-	chop $now;
-	chop $last;
 	# Header of statistics
 	print "$what from $now to $last:\n";
 	print '~' x 79 . "\n";
