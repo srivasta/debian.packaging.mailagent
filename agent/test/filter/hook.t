@@ -15,7 +15,6 @@
 # Baseline for mailagent 3.0 netwide release.
 #
 
-#exit 0;
 do '../pl/filter.pl';
 do '../pl/logfile.pl';
 unlink 'never', 'always', 'always.2', 'always.3';

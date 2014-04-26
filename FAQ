@@ -64,7 +64,7 @@ Subject: ... 5.1 Setting Up Mailagent
     directory like /usr/lib/mailagent. From now on, we'll assume we
     use the C filter and that it is located under /usr/lib/mailagent.
 
-m et	3] Copy the file /usr/share/doc/mailagent/examples/rc/dot.mailagent.gz
+3] Copy the file /usr/share/doc/mailagent/examples/rc/dot.mailagent.gz
    as ~/.mailagent and edit it to configure your system correctly. You
    will see two distinct sections in that file and you need to set-up
    properly the first one, the "Configuration section".

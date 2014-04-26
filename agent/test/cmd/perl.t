@@ -17,7 +17,6 @@
 # Revision 3.0  1993/11/29  13:49:38  ram
 # Baseline for mailagent 3.0 netwide release.
 #
-#exit 0;
 
 do '../pl/cmd.pl';
 unlink 'perl.1', 'perl.2', 'never', 'always', 'exit_ok';

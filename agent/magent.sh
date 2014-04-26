@@ -160,10 +160,6 @@ $startperl
 
 $spitshell >>magent <<'!NO!SUBS!'
 
-# Our domain name Changed for Debian
-# $mydomain = '.' . `dnsdomainname`;
-
-
 $prog_name = $0;				# Who I am
 $prog_name =~ s|^.*/(.*)|$1|;	# Keep only base name
 $has_option = 0;				# True if invoked with options
