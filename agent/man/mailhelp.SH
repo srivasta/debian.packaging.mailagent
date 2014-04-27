@@ -20,10 +20,10 @@ $spitshell >mailhelp.$manext <<!GROK!THIS!
 .TH MAILHELP $manext ram
 .\" @(#) Manual page for mailagent's commands -- (c) ram February 1991
 .\"
-.\" $Id: mailhelp.SH 1 2006-08-24 13:24:12Z rmanfredi $
+.\" $Id: mailhelp.SH 75 2011-12-23 10:18:37Z rmanfredi $
 .\"
 .\"  Copyright (c) 1990-2006, Raphael Manfredi
-.\"  
+.\"
 .\"  You may redistribute only under the terms of the Artistic License,
 .\"  as specified in the README file that comes with the distribution.
 .\"  You may reuse parts of this distribution only within the terms of
@@ -63,7 +63,7 @@ commands.
 .PP
 .I Maildist
 is used to mail a whole distribution to the given address. The version
-number may be ommitted if the system has no version specified !!
+number may be omitted if the system has no version specified !!
 .I Maildist
 looks for the \fISpool/distribs\fR file to find where the distribution
 is located. If it has been archived, the file name extension is used
@@ -86,7 +86,7 @@ compressed \fItar\fR archive
 .PP
 Note that on file systems with short file names, the final \fB.Z\fR
 extension could be dropped. Therefore, compressed archives must be
-explicitely stated in the \fISpool/distribs\fR file.
+explicitly stated in the \fISpool/distribs\fR file.
 .PP
 Once the directory is found (or extracted), \fImaildist\fR looks
 for a \fI.package\fR file. If one is found, then it is assumed this
@@ -114,7 +114,7 @@ file). A message will be sent back to the user, explaining that only
 patches are available.
 .PP
 .I Mailhelp
-sends help to the address (if ommitted, the return path of the mail
+sends help to the address (if omitted, the return path of the mail
 is used). The help text is found in \fISpool/agenthelp\fR. It should
 have been correctly set in the installation procedure, as explained
 in the \fImailagent\fR($manext) manual page.

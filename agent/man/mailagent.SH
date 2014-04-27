@@ -20,10 +20,10 @@ $spitshell >mailagent.$manext <<!GROK!THIS!
 .TH MAILAGENT $manext "Version $VERSION-$REVISION"
 .\" @(#) Manual page for mailagent's filter -- (c) ram February 1991
 .\"
-.\" $Id: mailagent.SH 70 2011-05-20 19:44:55Z rmanfredi $
+.\" $Id: mailagent.SH 75 2011-12-23 10:18:37Z rmanfredi $
 .\"
 .\"  Copyright (c) 1990-2006, Raphael Manfredi
-.\"  
+.\"
 .\"  You may redistribute only under the terms of the Artistic License,
 .\"  as specified in the README file that comes with the distribution.
 .\"  You may reuse parts of this distribution only within the terms of
@@ -539,7 +539,7 @@ though no locking was done, to ON if you want strict locking, to PARTIAL if
 you can live with partial locking. Messages not saved in a folder are
 dumped to an emergency mailbox. (optional, defaults to ON). On Debian
 systems, since \fImailagent\fR can not grab locks,it should always be
-left ON, or else mail garbling may occur. See 
+left ON, or else mail garbling may occur. See
 .I /usr/share/doc/mailagent/SECURITY
 for details.
 .TP
@@ -729,16 +729,16 @@ Set this to ON to enable macro substitutions in rule patterns.
 The name of the file holding the filtering rules (optional on non
 Debian systems, suggested: ~/.rules). On Debian systems, one must have
 a minimal rules file to prevent \fImailagent\fR from trying to put
-messages into 
+messages into
 .I /var/spool/mail/$USER,
 since mailagent can't lock that directory to prevent mail from being
 garbled. This is because Debian policy requires all entities
-attempting locks on that directory to be 
+attempting locks on that directory to be
 .I sgid mail,
 and making \fImailagent\fR sgid anything would be a security
 loophole.
     { SAVE incoming };
- is the suggested minimal rules file. 
+ is the suggested minimal rules file.
 .TP
 .I runmax
 Timeout for RUN commands and friends. (optional, defaults to: 3600).
@@ -780,7 +780,7 @@ the default lookup place. Optional parameter unless SERVER is used.
 .TP
 .I servshell
 This is the name of the shell used to launch SERVER shell commands (actually
-to proces the wrapper file that will ultimately exec() the command). On some
+to process the wrapper file that will ultimately exec() the command). On some
 systems like HPUX 10.x, this has to be set to /usr/old/bin/sh to get the
 plain old Bourne shell, because /bin/sh is a braindead POSIX shell that
 closes file descriptors greater than 2 upon exec(), whereas the Bourne
@@ -1157,13 +1157,13 @@ queued mail.
 .\" D e f a u l t   R u l e s
 .\"
 .SH "USING THE DEFAULT RULES"
-If you do not want to use the filtering feature of mailagent, 
+If you do not want to use the filtering feature of mailagent,
 .B (NOTE:
 This may cause mail to be garbled on Debian systems, since
 \fImailagent\fR can not lock the spol directory under Debian policy
 restrictions)
 then the default built-in rules will be used.  Those are really
-simple: all the mails 
+simple: all the mails
 are left in your mailbox and mails with a line "Subject: Command" anywhere in
 the message will be processed. Commands are looked for on lines starting with
 "@SH". The remaining of the line is then given to a shell for execution.

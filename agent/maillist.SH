@@ -23,7 +23,7 @@ $startperl
 	eval 'exec perl -S \$0 \${1+"\$@"}'
 		if \$running_under_some_shell;
 
-# $Id: maillist.SH 47 2008-06-26 19:18:00Z rmanfredi $
+# $Id: maillist.SH 75 2011-12-23 10:18:37Z rmanfredi $
 #
 #  Copyright (c) 1990-2006, Raphael Manfredi
 #  
@@ -76,7 +76,7 @@ $jobnum = $ENV{'jobnum'};
 $fullcmd = $ENV{'fullcmd'};
 
 $dest=shift;							# Who should the list to be sent to
-$dest = $ENV{'path'} if $dest eq '';	# If dest was ommitted
+$dest = $ENV{'path'} if $dest eq '';	# If dest was omitted
 
 # A single '-' as first argument stands for return path
 $dest = $ENV{'path'} if $dest eq '-';
