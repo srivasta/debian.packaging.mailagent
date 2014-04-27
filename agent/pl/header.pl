@@ -1,4 +1,4 @@
-;# $Id: header.pl 63 2009-09-02 15:40:54Z rmanfredi $
+;# $Id: header.pl 79 2013-05-17 20:49:33Z rmanfredi $
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
@@ -178,6 +178,7 @@ sub msgid_cleanup {
 	s/>\s+</>\01</g;			# Protect spaces between IDs for References
 	$fixup++ if s/\s/-/g;		# No spaces
 	$fixup++ if s/_/-/g;		# No _ in names
+	$fixup++ if s|/|-|g;		# No / in names
 	$fixup++ if s/[(){}]//g;	# No () nor {} in names and ID
 	$fixup++ if s/\.+>/>/g;		# No trailing dot(s)
 	$fixup++ if s/\.\.+/./g;	# No consecutive dots

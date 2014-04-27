@@ -1,4 +1,4 @@
-;# $Id: actions.pl 68 2010-11-07 12:27:01Z rmanfredi $
+;# $Id: actions.pl 77 2012-01-08 23:55:16Z rmanfredi $
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
@@ -1719,7 +1719,10 @@ sub perl {
 	# Note that the @ARGV array is held in the main package, but since the
 	# mailagent makes no use of it at this point, there is no need to save its
 	# value before clobbering it.
-	require 'shellwords.pl';
+
+	require Text::ParseWords;
+	*shellwords = \&Text::ParseWords::old_shellwords;
+
 	eval '@ARGV = &shellwords($script)';
 	if (chop($@)) {				# There was an unmatched quote
 		$@ =~ s/^U/u/;

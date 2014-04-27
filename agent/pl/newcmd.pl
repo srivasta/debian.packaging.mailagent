@@ -1,4 +1,4 @@
-;# $Id: newcmd.pl 1 2006-08-24 13:24:12Z rmanfredi $
+;# $Id: newcmd.pl 77 2012-01-08 23:55:16Z rmanfredi $
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
@@ -156,7 +156,9 @@ sub run {
 	# the mailhook variable in the current package.
 	&hook'initvar('newcmd');		# Initialize convenience variables
 	local(@ARGV);					# Argument vector for command
-	require 'shellwords.pl';
+
+	require Text::ParseWords;
+	*shellwords = \&Text::ParseWords::old_shellwords;
 	eval '@ARGV = &shellwords($cmd)';
 
 	# We don't need to protect the following execution within an eval, since

@@ -20,7 +20,7 @@ $spitshell >mailagent.$manext <<!GROK!THIS!
 .TH MAILAGENT $manext "Version $VERSION-$REVISION"
 ''' @(#) Manual page for mailagent's filter -- (c) ram February 1991
 '''
-''' $Id: mailagent.SH 70 2011-05-20 19:44:55Z rmanfredi $
+''' $Id: mailagent.SH 75 2011-12-23 10:18:37Z rmanfredi $
 '''
 '''  Copyright (c) 1990-2006, Raphael Manfredi
 '''  
@@ -760,7 +760,7 @@ the default lookup place. Optional parameter unless SERVER is used.
 .TP
 .I servshell
 This is the name of the shell used to launch SERVER shell commands (actually
-to proces the wrapper file that will ultimately exec() the command). On some
+to process the wrapper file that will ultimately exec() the command). On some
 systems like HPUX 10.x, this has to be set to /usr/old/bin/sh to get the
 plain old Bourne shell, because /bin/sh is a braindead POSIX shell that
 closes file descriptors greater than 2 upon exec(), whereas the Bourne
