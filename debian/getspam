@@ -1,0 +1,359 @@
+#! /usr/bin/perl
+#                              -*- Mode: Perl -*- 
+# getspam --- 
+# Last Modified By : Manoj Srivastava
+# Last Modified On : Mon Dec  1 23:36:11 2003
+# Last Machine Used: glaurung.green-gryphon.com
+# Update Count     : 55
+# Status           : Unknown, Use with caution!
+# HISTORY          : 
+# Description      : 
+# arch-tag: b6ea6640-7276-44ef-9264-3cf557ad5484
+#
+# $Id: getspam,v 1.2 1998/08/13 18:04:32 srivasta Exp $
+
+#
+#			  Copyright (c) 1997
+#	     Randal L. Schwartz <merlyn@stonehenge.com>,
+#		Scott Blachowicz <scott@statsci.com>,
+#				 and
+#	       Manoj Srivastava <srivasta@debian.org>.
+#			 All rights reserved.
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of either:
+#    
+#        a) the GNU General Public License as published by the Free
+#        Software Foundation; either version 1, or (at your option) any
+#        later version, or
+#
+#        b) the "Artistic License" which comes with this Kit.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See either
+#    the GNU General Public License or the Artistic License for more details.
+#
+#    You should have received a copy of the Artistic License with this
+#    Kit, in the file named "Artistic".  If not, I'll be glad to provide one.
+#
+#    You should also have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+#
+
+require 5.001;
+
+# You need the LWP library package for this program.
+
+use strict;
+use diagnostics;
+use Carp;
+use Sys::Hostname;
+use URI::Escape;
+use LWP::Simple;
+use Getopt::Long;
+
+
+package main;
+
+=head1 NAME
+
+getspam - A script to get the latest list of spammers.
+
+=cut
+
+=head1 SYNOPSIS
+
+ usage: getspam [options] 
+ where the options are:
+
+=over 2
+
+=item --lists LISTNAME
+
+colon seperated list of indices into hash of URLs, currently this is
+one of aol, mindspring, znet, iocom, nancynet, cyberpromo, llv)
+
+=item --output OUTPUT  
+
+base prefix for split lists, filename for merged list
+
+=item --help
+
+A short usage message.
+
+=item --[no]split
+
+split lists into individual files - default is on for 'mailagent' and
+off for others)
+
+=item --type TYPE_OF_OUTPUT 
+
+"sendmail" or "mailagent" - default "mailagent"
+
+=item --[no]verbose
+
+verbose
+
+=back
+
+=cut
+
+=head1 DESCRIPTION
+
+This utility creates a series of lines that look like
+
+=over 2
+
+Z<>
+
+C</^((.*[@.])?1floodgate\.com)$/i>
+
+C</^((.*[@.])?205\.254\.167\.57)$/i>
+
+=back
+
+which happen to be directly useful in .rules lines that look like this:
+
+=over 2
+
+Z<>
+
+E<lt>INITIAL<gt> Envelope From Sender Relayed Reply-To: "~/.spamlist" {
+
+=over 4
+
+	    ANNOTATE -d X-merlyn-spam Smells like spam from %1;
+	    REJECT;
+};
+
+=back
+
+=back
+
+Alternatively, it can produce files ready for the B<check_mail2> macro
+in recent B<sendmail> versions, so that one may automatically keep
+ones spam filter up to date. The default is mailagent format. 
+
+This script uses the C<LWP> Perl library, so you need to have that
+installed as well.
+
+This version of the getspam utility has been podified and tweaked by
+Manoj Srivastava <srivasta@debian.org>, based entirely on the work of
+Scott Blachowicz <scott@statsci.com> (the program structire is mostly
+his), which, in turn, was inspired by and based on the script posted
+to the Agent users list by Randal L. Schwartz <merlyn@stonehenge.com>. 
+
+=cut 
+
+sub main { 
+  my $ret;
+  my $lists = 'ALL';
+  my $spam_base = "$ENV{'HOME'}/spamlist";
+  my $output_type = "mailagent";
+  my $split_lists = 1;
+  my $verbose = 0;
+  my $help = 0;
+  my $MYNAME = '';
+  
+  ($MYNAME     = $0) =~ s|.*/||;
+  my $usage= <<EOUSAGE;
+ usage: $MYNAME [options]
+ where the options are: 
+   --lists LISTNAME 
+     colon separated list of indices into hash of URLs, currently this
+     is one of aol, mindspring, znet, iocom, nancynet, cyberpromo, llv
+   --help    This message.
+   --output OUTPUT  
+             base prefix for split lists, filename for merged list)
+  --[no]split
+          split lists into individual files - default is on for
+	  'mailagent' and off for others
+  --type TYPE_OF_OUTPUT 
+          "sendmail" or "mailagent" - default ["mailagent"]
+  --[no]verbose Whether $MYNAME should be verbose.
+
+EOUSAGE
+  ;
+
+  $ret = GetOptions("lists=s"    => \$lists,
+		    "output=s"   => \$spam_base,
+		    "split!"     => \$split_lists,
+		    "type=s"     => \$output_type,
+		    "verbose!"   => \$verbose,
+		    "help"       => \$help);
+  die "$usage" unless $ret; 
+  die "$usage" if $help;
+
+  my $host = hostname();
+  if ($host !~ /\./) {
+    # Try to add a domain name?
+    my ($name, $aliases, $addrtype, $length, @addrs) = gethostbyname($host);
+    my @aliases = grep(/\./,split(/\s+/,$aliases));
+    $host = $aliases[0] if @aliases;
+  }
+
+  my $ftpuser = "ftp:despammer%40" . uri_escape ("$host");
+
+=head2 Known locations for Spam lists
+
+There are a number of sites on the network, either on the Web, or
+anonymous ftp servers, that maintain lists of domains and email
+addresses that are known to generate spam. The addresses are stored in
+a hash. Currently valid keys are aol, mindspring, znet, iocom,
+nancynet, cyberpromo, and llv.
+
+=cut
+
+  my %urls = 
+    ('aol', "http://www.idot.aol.com/preferredmail/",
+     'mindspring', "http://www.mindspring.com/cgi-bin/spamlist.pl",
+     'znet', "http://www.znet.com/spammers.txt",
+     ## too many bad matches: 'wsrcc', "http://www.wsrcc.com/spam/spamlist.txt",
+     'iocom', "http://www.io.com/help/killspam.php",
+     'nancynet', "ftp://ftp.cybernothing.org/pub/abuse/nancynet.domains",
+     'cyberpromo', "ftp://ftp.cybernothing.org/pub/abuse/cyberpromo.domains",
+     'llv', "ftp://ftp.cybernothing.org/pub/abuse/llv.domains",
+    );
+
+=head2 Parsers for raw data
+
+There are parsers available internally for some of the sites in the
+list above to massage the data into a usable format.
+
+=cut
+
+  my %parsers = 
+    ('aol', '&parse_aol($_)',
+     'mindspring', '&parse_mindspring($_)',
+     'iocom', '&parse_iocom($_)',
+    );
+
+=head2 Sites that may be mistakenly blocked
+
+There is an internal list of sites that have been incorrectly flagged
+as spamming domains. This can be used to tinker with auto generated
+lists.
+
+=cut
+
+  my %unspam = 
+    (
+     'concentric.net', 'non-spam emails', #wsrcc
+     'demon.net', 'non-spam emails',    #wsrcc
+     'hotmail.com', 'free email used by non-spammers as well',
+     'interactive.net', 'non-spam emails',    #znet
+     'mindspring.com', 'non-spam emails',    #wsrcc
+     'psi.net', 'non-spam emails',    #wsrcc
+     'shoppingplanet.com', 'non-spam emails',
+     'vnet.net', 'non-spam emails',   #wsrcc
+     'yoyo.com', 'non-spam emails',
+    );
+  
+  if (! $split_lists) {
+    open OUT, ">${spam_base}" or die  "create ${spam_base}: $!";
+  }
+
+  my $site;
+  foreach $site (keys %urls) {
+    print "# Processing '$site' at URL $urls{$site}\n" if $verbose;
+    
+    if ($_ = get $urls{$site}) {
+      if ($split_lists) {
+	open OUT, ">${spam_base}-$site" or
+	  die  "create ${spam_base}-$site: $!";
+      }
+      
+      ## 1) Filter out duplicate sites if going to one spamlist file.
+      ## 2) Filter out '#'-started comments.
+      ## 3) Filter out blank lines.
+      ## 4) be sure $1 is what you want in the annotation
+      ## 5) if no @ char, stick a "any user/any subdomain/host" regexp in.
+      print OUT map {s/\#.*$//;
+		     /\S/ && eval "\&filter_${output_type}(\$_)";
+		   } grep((!$unspam{$_} &&
+			   ($split_lists || !$unspam{$_}++)),
+			  ($parsers{$site} ?
+			   eval "$parsers{$site}" : split /\n/));
+      close OUT if $split_lists;
+    }
+    else {
+      warn "Cannot get $urls{$site}\n";
+    }
+  }
+  close OUT if !$split_lists;
+}
+
+sub filter_mailagent {
+    local($_) = @_;
+    "/^(" . (/\@/ ? "" : "(.*[\@.])?") . "\Q$_\E)\$/i\n";
+}
+
+sub filter_sendmail {
+    local($_) = @_;
+    "$_ " . (/\@/ ? "SPAMMER" : "JUNK") . "\n";
+}
+
+sub parse_aol {
+    local($_) = @_;
+    if (! s/^[\s\S]*<MULTICOL.*\n//) {
+        warn "parse_aol: missing MULTICOL in $_ ";
+        return ();
+    }
+    if (! s/<\/PRE[\s\S]*//) {
+        warn "parse_aol: missing /PRE in $_ ";
+        return ();
+    }
+    split /\n/;
+}
+
+sub parse_mindspring {
+    local($_) = @_;
+    if (! s,^[\s\S]*?<pre>[^\n]*\n,,) {
+        warn "parse_mindspring: can't find block of hostnames";
+        return ();
+    }
+    if (! s,</pre>[\s\S]*?<pre>[^\n]*\n,,) {
+        warn "parse_mindspring: can't find block of email addresses";
+        return ();
+    }
+    s,</pre>[\s\S]*$,,;
+    split /\n/;
+}
+
+sub parse_iocom {
+    local($_) = @_;
+    if (! s,^[\s\S]*?<H(\d)>Blocked\s*Domains</H\1>[\s\S]*?<TABLE[^\n]*\n,,) {
+        warn "parse_iocom: can't find 'Blocked Domains' table";
+        return ();
+    }
+    if (! s,</TABLE.*,,) {
+        warn "parse_iocom: can't find end of 'Blocked Domains' table";
+        return ();
+    }
+    s,<[^>]+>,,g;
+    split /[\s\n]+/;
+}
+
+
+=head1 BUGS
+
+None Known so far.
+
+=cut
+
+=head1 MAINTAINER
+
+Manoj Srivastava <srivasta@debian.org>
+
+=cut
+
+&main::main();
+
+__END__    
+
+
+
+
+

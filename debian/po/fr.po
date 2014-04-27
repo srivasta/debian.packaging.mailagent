@@ -1,0 +1,60 @@
+# Translation of mailagent debconf templates to French
+# Copyright (C) 2008 Florent USSEIL <swiip81@free.fr>
+# This file is distributed under the same license as the mailagent package.
+#
+# Eric Madesclair <eric-m@wanadoo.fr>, 2005.
+# Florent USSEIL <swiip81@free.fr>, 2008.
+msgid ""
+msgstr ""
+"Project-Id-Version: mailagent\n"
+"Report-Msgid-Bugs-To: mailagent@packages.debian.org\n"
+"POT-Creation-Date: 2009-10-31 03:26-0500\n"
+"PO-Revision-Date: 2008-02-26 01:42+0100\n"
+"Last-Translator: Florent USSEIL <swiip81@free.fr>\n"
+"Language-Team: French <debian-l10n-french@lists.debian.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.11.4\n"
+
+#. Type: string
+#. Description
+#: ../templates:1001
+msgid "Organization name for this computer:"
+msgstr "Nom de l'organisation pour ce serveur :"
+
+#. Type: string
+#. Description
+#: ../templates:1001
+msgid ""
+"The /etc/news/organization file does not exist. That file contains the name "
+"of the organization this computer belongs to. This is the name that will "
+"appear in the Organization header field of outgoing articles, mail, or "
+"patches."
+msgstr ""
+"Le fichier « /etc/news/organization » n'existe pas. Ce fichier contient le "
+"nom de l'« organisation » (entreprise ou autre) à laquelle appartient ce "
+"serveur. Ce nom apparaîtra sur les articles, courriels ou rustines émis."
+
+#. Type: string
+#. Description
+#: ../templates:1001
+msgid ""
+"Please enter the name of the organization as you want it to appear in that "
+"header field. It is common practice to add a location, typically a city "
+"name, to the organization's name, for instance:\n"
+" University of Southern North Dakota, Hoople"
+msgstr ""
+"Veuillez indiquer ce nom d'« organisation » tel qu'il doit apparaître. "
+"Généralement un nom de ville est adjoint au nom de l'organisation, par "
+"exemple :\n"
+" Institut Universitaire de Technologie, Nice Côte d'Azur"
+
+#. Type: string
+#. Description
+#: ../templates:1001
+msgid "If you enter \"--none--\", no organization name will be setup."
+msgstr ""
+"Si vous indiquez exactement « --none-- », aucun nom d'organisation ne sera "
+"configuré."

@@ -1,0 +1,65 @@
+yes, mailagent, as distributed, can't create .lock lock files in
+/var/spool/mail on Debian systems, since /var/spool/mail is owned by
+root.mail mode 3775, and mailagent expected it to be 1777 (which is as
+it was set up on DIGITAL UNIX and HP-UX boxes at my previous job). 
+
+However, making either the filter or mailagent setgid mail is _NOT_
+the way to go. This would be a big, big, security hole.
+
+In the normal mode of operation, neither the filter or mailagent pick up
+the messages from the system mailbox, so do not need to do locking
+there. (for abnormal cases, when you do have things in your mailbox,
+you have to invoke mailagent manually anyway, so copy the file
+/var/spool.mail/$USER to ~/<some-filename>, and use the -f switch for
+mailagent).
+
+All the filter does is leave the mail messages in the mailagent queue,
+in your home directory, so the filter _never_ touches the system box,
+so it should never benefit from being setgid mail (and hence should
+never be made so). It does have to handle locking with other instances
+of the filter and also with mailagent, and I strongly urge you to use
+both flavors of locking, as distributed.
+
+Now, the mailagent, even though it does not do any pickups from the
+system mailbox, does try to leave messages that don't match anything
+in your mailagent rules to the system mailbox, for which it does try
+.lock locking in the system mailbox -- and fails,on Debian. 
+
+_However_, it fails safe, if can't write the message to your system
+mailbox (or whatever you have specified as your maildrop) (lock
+failure or permission denied), it tries ~/mbox.$USER, and, failing
+that, it drops it in the emergency directory (as specified in
+~/.mailagent) .
+
+Most mail readers can be made to query another mailbox apart from the
+default system mailbox (~/mbox seems to be looked at automatically by
+Emacs vm and Rmail, and I vaguely remember also by mailx).  
+
+My suggestion is to
+ a) put a catch-all rule in your rules file, like so, to save all
+    unmatched messages, and instruct your mail reader to look there
+
+All: /./    { UNIQUE -a; SAVE important };
+
+#
+# End of mailagent rules
+#
+
+ b) set the variable maildrop to a directory you own in ~/.mailagent
+ 
+
+DO NOT MAKE MAILAGENT setgid anything; it is not designed to handle
+that. It allows one to run ARBITRARY PERL SCRIPTS using the PERL
+directive (and very handy they are, too, with the broken MIME that
+MUA's write nowadays), if you make mailagent setgid mail, I can do
+anything I want with peoples mail files. You have been warned.
+
+In fact, it would be more secure to chmod 1777 /var/spool/mail than
+letting mailagent be setgid mail (not, mind you, that I'm advocating
+any such action).
+
+Also, since it has to interact with filter, _and_ your home directory
+is NFS mounted, you may loose mail unless BOTH flavors of locking are
+on. 
+
+arch-tag: 07b2bc83-30a9-42a2-bac5-70ed449537d6

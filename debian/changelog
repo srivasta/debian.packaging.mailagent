@@ -1,0 +1,957 @@
+mailagent (1:3.1-78-1) unstable; urgency=low
+
+  * New upstream release
+  * Ack NMUs. Move to a new build system based on dh
+
+ -- Manoj Srivastava <srivasta@debian.org>  Sun, 27 Apr 2014 00:10:30 -0700
+
+mailagent (1:3.1-74-0.4) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Fix "FTBFS with perl 5.18: POD issues":
+    fix POD syntax in debian/getspam.
+    (Closes: #720973)
+
+ -- gregor herrmann <gregoa@debian.org>  Mon, 02 Sep 2013 21:54:42 +0200
+
+mailagent (1:3.1-74-0.3) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Fix FTBFS with gcc-4.8 (Closes: #701316)
+
+ -- Balint Reczey <balint@balintreczey.hu>  Mon, 12 Aug 2013 22:57:11 +0200
+
+mailagent (1:3.1-74-0.2) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Fix pending l10n issues. Debconf translations:
+    - Danish (Joe Hansen).  Closes: #605435
+
+ -- Christian Perrier <bubulle@debian.org>  Tue, 17 Jan 2012 07:16:11 +0100
+
+mailagent (1:3.1-74-0.1) unstable; urgency=high
+
+  * Non-maintainer upload.
+  * New upstream release
+  * One bug was still present in the patch, this release fixes it.
+
+ -- Julian Gilbey <jdg@debian.org>  Fri, 23 Dec 2011 10:02:19 +0000
+
+mailagent (1:3.1-73-0.1) unstable; urgency=high
+
+  * Non-maintainer upload.
+  * New upstream release
+  * Fixes the ctime.pl problem which was causing mail loss as in the
+    previous upload, but corrects some bugs in my patch, hence
+    urgency=high
+
+ -- Julian Gilbey <jdg@debian.org>  Fri, 23 Dec 2011 09:44:10 +0000
+
+mailagent (1:3.1-72-0.2) unstable; urgency=high
+
+  * Non-maintainer upload.
+  * Fix ctime.pl problem which was causing mail loss (Closes: Bug#652740)
+
+ -- Julian Gilbey <jdg@debian.org>  Thu, 22 Dec 2011 21:20:30 +0000
+
+mailagent (1:3.1-72-0.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * New upstream release:
+  *   Handles deprecated ctime.pl (Closes: #650205)
+  *   Quietens perl warnings (Closes: #630963)
+  * Depend on libperl4-corelibs-perl
+
+ -- Julian Gilbey <jdg@debian.org>  Sun, 27 Nov 2011 19:05:03 +0000
+
+mailagent (1:3.1-65-2) unstable; urgency=low
+
+  * Bug fix: "postinst fails if debconf question skipped", thanks to Aaron
+    M. Ucko                                               (Closes: #553628).
+
+ -- Manoj Srivastava <srivasta@debian.org>  Sun, 01 Nov 2009 21:32:56 -0600
+
+mailagent (1:3.1-65-1) unstable; urgency=low
+
+  * New upstream release.
+    + Do not propagate Followup-To headers via POST, unless the value is
+      "poster". Indeed, INN2 will reject the article if the newsgroup
+      listed there is invalid.
+    + Be more picky about message IDs used for news: ensure there is but
+      one "@".
+    + Be even stricter with X- headers in POST: only let a few selected
+      ones through.
+    + Have POST strip more headers from the message, since INN2 will reject
+      the message anyway if they are present.
+
+ -- Manoj Srivastava <srivasta@debian.org>  Sat, 31 Oct 2009 02:46:47 -0500
+
+mailagent (1:3.1-56-1) unstable; urgency=low
+
+  * New upstream VCS snapshot.
+    + Protect against SIGPIPE during BOUNCE and FORWARD, relying on the
+      exit code at close() time to detect failures. (closes: #267879)
+    + Make sure we suggest the use of "-i" in mailopt when they use
+      sendmail. Automatically protect lines with a single "." when they
+      did not supply -i to avoid failure of FORWARD and BOUNCE commands.
+                                                     (Closes: #128114)
+
+ -- Manoj Srivastava <srivasta@debian.org>  Tue, 02 Sep 2008 23:50:40 -0500
+
+mailagent (1:3.1-24-2) unstable; urgency=high
+
+  * Swedish strings for mailagent debconf, thanks to
+    brother@bsnet.se. This is an i18n upload.      Closes: #491775
+
+ -- Manoj Srivastava <srivasta@debian.org>  Tue, 02 Sep 2008 23:09:35 -0500
+
+mailagent (1:3.1-24-1) unstable; urgency=low
+
+  * New upstream release. After a long time, mailagent has revived. This
+    version has bug fixes that make it friendlier to perl 5.10, and
+    - Use strict RFC-822 definition for header names: the field name can
+      be made of anything but SPACE or colon, from ASCII 33 to ASCII 126.
+    - The patchlevel is now ignored, as we track by SVN revision
+      number. Changed all version information reporting to new format
+      "version-revision".
+    - Added automatic computation of the SVN revision in "revision.h", for
+      later  perusal by Configure to propagate correct revision numbers in
+      files.
+    - Added update of revision.h.
+    - Removed the WARNING level, as it is not critical enough to warrant a
+      daily notification.
+    - Changed path for checkagent.sh in the sample crontab entry.
+    - Added bzip2 compressor.
+    - Removed legacy hardwired HOME directory.  Compute it!
+    - Removed more "$*" uses that are now forbidden by perl 5.10.
+    - Integrated more changed from Debian:
+      + Fixed maildir computation logic to avoid useless superseding.
+      + Added regular expression for Top Level Domain validation.
+      + Removed "compress" from the list of default compressors and added
+        bzip2.
+    - Cleaned up by fixing most of the items listed in Debian bug #43171
+      Bug fix: "mailagent: several problems with the manual page", thanks
+      to  swift@alum.mit.edu                                (Closes: #43171).
+    - Ensure POST always puts a single space after the field name to avoid
+      INN rejecting the article due to invalid header.
+    - Do not process the queue in the background when invoked from
+      terminal, unless given an explicit -q switch, naturally.
+    - Added -U switch to disable first UNIQUE / RECORD rejection for
+      duplicates.
+    - Reduce maximum article age for POST to 10 days.
+    - Look for utmp in /var/run as well, for modern systems with read-only
+     /etc.
+    - Cleaned up code a little bit since now Configure enables gcc
+      warnings  by default and thus code required some uplifting.
+    - Remove all usage of $* as it is no longer accepted by Perl 5.10.
+    - Reset CDPATH to avoid pdksh's emission of the chosen dir on "cd".
+  * Bug fix: "[INTL:de] German translation for mailagent (debconf)",
+    thanks to Erik Schanze                                 (Closes: #479259).
+  * Bug fix: "mailagent : [INTL:pt] Updated Portuguese translation for
+    debconf messages", thanks to Traduz - Portuguese Translation Team
+                                                           (Closes: #478349).
+  * Bug fix: "mailagent: [INTL:fr] French debconf templates translation
+    update", thanks to Christian Perrier                   (Closes: #478552).
+  * Bug fix: "mailagent: [INTL:es] Updated Spanish translation for debconf
+    templae", thanks to Rudy Godoy Guillén         (Closes: #465153,#480754).
+  * Bug fix: "mailagent: [INTL:it] Italian debconf templates translation",
+    thanks to Luca Monducci                                (Closes: #482897).
+
+ -- Manoj Srivastava <srivasta@debian.org>  Fri, 30 May 2008 12:35:38 -0500
+
+mailagent (3.73-29) unstable; urgency=low
+
+  * Bug fix: "[INTL:de] German translation for mailagent (debconf)",
+    thanks to Erik Schanze                                  (Closes: #473311).
+  * Bug fix: "[INTL:eu] Basque translation update", thanks to Piarres
+    Beobide                                                 (Closes: #472089).
+  * Bug fix: "mailagent: [INTL:it] Italian debconf templates translation",
+    thanks to Luca Monducci                                 (Closes: #474565).
+  * Bug fix: "[INTL:es] Spanish debconf templates translation", thanks to
+    Carlos Izquierdo                               (Closes: #473575, #472268).
+  * Bug fix: "mailagent: [INTL:vi] Vietnamese debconf templates
+    translation update", thanks to Clytie Siddall           (Closes: #473380).
+  * Bug fix: "[l10n] Updated Czech translation of mailagent debconf
+    messages", thanks to Miroslav Kure                      (Closes: #473264).
+  * Bug fix: "[INTL:nl] Updated Dutch po-debconf translation", thanks to
+    cobaco (aka Bart Cornelis)                              (Closes: #473122).
+  * Bug fix: "mailagent: [INTL:ru] Russian debconf templates translation
+    update", thanks to Yuri Kozlov                          (Closes: #473251).
+  * Bug fix: "mailagent: [INTL:ja] Updated Japanese po-debconf template
+    translation (ja.po)", thanks to Hideki Yamane \(Debian-JP\)
+                                                            (Closes: #472371).
+  * Bug fix: "mailagent: [INTL:fr] French debconf templates translation
+    update", thanks to Christian Perrier                    (Closes: #472291).
+  * Bug fix: "mailagent: [INTL:pt] Updated Portuguese translation for
+    debconf messages", thanks to Traduz - Portuguese Translation Team
+                                                            (Closes: #472222).
+  * Bug fix: "[INTL:gl] Galician debconf template translation for
+    mailagent", thanks to Jacobo Tarrio                     (Closes: #472210).
+  * Bug fix: "Updated nb translation for debconf mailagent", thanks to
+    Bjørn Steensrud                                         (Closes: #472123).
+  * Bug fix: "[INTL:fi] Updated Finnish translation of the debconf
+    templates", thanks to Esko Arajärvi                     (Closes: #472112).
+  * Updated control file with new location of the SCM repository
+    (mailagent development is now taking place using git)
+
+ -- Manoj Srivastava <srivasta@debian.org>  Thu, 24 Apr 2008 22:57:17 -0500
+
+mailagent (3.73-28) unstable; urgency=low
+
+  * Debconf templates and debian/control reviewed by the
+    debian-l10n-english team as part of the Smith review project.
+                                                Closes: #466759
+  * [Debconf translation updates]
+   -  Basque.                                   Closes: #466974
+   -  Spanish.                                  Closes: #467018
+   -  Galician.                                 Closes: #467079
+   -  Vietnamese.                               Closes: #467114
+   -  Czech.                                    Closes: #467171
+   -  Norwegian BokmÃ¥l.                        Closes: #467350
+   -  Finnish.                                  Closes: #468211
+   -  Dutch.                                    Closes: #468308
+   -  French.                                   Closes: #468815
+   -  Portuguese.                               Closes: #469227
+   -  German.                                   Closes: #469371
+   -  Russian.                                  Closes: #469722
+
+ -- Manoj Srivastava <srivasta@debian.org>  Wed, 19 Mar 2008 15:24:00 -0500
+
+mailagent (3.73-27) unstable; urgency=low
+
+  * A patch for the upcoming Perl 5.10 version was provided by the
+    author,  Raphael Manfredi.  There is a new subversion repository for
+    the sources as well.
+  * Remove a spurious -s from the install line in debian/rules that was
+    unconditionally stripping the executable, bypassing the conditional
+    stripping step.                                        Closes: #437552
+  * The new version also fixes the matching of plain email addresses bug,
+    which is the major issue reported by Matthew Swift. The bit about the
+    man page needing a re-write for clarity, and example having redundant
+    bits, are probably valid, but unlikely at this point to be
+    addressed. I am not closing 43171 until I, or someone else, refactors
+    the manual page.
+
+ -- Manoj Srivastava <srivasta@debian.org>  Fri, 08 Feb 2008 12:52:46 -0600
+
+mailagent (3.73-26) unstable; urgency=low
+
+  * Bug fix: "mailagent: [INTL:vi] Vietnamese debconf templates
+    translation update", thanks to Clytie Siddall (Closes: #427041).
+
+ -- Manoj Srivastava <srivasta@debian.org>  Sat, 07 Jul 2007 14:46:59 -0500
+
+mailagent (3.73-25) unstable; urgency=low
+
+  * Bug fix: "mailagent: please take care of exim 3 going away", thanks to
+    Marc Haber. Use exim4 instead of exim in the dependencies.
+                                                              (Closes: #420271).
+
+ -- Manoj Srivastava <srivasta@debian.org>  Thu, 10 May 2007 00:13:01 -0500
+
+mailagent (3.73-24) unstable; urgency=low
+
+  * Bug fix: "[INTL:gl] Galician debconf templates translation for
+    mailagent", thanks to Jacobo Tarrio                       (Closes: #412645).
+  * Bug fix: "[l10n] Updated Czech translation of mailagent debconf
+    messages", thanks to Miroslav Kure                        (Closes: #413319).
+  * Bug fix: "[INTL:nl] Dutch po-debconf translation", thanks to cobaco
+    (aka Bart Cornelis)                                       (Closes: #413884).
+  * Bug fix: "mailagent: [INTL:es] Spanish debconf translation", thanks to
+    Rudy Godoy                                                (Closes: #414347).
+  * Bug fix: "mailagent : [INTL:pt] Portuguese translation for debconf
+    messages", thanks to Traduz - Portuguese Translation Team (Closes: #414425).
+  * Added XS-VCS-Arch and XS-VCS-Browse variables in debian/control
+
+ -- Manoj Srivastava <srivasta@debian.org>  Tue, 17 Apr 2007 18:20:28 -0500
+
+mailagent (3.73-23) unstable; urgency=low
+
+  * Bug fix: "mailagent: [INTL:ja] Updated Japanese po-debconf template
+    translation", thanks to Hideki Yamane (Debian-JP)         (Closes: #393217).
+
+ -- Manoj Srivastava <srivasta@debian.org>  Tue, 24 Oct 2006 00:10:41 -0500
+
+mailagent (3.73-22) unstable; urgency=low
+
+  * Bug fix: "mailagent: false warning about 'bad host'", thanks
+    to Matt Swift                                             (Closes: #383245).
+  * Updated standards version.
+
+ -- Manoj Srivastava <srivasta@debian.org>  Sun, 20 Aug 2006 12:57:57 -0500
+
+mailagent (3.73-21) unstable; urgency=low
+
+  * Bug fix: "[l10n:de] Updated German translation of the debconf
+    templates", thanks to Erik Schanze                         (Closes: #345852).
+  * Bug fix: "mailagent: Upgrade outputs duplicate warning", thanks to
+    Thijs Kinkhorst. The fix and patch thanks to Bart Martens  (Closes: #301974).
+
+ -- Manoj Srivastava <srivasta@debian.org>  Tue,  7 Feb 2006 15:29:38 -0600
+
+mailagent (3.73-20) unstable; urgency=low
+
+  * Bug fix: "mailagent: [INTL:sv] Swedish debconf templates translation",
+    thanks to Daniel Nylander                                 (Closes: #332353).
+
+ -- Manoj Srivastava <srivasta@debian.org>  Thu, 20 Oct 2005 22:51:40 -0500
+
+mailagent (3.73-19) unstable; urgency=low
+
+  * Bug fix: "mailagent: Update of the french translation of the debconf
+    templates", thanks to Eric                               (Closes: #318394).
+
+ -- Manoj Srivastava <srivasta@debian.org>  Mon,  8 Aug 2005 13:09:34 -0500
+
+mailagent (3.73-18) unstable; urgency=low
+
+  * Bug fix: "mailagent: [INTL:pt_BR] Substituted correct pt_BR translation.
+                                                             (Closes: #307237).
+  * Bug fix: "mailagent", thanks to Clytie Siddall           (Closes: #312653).
+  * Bug fix: "INTL:vi", thanks to Clytie Siddall             (Closes: #312652).
+
+ -- Manoj Srivastava <srivasta@debian.org>  Wed,  6 Jul 2005 12:12:24 -0500
+
+mailagent (3.73-17) unstable; urgency=low
+
+  * Bug fix: "mailagent: [INTL:pt_BR] Please consider adding the attached
+    debconf template translation", thanks to Rodrigo Tadeu Claro
+                                                         (Closes: #307237).
+
+ -- Manoj Srivastava <srivasta@debian.org>  Mon,  2 May 2005 01:39:46 -0500
+
+mailagent (3.73-16) unstable; urgency=low
+
+  * Bug fix: "Czech templates for mailagent", thanks to Lukáš Oliva
+                                                          (Closes: #298780).
+
+ -- Manoj Srivastava <srivasta@debian.org>  Thu, 17 Mar 2005 03:06:57 -0600
+
+mailagent (3.73-15) unstable; urgency=low
+
+  * Bug fix: "minor fix for building mailagent with gcc-3.4 on amd64",
+    thanks to Kaare Hviid                                  (Closes: #272988).
+  * Bug fix: "mailagent: Please add German translation of the debconf
+    templates", thanks to Erik Schanze                     (Closes: #266929).
+
+ -- Manoj Srivastava <srivasta@debian.org>  Mon, 27 Sep 2004 12:07:19 -0500
+
+mailagent (3.73-14) unstable; urgency=low
+
+  * Bug fix: "mailagent: fixed Japanese po-debconf template translation
+    (ja.po)", thanks to Hideki Yamane                   (Closes: #256595).
+
+ -- Manoj Srivastava <srivasta@debian.org>  Wed, 21 Jul 2004 15:46:49 -0500
+
+mailagent (3.73-13) unstable; urgency=low
+
+  * Bug fix: "mailagent: Japanese po-debconf template translation
+    (ja.po)", thanks to Hideki Yamane (Closes: #254496).
+
+ -- Manoj Srivastava <srivasta@debian.org>  Tue, 22 Jun 2004 18:11:59 -0500
+
+mailagent (3.73-12) unstable; urgency=low
+
+  * Bug fix: "mailagent: French debconf templates translation", thanks to
+    Eric (Closes: #239602).
+  * Fixed the config script (similar to the dist package fixes) to not
+    purge our ownership of the old share/ debconf question too early.
+
+ -- Manoj Srivastava <srivasta@debian.org>  Mon, 19 Apr 2004 01:44:51 -0500
+
+mailagent (3.73-11) unstable; urgency=low
+
+  * Change the name of the debconf question to shared/news/organization.
+  * Bug fix: "mailagent: French debconf templates translation", thanks to
+    Eric                                                (Closes: #239602).
+
+ -- Manoj Srivastava <srivasta@debian.org>  Mon,  5 Apr 2004 15:46:49 -0500
+
+mailagent (3.73-10) unstable; urgency=low
+
+  * Bug fix: "mailagent: Please switch to gettext-based debconf
+    templates", thanks to Martin Quinson                         (Closes: #235815).
+
+ -- Manoj Srivastava <srivasta@debian.org>  Fri, 12 Mar 2004 00:58:10 -0600
+
+mailagent (3.73-9) unstable; urgency=low
+
+  * Converted to the new build system.
+  * Added debconf support to for setting up /etc/news/organization
+
+ -- Manoj Srivastava <srivasta@debian.org>  Tue,  2 Dec 2003 12:42:53 -0600
+
+mailagent (3.73-8) unstable; urgency=high
+
+  * Bug fix: "mailagent: filter is incorrectly built", thanks to Julian
+    Gilbey. Added missing include of <errno.h> in logfile.c (Closes: #220238).
+
+ -- Manoj Srivastava <srivasta@debian.org>  Tue, 11 Nov 2003 15:48:47 -0600
+
+mailagent (3.73-7) unstable; urgency=low
+
+  * Fixed usage of chown root.root in the rules files.
+  * mailagent fails to correctly parse headers according to RFC822 and
+    therefore treats some legal headers as continuation lines. RFC822
+    section 3.2 defines:
+    field-name  =  1*<any CHAR, excluding CTLs, SPACE, and ":">
+    Bug and fix from christian mock <cm@tahina.priv.at>         closes: Bug#207399
+
+ -- Manoj Srivastava <srivasta@debian.org>  Tue, 26 Aug 2003 17:12:18 -0500
+
+mailagent (3.73-6) unstable; urgency=low
+
+  * gcc-3.3 changed the behaviour when a object like macor's replacement
+    list contains a unbalanced double quote. It is in its rights to do so,
+    of course, since C99 says that the behaviour is undefined. (BTW, this
+    is not a multiline string, see section 6.4 of the standard) closes: Bug#195205
+  * Changed dependendcies to depend on perl, not perl5.
+
+ -- Manoj Srivastava <srivasta@debian.org>  Thu, 29 May 2003 10:54:23 -0500
+
+mailagent (3.73-5) unstable; urgency=low
+
+  * use which instead of command -v
+  * No longer install /usr/doc/symlink. Bring this upto Standards version
+    3.5.7
+  * No longer depend on fileutils
+  * fixed typos in postinst.                                 closes: Bug#154127
+
+ -- Manoj Srivastava <srivasta@debian.org>  Tue, 29 Oct 2002 17:51:49 -0600
+
+mailagent (3.73-4) unstable; urgency=low
+
+  * Added a Build-Depends, not a pends-Indep for groff-base. closes: Bug#137817
+  * Silence a postinst warning in case /usr/doc is not found.
+
+ -- Manoj Srivastava <srivasta@debian.org>  Tue, 19 Mar 2002 23:48:34 -0600
+
+mailagent (3.73-3) unstable; urgency=medium
+
+  * Added a Build-Depends-Indep for groff-base.              closes: Bug#137817
+
+ -- Manoj Srivastava <srivasta@debian.org>  Mon, 11 Mar 2002 23:44:30 -0600
+
+mailagent (3.73-2) unstable; urgency=low
+
+  *  Without a prototype for strerror(), that function will be assumed to
+    return a 32-bit integer instead of a 64-bit pointer on ia64,  leading
+    to pointer corruption and likely segfaults. Fixed.       closes: Bug#126105
+
+ -- Manoj Srivastava <srivasta@debian.org>  Sun,  6 Jan 2002 01:56:23 -0600
+
+mailagent (3.73-1) unstable; urgency=low
+
+  * Incorporated the changes in the NMU's that have been made recently. I
+    am very grateful for the help from Paul Martin <pm@debian.org>,
+    Raphael Hertzog <rhertzog@hrnet.fr>, Raphael Manfredi
+    <Raphael_Manfredi@pobox.com>, and Barrie Stott
+    <G.B.Stott@bolton.ac.uk> for all the help with mailagent while I have
+    been swamped (which has been most of this year).
+  * Added lintian overrides for the postinst warning.
+
+ -- Manoj Srivastava <srivasta@debian.org>  Mon, 19 Mar 2001 09:19:47 -0600
+
+mailagent (3.73-0.1) unstable; urgency=low
+
+  * Non-maintainer upload
+  * This release supersedes the NMU 3.68-9.1, which was made concurrently.
+    Therefore, some of the changes mentionned here are dups of previous
+    changes, and the conflict was arbitrated in favor of this release.
+  * New upstream release, closes: Bug#72737, and addresses the original
+    concerns of Bug#43171.  Can't tell the latter is fully closed, since
+    not all the followed-up points were addressed.
+  * Fixed README spelling (verson -> version) and added special mention
+    for the missing "getcost" program which can be found in original sources
+    but is not packaged here.  Also added CPAN URL to the distribution.
+    Removed paragraph of the README which mentionned a few patches that
+    have been obsoleted by the new upstream version.
+  * Added missing mailagent.cf, setup.cf and commands to /usr/share/mailagent,
+    closes: Bug#81119.
+  * Mailagent can now be used as a full mail<->news gateway.  Look into
+    /usr/share/doc/mailagent/examples/news for the newsgate program which
+    handles the news->mail part, as well as mailagent rules for building the
+    mail->news part via mailagent's POST command.
+
+ -- Raphael Manfredi <Raphael_Manfredi@pobox.com>  Sat, 17 May 2001 20:26:06 +0100
+
+
+mailagent (3.70-1) unstable; urgency=low
+
+  * New upstream version (Not released)
+
+ -- Manoj Srivastava <srivasta@debian.org>  Thu,  8 Feb 2001 03:46:48 -0600
+
+mailagent (3.68-10) unstable; urgency=low
+
+  * Use print-gnu-build-architecture for dpkg.(Not released)
+  * use dnsdomainname to determine our hostname on the fly. gets rid of
+    some ugly postinst code. Many thanks to "C.M. Connelly" <c@eskimo.com>.
+    closes: Bug#72737
+
+ -- Manoj Srivastava <srivasta@debian.org>  Tue, 21 Nov 2000 23:18:50 -0600
+
+mailagent (3.68-9.1) unstable; urgency=low
+
+  * Non-maintainer upload
+  * Changed debian/rules to move some needed configuration files
+    (setup.cf, mailagent.cf and commands) to /usr/share/mailagent
+    Fixes #81119
+  * Fixed README to fix lintian error.
+  * Changed debian/rules to strip /usr/share/mailagent/filter, fixes
+    lintian warning.
+
+ -- Paul Martin <pm@debian.org>  Sat, 17 Mar 2001 03:28:38 +0000
+
+mailagent (3.68-9) unstable; urgency=low
+
+  * Make sure all the readme files and example, as well as help files, end
+    up in /usr/share/doc/mailagent, rather than in /usr/share/mailagent.
+    Added more documentation. closes: Bug#63428
+  * Clarified the mailbox locking issue some more.
+
+ -- Manoj Srivastava <srivasta@debian.org>  Wed,  3 May 2000 04:04:06 -0500
+
+mailagent (3.68-8) frozen unstable; urgency=low
+
+  * Added more explicit documentation about why mailagent can not lock
+    mailbox files on Debian (making mailagent sgid anything essentially
+    negates any utility of having things sgid mail, a big gaping security
+    hole). The details are now in the FAQ, the man page, and also in a
+    file /usr/share/doc/mailagent/SECURITY. This issue is now also
+    mentioned in the long description in the Control file.
+  * updated example files
+  * There have been no code changes in this upload, just documentation
+    changes. Nevertheless, this closes an important bug. closes: Bug#63428
+
+ -- Manoj Srivastava <srivasta@debian.org>  Tue,  2 May 2000 17:43:59 -0500
+
+mailagent (3.68-7) frozen unstable; urgency=low
+
+  * merely creating sub handle_doc_link in the postinst is not good
+    enough; the routine should be called as well ;-). This closes an
+    important bug (/usr/doc symlinks are a potato requirement).
+    closes: Bug#62435
+
+ -- Manoj Srivastava <srivasta@debian.org>  Fri, 28 Apr 2000 18:04:19 -0500
+
+mailagent (3.68-6) unstable; urgency=low
+
+  * Added a line to the FAQ emphasizing the fact that leading and trailing
+    double quotes are an integral part of the .forward file.
+
+ -- Manoj Srivastava <srivasta@debian.org>  Fri, 31 Mar 2000 15:50:52 -0600
+
+mailagent (3.68-5) frozen unstable; urgency=low
+
+  * Use absolute links when related links would not work, for the
+    /usr/doc/latex2tml symlink.
+  * Added a dependency on fileutiles >=4.0, since the package would fail
+    to install with older fileutils.
+
+ -- Manoj Srivastava <srivasta@debian.org>  Tue, 28 Mar 2000 01:45:51 -0600
+
+mailagent (3.68-4) frozen unstable; urgency=low
+
+  * Fixed an upgrade bug when /usr/doc happens to be a symlink, and does
+    not point to /usr/share/doc. A couple of people were bitten by this.
+
+ -- Manoj Srivastava <srivasta@debian.org>  Mon, 28 Feb 2000 22:27:05 -0600
+
+mailagent (3.68-3) frozen unstable; urgency=low
+
+  * Gorgot to make the last upload to frozen as well. To the release manager:
+  * The postinst was vulnerable to being affected by symlinks (if, for
+    some reason, the prerm failed). This has happended for latex2html; and
+    created a grave bug.
+  * There was a bug in the postinst in a case statement, that caused
+    installation to fail for certain situations.
+  * Also fixed an lintian warning
+
+ -- Manoj Srivastava <srivasta@debian.org>  Wed,  9 Feb 2000 22:28:35 -0600
+
+mailagent (3.68-2) unstable; urgency=low
+
+  * The postinst was vulnerable to being affected by symlinks (if, for
+    some reason, the prerm failed). This has happended for latex2html; and
+    created a grave bug.
+  * There was a bug in the postinst in a case statement, that caused
+    installation to fail for certain situations.
+  * Also fixed an lintian warning
+
+ -- Manoj Srivastava <srivasta@debian.org>  Tue,  8 Feb 2000 23:00:49 -0600
+
+mailagent (3.68-1) unstable; urgency=low
+
+  * New upstream version, with Y2K fixes.
+  * moved to new perl Policy
+  * moved to debian-policy 3.0.0 partially (no /usr/doc changes yet)
+
+ -- Manoj Srivastava <srivasta@debian.org>  Wed, 14 Jul 1999 15:45:36 -0500
+
+mailagent (3.65-2) frozen unstable; urgency=low
+
+  * Fixed an important mail corrupting bug. Just a one line change, no
+    other change made. I hope this qualifies for a slink inclusion.
+    closes: Bug#33589
+
+ -- Manoj Srivastava <srivasta@debian.org>  Sun, 21 Feb 1999 23:40:27 -0600
+
+mailagent (3.65-1) unstable; urgency=low
+
+  * New upstrem bugfix release.
+
+ -- Manoj Srivastava <srivasta@debian.org>  Tue, 26 Jan 1999 23:22:20 -0600
+
+mailagent (3.63-4) unstable; urgency=low
+
+  * Make sure that the files in the .deb are owned by root. fixes: BUG#30304
+
+ -- Manoj Srivastava <srivasta@debian.org>  Wed,  2 Dec 1998 23:50:24 -0600
+
+mailagent (3.63-3) unstable; urgency=low
+
+  * Added the fix from sparc to be prepared for glibc2.1 closes: BUG#30067
+
+ -- Manoj Srivastava <srivasta@debian.org>  Sat, 28 Nov 1998 00:16:55 -0600
+
+mailagent (3.63-2) frozen unstable; urgency=low
+
+  * Quoted the arguments to ASSIGN in the mailagent man page. The ASSIGN
+    command actually documented this, but the examples did need the simple
+    quotes. Only the man page has changed, and this may prevent some
+    confusion, so this may be sent to frozen. closes: BUG#29278.
+
+ -- Manoj Srivastava <srivasta@debian.org>  Wed, 25 Nov 1998 02:09:23 -0600
+
+mailagent (3.63-1.1) frozen unstable; urgency=low
+
+  * non maintainer, sparc only upload
+  * fix initializer not constant bug with glibc2.1
+
+ -- Christian Meder <meder@isr.uni-stuttgart.de>  Wed, 25 Nov 1998 13:29:53 +0100
+
+
+mailagent (3.63-1) unstable; urgency=low
+
+  * New upstream release.
+  * Moved spamlist to the examples section; most of the upstream sites
+    have dried up, and this needs be updated to the newer sources of
+    information.
+  * Put in new versions of my rules file. The argument to ASSIGN needs be
+    quoted, a bug made 3.58 more tolerant.
+
+ -- Manoj Srivastava <srivasta@debian.org>  Thu, 13 Aug 1998 13:08:15 -0500
+
+mailagent (3.61-1) unstable; urgency=low
+
+  * New upstream release. Excerpted changes:
+  * added "vacfixed" and "tofake" configuration parameters
+  * when "tofake" is turned off, disable faking of To:
+  * when "vacfixed" is on, forbid any change of vacation message
+  * new fakesend and getcost directories
+  * new ON command to issue commands on certain days only
+  * added hook for the new ON command
+  * added regression tests for new "ON" command
+  * without parameters, list all the defined variables
+  * the SERVER "set" command can now list defined variables
+  * added an example of alternate VACATION message selection
+  * changed "set" to dump variables when not given any argument
+  * typo fix in comment
+  * allow for missing "host1" in the Received: line parsing
+  * parser now allows no space between address and comment
+  * allow ~name expansion when specifying alternate rule files
+  * added -x to the sample unmime rules
+  * new -x and -X options to cope with accentuated letters
+  * added removal of ugly ?iso-8859-1?Q escapes in subject
+  * updated Copyright dates and canonicalized my HP e-mail address
+  * created 9 new files
+  * fixed typos
+
+ -- Manoj Srivastava <srivasta@debian.org>  Mon, 25 May 1998 01:41:36 -0500
+
+mailagent (3.58-6) unstable; urgency=low
+
+  * lintian correctly wants the magic bytes to be #! /usr .. rather than
+    #!/usr....
+  * Made two example scripts executable in /usr/lib to shut up lintian.
+
+ -- Manoj Srivastava <srivasta@debian.org>  Sun,  8 Mar 1998 15:48:14 -0600
+
+mailagent (3.58-5) unstable; urgency=low
+
+  * Really fix permission. (forgot to fix permissions in the Master CVS
+    repository. Bah.
+
+ -- Manoj Srivastava <srivasta@debian.org>  Fri, 13 Feb 1998 12:27:23 -0600
+
+mailagent (3.58-4) unstable; urgency=low
+
+  * Hmm. I was convinced by people that example files really should be
+    world readable. I also updated the examples again.
+
+ -- Manoj Srivastava <srivasta@debian.org>  Fri, 13 Feb 1998 01:10:59 -0600
+
+mailagent (3.58-3) unstable; urgency=low
+
+  * Updated to standards version 2.4.0.0
+  * mailagent contains a set of files that reflect the maintainers live
+    setup, which includes a number of small accesory scripts, and other
+    strange permissions. This annoys Lintian, but I am loth to change. So
+    not all lintian warning are addressed here.
+  * Updated the examples.
+
+ -- Manoj Srivastava <srivasta@debian.org>  Tue, 10 Feb 1998 00:02:48 -0600
+
+mailagent (3.58-2) unstable; urgency=low
+
+  * Updated debian/rules in an attmpt to make sure the test is not run
+    twice. This may fix Bug#14063.
+
+ -- Manoj Srivastava <srivasta@debian.org>  Tue, 28 Oct 1997 09:55:31 -0600
+
+mailagent (3.58-1) unstable; urgency=low
+
+  * Added a new HOWTO about settng up mailagent
+  * try and preserve timestamps
+  * clean up rules file
+  * New upstream release with pristine sources. Changes:
+    * factorized code to derive a unique filename
+    * added more generic file_lock() and file_unlock() routines
+    * new generic file_lock() and file_unlock() routines
+    * cosmetic change
+    * changed ordering of include files
+    * call new pmail() routine to process main message
+    * fixed typo in -r usage
+    * new -t and -f options for BEGIN and NOP
+    * all command options should now be output in bold
+    * documented _CALLOUT_ working state for callout queue
+    * code factorized within acs_lock()
+    * don't blindly chop command error message, remove trailing \n
+    * annotation was not performed for value "0"
+    * $lastcmd now global from analyze_mail() for BACK processing
+    * indication of relaying hosts now selectively emitted
+    * fixed ASSGINED -> ASSIGNED typo in log message
+    * implemented new -t and -f flags for BEGIN and NOP
+    * insert user e-mail address if no address for NOTIFY
+    * now clearly spot locked files in queue with a '*'
+    * improved Received: line parsing logic
+    * messages in the queue are now locked before processing
+    * new pmail() routine to factorize locking/processing code
+    * NOP now returns a status
+    * added -t and -f switches for BEGIN and NOP
+    * $lastcmd now global from analyze_mail()
+    * fixed overzealous unlinks
+    * uses an empty file instead of /dev/null
+    * forgot to unlink mail.lock in cp_mail()
+    * also handle bounced output from @SH package
+    * Added PATBOUNCE example
+
+ -- Manoj Srivastava <srivasta@debian.org>  Wed, 17 Sep 1997 00:24:00 -0500
+
+mailagent (3.56-8) unstable; urgency=low
+
+  * Added a getspam script which shows how to get a list of spammers from
+    the net.
+  * Greatly updated the examples/rc stuff. Now it is a copy of my current
+    mailagent configuration. This could be used as a drop-in after editing
+    the usename and home directory location in dot.mailagent, but I
+    recommend looking over the files carefully. The mailagent.rules
+    included show how to split out Debian mailing lists, and apply spam
+    filters to non-mailing list mail.
+  * There have been reports of a possible perl bug with unpack that is
+    triggered by mailagent (I have not been able to reproduce this),
+    possibly associated with mh folders, which I hope may go away with
+    this version (I am building with perl 5.004.02).
+
+ -- Manoj Srivastava <srivasta@debian.org>  Thu, 14 Aug 1997 13:26:56 -0500
+
+mailagent (3.56-7) unstable; urgency=low
+
+  * Make sure that the copyright file is not compressed, and that it
+    mentions the source locations. This fixes BUG#10827.
+
+ -- Manoj Srivastava <srivasta@debian.org>  Wed, 25 Jun 1997 11:20:09 -0500
+
+mailagent (3.56-6) unstable; urgency=low
+
+  * Built with libc6
+
+ -- Manoj Srivastava <srivasta@debian.org>  Fri, 16 May 1997 11:43:14 -0500
+
+mailagent (3.56-5) unstable; urgency=low
+
+  * Improved the clean command.
+
+ -- Manoj Srivastava <srivasta@debian.org>  Fri, 9 May 1997 17:27:06 -0500
+
+mailagent (3.56-4) unstable; urgency=low
+
+  * Handle all the @%$& problem with introducing more than one level of
+    directories and the inability of diff/patch to reconstruct the sources
+    by tarring, gzipping, and uuencoding the directories debian/Config and
+    debian/example. This fixes BUG#9605
+
+ -- Manoj Srivastava <srivasta@debian.org>  Fri, 9 May 1997 15:30:23 -0500
+
+mailagent (3.56-3) frozen unstable; urgency=low
+
+  * Fixed the spelling of frozen in changelog. Maybe the debian revision
+    did not need to be bumped up...
+
+ -- Manoj Srivastava <srivasta@debian.org>  Thu, 17 Apr 1997 20:36:33 -0500
+
+mailagent (3.56-2) forzen unstable; urgency=low
+
+  * This fixes BUG#8604
+  * Installed copyright
+  * Converted references to /usr/spool/mail to /var/spool/mail
+  * Compressed man page
+
+ -- Manoj Srivastava <srivasta@debian.org>  Sun, 13 Apr 1997 13:37:14 -0500
+
+mailagent (3.56-1) unstable; urgency=low
+
+  * Changed maintainers email address to srivasta@debian.org.
+  * New upstream version.
+  * The upstream changes were:
+    * regenerated Configure for getopt() and dup2() checking.
+    * updated copyright notice.
+    * new groupsafe, execskip and lockwarn variables.
+    * added getopt.c and dup2.c files.
+    * prefer open(O_APPEND) to fopen("a") for stdio append bugs.
+    * now uses getopt() to parse command line switches.
+    * used $* variable for no purpose.
+    * documents new execsafe, groupsafe and lockwarn variables.
+    * the C filter can now redirect output via -o.
+    * made it explicit that /pattern/i is legal.
+    * made 'perl -cw' clean and fixed a couple of typos.
+    * removed the 'do' workaround for perl5.001.
+    * improved Received: header parsing.
+    * typo fixes and print() call cleanup to avoid run-time warnings.
+    * the -e un-escape was overzealous for uuencoded parts....
+    * made the filter die if an error occurs to prevent feedback.
+    * two new files.
+
+ -- Manoj Srivastava <srivasta@debian.org>  Fri, 21 Feb 1997 17:15:32 -0600
+
+mailagent (3.54-2) unstable; urgency=low
+
+  * Moved to standards version 2.1.2.2
+  * Added error messages to failed root check
+
+ -- Manoj Srivastava <srivasta@debian.org>  Thu, 13 Feb 1997 14:50:47 -0600
+
+mailagent (3.54-1) unstable; urgency=high
+
+  * Critical upstream upgrade.
+
+ -- Manoj Srivastava <srivasta@debian.org>  Mon, 3 Feb 1997 14:20:50 -0600
+
+mailagent (3.53-2) unstable; urgency=high
+
+  * Upstream "unofficial" patch for critical bug.  3.54 will be released
+    after a testing period.
+
+ -- Manoj Srivastava <srivasta@debian.org>  Thu, 9 Jan 1997 10:11:14 -0600
+
+mailagent (3.53-1) unstable; urgency=low
+
+  * New upstream version, various bug fixes.
+  * New execsafe configuration variable to disable extended exec()
+    checks when OFF.
+
+ -- Manoj Srivastava <srivasta@debian.org>  Tue, 7 Jan 1997 18:43:39 -0600
+
+mailagent (3.51-1) unstable; urgency=low
+
+  * Added more examples, from both upstream sources and debian specific
+    rc files examples
+  * New upstream version with lots of patches
+
+ -- Manoj Srivastava <srivasta@debian.org>  Mon, 30 Dec 1996 02:21:34 -0600
+
+mailagent (3.44-8) unstable; urgency=low
+
+  * Changed to the new package format.
+
+ -- Manoj Srivastava <srivasta@debian.org>  Thu, 14 Nov 1996 00:27:29 -0600
+
+Old Changelog:
+
+mailagent (3.44-7) unstable; urgency=low
+ * Changed the postinst to make /usr/bin/mailagent executable again.
+   This fixes bug#3432 and Bug#3504.
+ * Changed debian.rules to use dpkg-name.
+ * Changed the separators used all over to conform to the new nameing
+   conventions.
+ * Changed the postinst to refer to /usr/bin/perl, rather than /bin/perl,
+   to  conform to an as yet unreleased guidelines.
+ * Changed the priority option to dchanges to conform to the new version.
+
+ -- Manoj Srivastava <srivasta@debian.org>
+
+mailagent (3.44-6) unstable; urgency=low
+ * There was a problem reported in that mailagent had a compiled
+   in domainname (mostly harmless, I think, except that the filter
+   reported that mail was filtered on whatever.pilgrim.umass.edu
+   which is not true for very many machines.  Now the postinst
+   tries to take care of it by editing /usr/bin/mailagent on the
+   fly.
+ * A problem that still persists is that reportedly mailagent does
+   not honor the HOME directory when run out of root's crontab,
+   (I have not yet tested this) . There well may be problems with
+   crontab in general, this has been reported upstream, and I'll be
+   attending to this ASAP.
+
+ -- Manoj Srivastava <srivasta@debian.org>
+
+mailagent (3.44-5) unstable; urgency=low
+ * Added the Priority field to the package file name.
+ * Added the Source field to the package file name.
+ * Changed a typo in mailhook.pl that caused the CC list to be
+   the same as the To list.  This fixes Bug#2983
+
+
+ -- Manoj Srivastava <srivasta@debian.org>
+
+mailagent (3.44-4) unstable; urgency=low
+        * Added the architecture field to the package file name.
+        * Modified maildist.1, maillist.1, and mailpatch.1 to not
+          contain the full path name.  This fixes Bug#2798.
+        * point to /usr/doc/copright/Artistic rather than install
+          our own copy.
+        * Gave up trying to fix the compress tests.  The fact is, we
+          have gzip, thinly disguised as compress, and mailagent
+          believes that compress should provide .Z files, not .gz,
+          and gets very confused.  Gzipped folders work. We can't produce
+          .Z folders anyway.
+        * Fixed Configure idiocy about non-NIS domain name determination.
+
+ -- Manoj Srivastava <srivasta@debian.org>
+
+mailagent (3.44-3) unstable; urgency=low
+	* Added architecture header in control
+	* added section header
+	* merged the package revision header into the revision header.
+	* cleaned up the debian.rules.
+	* added the Changelog.
+ 	* Fixed the description field not to include multiple contiguous
+	  spaces
+
+ -- Manoj Srivastava <srivasta@debian.org>
+
+mailagent (3.44-2) unstable; urgency=low
+        * Use /etc/news/organization instead of /etc/organization
+          Please note that people who installed mailagent-3.44-1
+          and/or dist-3.60-2 shall have to remove /etc/organization
+          manually after upgrading both packages.
+        * gzip files in /usr/doc/examples/mailagent
+
+ -- Manoj Srivastava <srivasta@debian.org>
+
+mailagent (3.44-1) unstable; urgency=low
+
+	* Added debian.* files
+
+ -- Manoj Srivastava <srivasta@debian.org>

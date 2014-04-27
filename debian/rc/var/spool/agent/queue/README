@@ -1,0 +1,9 @@
+This is where the filter drops the incoming email before calling the
+rest of the mailagent for processing it.  The filter, is small, fast,
+and is called for every incoming mail; and is written in C. The rest
+of mailagent is written in perl, and can be slow, and only one
+instance is run for a whole batch of incoming mail. So, the filter
+delivers mail here, where mailagent processes it, and delivers it into
+the user spool.
+
+arch-tag: b84bcad3-baef-4c57-b8bb-6fbfd50b46ff

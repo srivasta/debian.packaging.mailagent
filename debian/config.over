@@ -1,0 +1,10 @@
+thisdir=`pwd`
+installmansrc=$thisdir/debian/tmp/usr/share/man/man1 
+installprivlib=$thisdir/debian/tmp/usr/share/doc/mailagent 
+installscript=$thisdir/debian/tmp/usr/bin 
+installbin=$thisdir/debian/tmp/usr/bin
+mydomain=.Unconfigured.Mailagent.Domain
+maildir='/var/spool/mail'
+maildirexp='/var/spool/mail'
+mailfile='/var/spool/mail/%L'
+

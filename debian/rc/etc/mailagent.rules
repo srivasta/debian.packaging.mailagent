@@ -1,0 +1,1410 @@
+######################################################################
+######################################################################
+#                                                                    #
+#                      Rule file for mailagent                       #
+#                                                                    #
+######################################################################
+######################################################################
+
+
+######################################################################
+######################################################################
+#                                                                    #
+#                          Global variables                          #
+#                                                                    #
+######################################################################
+######################################################################
+
+# The 'maildir' variable tells the mailagent where the folders are located.
+# By default, it is set to ~/Mail (because it is a convention used by other
+# mail-related programs), but the author prefers to use ~/mail.
+
+maildir = ~/var/spool/mail;
+
+# The 'mailfilter' variable points to the place where all the loaded files
+# are stored (e.g. loaded patterns or addresses) and is used only when a
+# relative path is specified.
+
+mailfilter = ~/etc;
+
+######################################################################
+#####################################################################
+#                                                                    #
+#                      Command and server stuff                      #
+#                                                                    #
+######################################################################
+######################################################################
+
+
+X-Spam-Status: /Yes/          { REJECT SPAM };
+<SPAM> X-Spam-Value: /([1-9]\d\.\d)/
+       { UNIQUE -a (SPAM); ANNOTATE -d X-RealSpam '%1'; SAVE realspam;  };
+
+
+# Remove all the crm114 and spamassassin headers from upstream
+#All:  /./
+# { STRIP X-CRM114-Status X-CRM114-Version X-Spam-Value X-Spam-Status
+#    X-Spam-Checker-Version; REJECT; };
+#<!SPAM>  /./  { FEED /usr/bin/spamassassin -a 2>>$HOME/var/log/assassin;
+#                RESYNC; REJECT; };
+#All:  /./  
+# { FEED /usr/bin/crm114 -u $HOME/var/lib/crm114 mailfilter.crm 2>>$HOME/var/log/crm;
+#   RESYNC; REJECT; };
+#X-CRM114-Status: /SPAM\s+.\s+pR: \-(\d\d\d)/
+# { UNIQUE -a (SPAM); ANNOTATE -d X-RealSpam '%1'; SAVE realspam; };
+#<!SPAM>  /./
+# { FEED /usr/bin/spamc -f 2>>$HOME/var/log/assassin; RESYNC; REJECT; };
+
+# Make sure spamassassin sees this
+#<!SPAM> !X-Spam-Status: /No/
+#               { ANNOTATE -d X-Spam Again;
+#                 FEED /usr/bin/spamc -f 2>>$HOME/var/log/assassin2;
+#                RESYNC; REJECT; };
+#<!SPAM> X-Spam-Status: /Yes/            { REJECT SPAM };
+#<SPAM> X-Spam-Value: /(1[5-9]\.\d)/
+#       { UNIQUE -a (SPAM); ANNOTATE -d X-RealSpam '%1'; SAVE realspam;  };
+#<INITIAL> X-SBClass:/Spam/               { REJECT SPAM };
+#<!SPAM> X-Spam-Status: /autolearn=ham/  { SAVE ham; REJECT };
+#<!SPAM> X-Spam-Status: /autolearn=spam/ { SAVE realspam; REJECT };
+#Subject: /^[Cc]ommand\s*$/ { VACATION off; BEGIN CMD; REJECT };
+#Subject: /CFV: Proposal/       { VACATION off; REJECT VOTE; };
+#Body <1,3>: /^Subject:\s*[Cc]ommand\s*$/ { VACATION off; BEGIN CMD; REJECT };
+#All: /^Subject:\s*[Cc]ommand/   { VACATION off; BEGIN CMD; REJECT };
+#<CMD> *         { STRIP Received; SAVE admin; PROCESS };
+#Subject: /glaurung: snort daily report/   { VACATION off; SAVE admin };
+
+
+######################################################################
+######################################################################
+#                                                                    #
+#           Adminstrative stuff, not to be recorded below            #
+#                                                                    #
+######################################################################
+######################################################################
+<!SPAM>  Subject: /±¤°í|ks_c_5601-|GB2312|EUC-KR/ { REJECT SPAM };
+<!SPAM>  Content-Type: /charset=.*ks_c_5601-/     { REJECT SPAM };
+
+<!SPAM> From: Mailer-Daemon, 
+        Subject: /Mail delivery failed: returning message/,
+             { REJECT BOUNCED };
+
+# The machine is called tiamat
+<INITIAL> From: news, From: root, To: usenet           { REJECT ADMIN };
+<INITIAL> Subject: /Cron \<root\@tiamat\>/             { REJECT ADMIN };
+<INITIAL> From:   root, To: root                { BEGIN ADMIN; REJECT };
+<INITIAL> From: john.doe, Subject: /lurkftp output/    { REJECT ADMIN };
+<INITIAL> From: /root\@.+\.internal\.bar\.com/
+                                                       { REJECT ADMIN };
+<INITIAL> From: /daemon\@.+\.internal\.bar\.com/
+                                                       { REJECT ADMIN };
+<INITIAL> From: /root\@bar.com/                        { REJECT ADMIN };
+<INITIAL> From: /root\@ladon\.bar.com/                 { REJECT ADMIN };
+<INITIAL> From:   Majordomo                            { REJECT ADMIN };
+<INITIAL> From:   uucp                                 { REJECT ADMIN };
+<INITIAL> From: /mailman-owner\@lists.sourceforge.net/ { REJECT ADMIN };
+<INITIAL> From:   arpwatch                             { REJECT ADMIN };
+<INITIAL> From:   Calamaris                            { REJECT ADMIN };
+<INITIAL> Subject: /^\s*\[SNORT] /                     { REJECT ADMIN };
+<INITIAL> From: /support\@isp.com/                     { REJECT ADMIN };
+<INITIAL> From: /scheduledmaintenance\@isp.com/        { REJECT ADMIN };
+<INITIAL> From: /support-portal\@isp.com/              { REJECT ADMIN };
+#From: /listar\@bar.com/                               { REJECT ADMIN };
+#To: faxmaster                                         { REJECT ADMIN };
+
+# If I was just on the CC list, do not send vacation messages
+<INITIAL> Cc: john.doe    { VACATION off; REJECT };
+
+### Save this -- before getting indexed and all
+<INITIAL> From: /nagios\@.+\.internal\.bar\.com/,
+          From: /nagios\@artemis\.foo\.com/,
+          From: /nagios\@smtp\.foo\.com/
+         { VACATION off; SAVE nagios.log };
+<INITIAL> From: /logcheck\@.+\.internal\.bar\.com/
+         { VACATION off; SAVE logcheck.log };
+<INITIAL> From: /buildmeister\@foo\.com/i,
+          To: /manoj\.john.doeva\@foo\.com/i
+         { VACATION off; SAVE cabie.log };
+
+
+######################################################################
+######################################################################
+#                                                                    #
+#                            Main Section                            #
+#                                                                    #
+######################################################################
+######################################################################
+
+# All that enter here get logged
+All: /./        { PERL sbin/mailagent.log.pl};
+
+## Just annotate the body, and stop
+# All: /./        { PERL sbin/anno.pl; LEAVE } ;
+# anno.pl contains
+# $header{'Body'} = " --- HEADER ---\n" . $header{'Body'} . " --- FOOTER ---\n";
+# $header{'All'} = $header{'Head'} . $header{'Body'}; # vital!
+#
+# Variaqnt using PASS
+# All: /./        { PASS sbin/anno.pl; LEAVE } ;
+# anno.pl contains
+# #! /usr/bin/perl
+# print "  --- HEADER ---\n";
+# while (<>)
+# {
+#     print;
+# }
+# print "  --- FOOTER ---\n";
+
+
+
+#
+## From: /:IN/     {PURIFY ~/sbin/mailagent.decnet.pl; RESYNC; REJECT };
+
+<INITIAL> Subject: /Your signed PGP key 0x21BADABBBF24424C/i
+          { VACATION off; UNIQUE -a (keys); SAVE signed-keys   };
+
+######################################################################
+######################################################################
+#                                                                    #
+#                            Debian Secretary                        #
+#                                                                    #
+######################################################################
+######################################################################
+
+<INITIAL> From: /secretary\@debian.org/,
+          Subject: /Acknowledgement for your vote/
+               { VACATION off; UNIQUE -a (vote); SAVE ~/mail/acks   };
+<INITIAL> From: /secretary\@debian.org/,
+         Subject: /Error report for your vote/
+              { VACATION off; UNIQUE -a (vote); SAVE ~/mail/nacks  };
+<INITIAL> From: /john.doe\@master.debian.org/,
+         Subject: /Error report for your vote/
+              { VACATION off; UNIQUE -a (vote); SAVE ~/mail/nacks  };
+<INITIAL> To: /ballot\@vote.debian.org/
+               { VACATION off; UNIQUE -a (vote); SAVE ~/mail/ballot   };
+<INITIAL> To: /vote.debian.org/
+               { VACATION off; DELETE;  };
+
+
+## <INITIAL> From: /debian-ctte-request\@lists.debian.org/,
+##          Subject: /\[debian-ctte\] COMMAND DISCARD/
+##               { VACATION off; UNIQUE -a (moderate); SAVE moderate   };
+
+######################################################################
+######################################################################
+#                                                                    #
+#                            Job Related                             #
+#                                                                    #
+######################################################################
+######################################################################
+<SPAM,INITIAL> To Cc Sender X-Mailing-List X-Loop X-MDMailing-List Resent-From Envelope:
+          /(analog-team)\@baz\.com/i,
+          /(analog-others)\@baz\.com/i,
+          /(analog-pmo)\@baz\.com/i,
+          /(analog-support)\@baz\.com/i,
+          /(analog-pi)\@baz\.com/i
+           { ANNOTATE -d X-Agent-list '%1'; ASSIGN list '%1';
+             TR #list /A-Z/a-z/;
+             REJECT MailingList };
+
+# Office broadcast lists
+#To Cc Sender: /owner-useg_consult/
+#   { VACATION off; UNIQUE -a (bcast); SAVE bcast };
+#To Cc Sender: /useg_gcif/
+#            { VACATION off; UNIQUE -a (bcast); SAVE bcast };
+#To Cc Sender: /dceunix_ext/,
+#             /dceunix/,
+#             /kamlia-admin/,
+#             /kamlia-users/,
+#             /uegts/,
+#             /owner-useg/, /usg/,
+#             /kv_reports/,
+#             /useg\@.*zk3.bar.com/,
+#             /dcev3submits\@.*bar.com/,
+#             /tunnel-announce\@ecom.bar.com/
+#       { VACATION off; UNIQUE -a (bcast); SAVE bcast   };
+
+# Huge word docs that I really do not want to see
+#<INITIAL> From: /Thomas@gab.com/i,
+#               /Thomas@gab.com/i,
+#          Subject: /Weekly Report and Conference Call Announcement/i,
+#          { VACATION off; DELETE };
+
+#<DigitalDCE> Subject: /case\s+(\S+)/i {
+#        ASSIGN list '%1'; TR #list /A-Z/a-z/;
+#       ANNOTATE -d X-Case %#list; REJECT };
+#
+#<DigitalDCE> { VACATION off; UNIQUE -a (digital); SAVE digital };
+#
+#<GCIF> Subject: /case\s+(\S+)/i {
+#        ASSIGN list '%1'; TR #list /A-Z/a-z/;
+#       ANNOTATE -d X-Case %#list; REJECT };
+#
+#<GCIF> { VACATION off; UNIQUE -a (gcif); SAVE gcifcases };
+
+<INITIAL> From: /bacula@foo.com/
+   { ANNOTATE -d X-Agent-list 'bacula';
+          ASSIGN list bacula;
+          REJECT MailingList };
+
+
+<INITIAL> From: /emailupgrade\@foo-bar.net/,
+          To: /foo\@foo-bar\.net/
+   { ANNOTATE -d X-Agent-list 'foo-bar notice';
+          ASSIGN list foo;
+          REJECT MailingList };
+
+<INITIAL> From: /specialoffers\@foo-bar.net/,
+          To: /foo\@foo-bar\.net/
+   { ANNOTATE -d X-Agent-list 'foo-bar notice';
+          ASSIGN list foo;
+          REJECT MailingList };
+
+<SPAM,INITIAL> To Cc Sender X-Mailing-List X-Loop X-MDMailing-List Resent-From Envelope:
+        /jane.doe\@(foo).com/
+        { ANNOTATE -d X-Agent-list '%1';
+          ASSIGN list foo;
+          REJECT MailingList };
+
+<INITIAL> Envelope Relayed From Reply-To Message-Id: "KNOWN" {
+        ANNOTATE -d X-Spam Non-spam from %1;
+        REJECT ADDRESSED;
+};
+
+######################################################################
+######################################################################
+#                                                                    #
+#                            Debian                                  #
+#                                                                    #
+######################################################################
+######################################################################
+######################################################################
+<INITIAL>  X-PTS-Package: /([-\w]+)/ 
+      { ANNOTATE -d X-Agent-list 'pkg-%1';
+          ASSIGN list 'pkg-%1';
+          REJECT MailingList };
+# X-Mailing-List To Resent-From Resent-To Resent-Reply-To Cc
+<INITIAL>  X-Loop: /debian-devel-changes/i   { DELETE; };
+
+# Do not wish to see acks for bug reports
+<INITIAL> From: /owner\@bugs.debian.org/, Subject: /Bug#\d+: Acknowledgement /
+       { DELETE };
+
+# These have little information really
+<INITIAL> From: /owner\@bugs.debian.org/, Subject: /Bug#\d+: Info received/i
+       { REJECT ClosedBugs };
+
+<INITIAL>  X-Loop: /debian-bugs-dist/i        { REJECT DEBIANBUGS };
+<INITIAL>  X-Loop: /owner\@bugs.debian.org/i  { REJECT DEBIANBUGS };
+
+<INITIAL> From Envelope: /discard-all\@chiark.greenend.org.uk/
+       { REJECT DEBIAN };
+
+<INITIAL> X-Loop X-Mailing-List To Resent-From Resent-To Resent-Reply-To Cc:
+  /lists.debian.org/i  { REJECT DEBIAN };
+
+<INITIAL> X-Loop X-Mailing-List To Resent-From Resent-To Resent-Reply-To Cc:
+ /debian-ctte/i  { REJECT DEBIAN };
+
+<INITIAL> X-Loop: /deity/i  { ASSIGN list deity;  REJECT MailingList  };
+
+<INITIAL> Sender From: /installer\@ftp-master.debian.org/
+        { ASSIGN list 'installed'; REJECT MailingList };
+
+
+<INITIAL> X-BeenThere List-Id: /lists.spi-inc.org/i  { REJECT SPI };
+
+
+<INITIAL> X-BeenThere List-Id: /freestandards.org/i, /lsb-/
+        { REJECT LSB };
+
+######################################################################
+######################################################################
+#                                                                    #
+#                 The mailing lists I subscribe to:                  #
+#                                                                    #
+######################################################################
+######################################################################
+# Do not wish to see acks for bug reports
+<INITIAL> From: /owner\@bugs.debian.org/, Subject: /Bug#\d+: Acknowledgement /
+       { DELETE };
+
+<INITIAL> Subject: /\[Soc-coordination\]/
+          { ANNOTATE -d X-Agent-list 'soc'; 
+            ASSIGN list 'soc';
+            REJECT MailingList };
+
+<INITIAL> To Cc Sender X-Mn-Key Envelope:
+        /customerservice\@mail.walgreens.com/        { REJECT MEDICAL };
+
+<MEDICAL> Subject: /Your prescription is not ready for pick up/
+         { REJECT ADDRESSED };
+
+<MEDICAL> All: /./  { ANNOTATE -d X-Agent-list 'walgreens'; 
+                      ASSIGN list 'walgreens';
+                      REJECT MailingList };
+
+<INITIAL> Subject: /\[Tome\]/i, To: /\@t-o-m-e.net/i
+         { ANNOTATE -d X-Agent-list 'tome'; ASSIGN list 'tome';
+          REJECT MailingList };
+# Mailing list moved
+<INITIAL> To: /PernAngband\@yahoogroups.com/i
+         { REJECT SPAM };
+
+<INITIAL> Subject: /MIGRATED to testing/
+          { ANNOTATE -d X-Agent-list 'testing'; ASSIGN list 'testing';
+            REJECT MailingList };
+<INITIAL> To Cc Sender X-Mn-Key Envelope:
+       /majordom\@aunet.org/i
+       { ASSIGN list 'linux-india'; REJECT MailingList };
+
+<INITIAL> To Cc Sender X-Mn-Key Envelope:
+        /careermag.com/,
+        /geowebinc.com/
+        { ASSIGN list 'jobs'; REJECT MailingList };
+
+<INITIAL> From Sender X-Mn-Key Envelope:
+ /(xandros)\@reply.exacttarget.com/i
+ {
+   ASSIGN list Xandros-Mailinglist;
+   BOUNCE jshardo@mail.bar.com;
+   VACATION off;  TR #list /A-Z/a-z/;
+   ANNOTATE -d X-MYLIST %#list.spool;
+   UNIQUE -a (%#list);
+   SAVE %#list.spool
+ };
+
+<RETRY,INITIAL> From Sender X-Mn-Key Envelope X-BeenThere:
+ /custserv\@(burpee)\.com/i
+ {
+    VACATION off;  
+    ANNOTATE -d X-Disposition Burpee-Mailinglist;
+    BOUNCE jshardo@mail.bar.com;
+    ASSIGN list '%1';
+    TR #list /A-Z/a-z/;
+    UNIQUE -a (%#list); SAVE %#list.spool 
+ };
+
+<RETRY, INITIAL> From Sender Envelope: BizBuzz { VACATION: OFF; DELETE };
+
+#
+# all known mailing list expression
+#
+
+# Work
+<SPAM,RETRY,INITIAL> From To Cc Sender X-Mn-Key Envelope Delivered-To X-BeenThere:
+ /(arms)\@opengroup.org/i,
+ /discuss\@(globus).org/i,
+ /(omg-list)-errors\@amethyst\.omg\.org/i,
+ /(opendce)\@opengroup.org/i,
+ /(analog)-info\@eagle-link\.org/i,
+ /(analog)\&harm\@eagle-link\.org/i,
+ /(ul-\w+)\@ultralog.net/i
+ {
+   ANNOTATE -d X-Disposition Work-Mailinglist;
+   ASSIGN list '%1';
+   REJECT MailingList
+ };
+
+# Debian Conference
+<RETRY,INITIAL> From To Cc Sender X-Mn-Key Envelope Delivered-To X-BeenThere:
+ /(debconf)-announce-bounces\@lists\.debconf\.org/i,
+ /(debconf)-discuss-bounces\@lists\.debconf\.org/i,
+ /(debconf)-discuss\@lists\.debconf\.org/i,
+ /(debconf)-team\@lists\.debconf\.org/i,
+ /debconf6-speaker-bounces\@lists\.(debconf)\.org/i,
+ /(debianbook)-announce-bounces\@lists\.debianbook\.info/i,
+ /(debianbook)-announce\@lists\.madduck\.net/i,
+ /(dmup)\@bar.com/i
+ {
+   ANNOTATE -d X-Disposition Debian-Mailinglist;
+   ASSIGN list '%1';
+   REJECT MailingList
+ };
+
+# Applications
+<RETRY,INITIAL> From To Cc Sender X-Mn-Key Envelope Delivered-To X-BeenThere List-Post:
+ /(agent)-users/i,
+ /(bbdb)-announce/i,
+ /(bbdb)-info/i,
+ /(blosxom)\@yahoogroups\.com/i,
+ /(c2man)\@research/i,
+ /owner-(c2man)/i,
+ /(cryptoapi-devel)-admin\@kerneli.org/i,
+ /(crm114-general)\@lists\.sourceforge\.net/i,
+ /(crm114-general)-bounces\@lists\.sourceforge\.net/i,
+ /(docbook-tools)\@bazar.conectiva.com.br/i,
+ /(ding)-owner\@gnus\.org/i,
+ /(ding)-owner\@lists\.math\.uh\.edu/i,
+ /(ding)-announce-owner\@lists\.math\.uh\.edu/i,
+ /(ding)-patches\@/i,
+ /(ding)-request/i,
+ /(ding)\@gnus\.org/i,
+ /(ding)-announce\@gnus\.org/i,
+ /(ding)\@hpc.uh.edu/i,
+ /(ding)\@ifi\.uio\.no/i,
+ /(ding)\@lists\.math\.uh\.edu/i,
+ /(emacs-pretest)ers\@gnu\.org/i,
+ /(fvwm-themes-devel)-admin\@lists.sourceforge.net/i,
+ /(fvwm)-owner\@lists\.math\.uh\.edu/i,
+ /(fvwm)\@fvwm.org/i,
+ /(fvwm)\@lists\.math\.uh\.edu/i,
+ /(fvwm-announce)-owner\@lists\.math\.uh\.edu/i,
+ /(fvwm-announce)\@fvwm\.org/i,
+ /(fvwm-announce)\@lists\.math\.uh\.edu/i,
+ /(fvwm-workers)-owner\@lists\.math\.uh\.edu/i,
+ /(fvwm-workers)\@fvwm.org/i,
+ /(fvwm-workers)\@lists\.math\.uh\.edu/i,
+ /owner-(fvwm)\@fvwm.org/i,
+ /owner-(fvwm-announce)\@fvwm\.org/i,
+ /owner-(fvwm-workers)\@fvwm.org/i,
+ /(gnu-arch-dev)-request\@gnu.org/i,
+ /(gnu-arch-dev)\@gnu.org/i,
+ /(gnu-arch-users)-request\@gnu.org/i,
+ /(gnu-arch-users)\@gnu.org/i,
+ /(listar)-announce\@listar.org/i,
+ /(listar)-support\@listar.org/i,
+ /(log4perl-devel)-admin\@lists.sourceforge.net/i,
+ /(mason-devel)\@geek-speak.net/i,
+ /(mason-devel)\@mail.ists.dartmouth.edu/i,
+ /(mason-help)\@geek-speak.net/i,
+ /(mason-help)\@mail.ists.dartmouth.edu/i,
+ /owner-(mason-devel)\@geek-speak.net/i,
+ /owner-(mason-help)\@geek-speak.net/i,
+ /(multi-tty)-bounces\@lists\.fnord\.hu/i,
+ /(pcgen)-users\@lists.sourceforge.net/i,
+ /(psgml-devel)-admin\@lists.sourceforge.net/i,
+ /(psgml-devel)\@lists.sourceforge.net/i,
+ /(psgml-user)-admin\@lists.sourceforge.net/i,
+ /(psgml-user)\@lists.sourceforge.net/i,
+ /linux-(diald)\@vger\.rutgers\.edu/i,
+ /noreply\@noreply\.(calorieking)\.com/i,
+ /owner-updates\@lists.(spambouncer).org/i,
+ /(rt-users)\@lists\.bestpractical\.com/i,
+ /(rt-users)-bounces\@lists\.bestpractical\.com/i,
+ /(rt-devel)\@lists\.bestpractical\.com/i,
+ /(rt-devel)-bounces\@lists\.bestpractical\.com/i,
+ /updates\@lists.(spambouncer).org/i,
+ /(vdt-discuss)-request\@LISTSERV\.FNAL\.GOV/i,
+ /(vdt-support)\@OPENSCIENCEGRID\.ORG/i,
+ /owner-(vdt-discuss)\@OPENSCIENCEGRID\.ORG/i,
+ /owner-(vdt-support)\@OPENSCIENCEGRID\.ORG/i,
+ /(ddt)-announce-admin\@lists.sourceforge.net/i,
+ /(ddt)-user-admin\@lists.sourceforge.net/i,
+ /(latex2html)/i,
+ /announce-bounces\@www1\.(codeweavers)\.com/i,
+ /info-(bbdb)/i,
+ /(dist)-users/i,
+ /owner-(dist)-users/i
+ {
+   ANNOTATE -d X-Disposition App-Mailinglist;
+   ASSIGN list '%1';
+   REJECT MailingList
+ };
+
+# Social
+<RETRY,INITIAL> From To Cc Sender X-Mn-Key Envelope Delivered-To X-BeenThere:
+ /(newmembers)\@batchmates\.com/i,
+ /administrator\@alumni\.(iitkgp)\.ernet\.in/i,
+ /all-alumni-bounces\@oit\.(umass)\.edu/i,
+ /alumnikgp\@alumni\.(iitkgp)\.ernet\.in/i,
+ /alumni\@hijli.(iitkgp).ernet.in/i,
+ /directory\@(iitfoundation).org/i,
+ /annualfund\@admin\.(umass)\.edu/i,
+ /newsletter\@(alumni)\.net/i,
+ /(summer-admin)-announce-2006\@googlegroups\.com/i,
+ /umalumni\@admin\.(umass)\.edu/i
+ {
+   ANNOTATE -d X-Disposition Alumni-Mailinglist;
+   ASSIGN list '%1';
+   REJECT MailingList
+ };
+
+# Trade mags
+<RETRY,INITIAL> From To Cc Sender X-Mn-Key Envelope Delivered-To X-BeenThere:
+ /\@(computerworld)\.com/i,
+ /\@cwflyris\.(computerworld)\.com/i,
+ /\@cwonline\.(computerworld)\.com/i,
+ /apc\@(apc)\.chtah\.com/i,
+ /\@(bzmedia)\.com/i,
+ /\@info\.(cmptech)direct\.com/i,
+ /(ddj)\@newsletters\.sdmediagroup\.com/i,
+ /(cmpmedia)\@newsletter\.smallbizresource\.com/i,
+ /(itworld)\@.*itwpub1.com/i,
+ /\@itwonline\.(itworld).com/i,
+ /(networkworld)\@nwwsubscribe\.com/i,
+ /infosecnewswire\@(scmagazine)\.com/i,
+ /nwinfo\@(networkworld)\.info/i,
+ /(sysadmin)magazine\@newsletters\.sdmediagroup\.com/i,
+ /(sysadmin)\@promos\.sdmediagroup\.com/i,
+ /(unixreview)\@newsletters\.sdmediagroup\.com/i,
+ /(wbg)\@enews\.webbuyersguide\.com/i,
+ /ciominute\@enews\.(cioinsight)\.com/i,
+ /\@eletters\.(whatsnewnow)\.com/i,
+ /ITworld.com\@itw\.(itworld)\.com/i,
+ /\@(networksolutions)\.com/i,
+ /InfoWeek\@update\.(informationweek)\.com/i,
+ /IK\@events\.(informationweek)\.com/i,
+ /(informationweek)\@.*\.cmptechnetwork\.com/i,
+ /\@.*\.(cmptech)network\.com/i,
+ /NC\@events\.(networkcomputing)\.com/i,
+ /NetworkComputing\@update.(networkcomputing)\.com/i,
+ /bestofeweek\@(eweek)-zannounce\.com/i,
+ /(crn)\@onlineevents\.cmptechnetwork\.com/i,
+ /subscribe\@(eweek)-info\.com/i,
+ /newsletters\@(scmagazine)us\.com/i,
+ /\@enews\.(eweek)\.com/i,
+ /(swmg)\@e-circ\.net/i,
+ /\@(eweek)-zannounce\.com/i,
+ /\@newsletter\.(infoworld)\.com/i,
+ /\@ifwonline\.(infoworld)\.com/i,
+ /\@ifwonline\.newsletters\.(infoworld)\.com/i,
+ /\@ifnewsletters\.newsletters\.(infoworld)\.com/i,
+ /enewsandviews\@enews\.(eweek)\.com/i,
+ /enterprisestrategies\@newsletter\.(infoworld)\.com/i,
+ /from_the_analysts\@newsletter\.(infoworld)\.com/i,
+ /government\@enews\.(eweek)\.com/i,
+ /\@(ifw)-media\.com/i,
+ /iwdaily\@newsletter\.(infoworld)\.com/i,
+ /iwdaily\@newsletter\.(infoworld)\.com/i,
+ /linuxreport\@newsletter\.(infoworld)\.com/i,
+ /news\@(idevnews)\.com/i,
+ /nwinfo\@(networkworld)\.info/i,
+ /openenterprise\@newsletter\.(infoworld)\.com/i,
+ /realitycheck\@newsletter\.(infoworld)\.com/i,
+ /voip\@enews\.(eweek)\.com/i
+ {
+   ANNOTATE -d X-Disposition Mailinglist;
+   ASSIGN list '%1';
+   REJECT MailingList
+ };
+
+#Linux
+<RETRY,INITIAL> From To Cc Sender X-Mn-Key Envelope Delivered-To X-BeenThere:
+ /(linux-dce)-list\@bu.edu/i,
+ /(linux-india)\@lists\.linux-india\.org/i,
+ /(linux-kernel)-digest/,
+ /(linux-kernel)-owner\@vger.kernel.org/,
+ /(linux-kernel)/,
+ /(linux-kernel)\@vger.kernel.org/,
+ /(vcs-pkg)\@lists\.madduck\.net/i,
+ /(backports-users)\@lists\.backports\.org/i,
+ /owner-(linux-india-general)\@aunet\.org/i,
+ /owner-(linux-kernel)-digest\@vger.rutgers.edu/,
+ /(linux-india)\@aunet\.org/i,
+ /(linux-india-\w+)\@lists\.linux-india\.org/i,
+ /(linux-india-general)\@aunet\.org/i,
+ /owner-(linux-india)\@aunet.org/i
+ {
+   ANNOTATE -d X-Disposition Linux-Mailinglist;
+   ASSIGN list '%1';
+   REJECT MailingList
+ };
+
+# Security
+# Cryptogram
+<RETRY,INITIAL> Sender Reply-To: /schneier\@SCHNEIER.COM/i, 
+                                 /schneier\@COUNTERPANE.COM/i,
+                        Subject: /CRYPTO-GRAM/
+  {
+   ANNOTATE -d X-Disposition Security-Mailinglist;
+   ASSIGN list 'crypto-gram';
+   REJECT MailingList
+ };
+
+<RETRY,INITIAL> From To Cc Sender X-Mn-Key Envelope Delivered-To X-BeenThere:
+ /(cert)-advisory\@.*cert\.org/i,
+ /(infosec)newswire\@westcoast\.com/i,
+ /\@(sans)\.org/i,
+ /(crypto-gram)-list\@listserv\.modwest\.com/i,
+ /(crypto-gram)-list\@schneier\.com/i,
+ /(labeled-nfs)\@linux-nfs\.org/i,
+ /(labeled-nfs)-bounces\@linux-nfs\.org/i,
+ /(selinux-devel)-bounces\@lists\.alioth\.debian\.org/i,
+ /(selinux-devel)\@lists\.alioth\.debian\.org/i,
+ /(selinux-user)-bounces\@lists\.alioth\.debian\.org/i,
+ /(selinux-user)\@lists\.alioth\.debian\.org/i,
+ /owner-(selinux)\@tycho.nsa.gov/i,
+ /(selinux)\@tycho\.nsa\.gov/i,
+ /announce-bounces\@(selinux-symposium)\.org/i,
+ /paper-committee\@(selinux-symposium)\.org/i,
+ /ConsensusSecurityVulnerabilityAlert\@(sans)\.org/i,
+ /security\@enews\.(eweek)\.com/i,
+ /securityadviser\@newsletter\.(infoworld)\.com/i,
+ /announce\@(selinux-symposium)\.org/i,
+ /bounce\@mailings\.(sans)\.org/i,
+ /summit-bounces\@(selinux-symposium)\.org/i,
+ /summit\@(selinux-symposium)\.org/i
+ {
+   ANNOTATE -d X-Disposition Security-Mailinglist;
+   ASSIGN list '%1';
+   REJECT MailingList
+ };
+
+# Societies
+<RETRY,INITIAL> From X-Sender To Cc Sender X-Mn-Key Envelope Delivered-To X-BeenThere:
+ /(acm)-pdc-announce\@ACM.ORG/i,
+ /(acm)bulletin\@ACM\.ORG/i,
+ /pervasive\@(computer)\.org/i,
+ /membernet\@hq\.(acm)\.org/i,
+ /mn-subscribers\@listserv\.(acm)\.org/i,
+ /(acm)-bulletin\@ACM\.ORG/i,
+ /(ieee)-enotice\@ieee\.org/i,
+ /conference-services\@(ieee)\.org/i,
+ /careernavigator\@(ieee)\.org/i,
+ /special-mailing\@(ieee)\.org/i,
+ /IEEE-Annual-Election\@(ieee)\.org/i,
+ /(ieee)-enotice\@ieee\.org/i,
+ /(techalert)@ieee\.org/i,
+ /l\.book\@(ieee)\.org/i,
+ /owner-(ieee)-e-notice\@bmsmail3.ieee.org/i,
+ /owner-theinstitute-news\@bmsmail3\.(ieee)\.org/i,
+ /the-institute\@(ieee).org/i,
+ /owner-(ieee-centraltn)-members\@list\.vanderbilt\.edu/i,
+ /owner-institute-news\@boldfish\.(ieee)\.org/i,
+ /membernet\@hq\.(acm)\.org/i,
+ /Anne_Dickison\@(usenix)\.org/i,
+ /Mike_Swift\@(usenix)\.org/i,
+ /Jeff_Chase\@(usenix)\.org/i,
+ /Paul_Anderson\@(usenix)\.org/i,
+ /office\@(usenix)\.org/i,
+ /pd\@(acm)\.org/i,
+ /(technews)\@.acm\.org/i,
+ /(technews)\@.*\.acm\.org/i,
+ /the-institute\@(ieee)\.org/i,
+ /tipservice\@(acm)\.org/i
+ {
+   ANNOTATE -d X-Disposition prof-soc-Mailinglist;
+   ASSIGN list '%1';
+   REJECT MailingList
+ };
+
+
+# Charities
+<RETRY,INITIAL> From To Cc Sender X-Mn-Key Envelope Delivered-To X-BeenThere:
+ /redcross-email\@usa.(redcross).org/i,
+ /chapter\@hot-(redcross)\.org/i,
+ /sierraclub\.giving\@(sierraclub).org/i,
+ /membership\.services\@(sierraclub)\.org/i,
+ /newsletter\@(mercycorps)\.org/i,
+ /\@(joslin)\.harvard\.edu/i,
+ /\@(secondharvest)\.org/i,
+ /newsletter\@(tnc)\.org/i,
+ /ecomments\@(wwf)us\.org/i,
+ /member\@(tnc)\.org/i,
+ /email\@(unicef)usa\.org/i,
+ /insider\@(sierraclub).org/i
+ {
+   ANNOTATE -d X-Disposition prof-soc-Mailinglist;
+   ASSIGN list '%1';
+   REJECT MailingList
+ };
+
+<RETRY,INITIAL> From To Cc Sender X-Mn-Key Envelope Delivered-To X-BeenThere:
+ /showtime\@(sho)\.delivery\.net/i
+ {
+   ASSIGN list sho;
+   BOUNCE jshardo@mail.bar.com;
+   VACATION off;  TR #list /A-Z/a-z/;
+   ANNOTATE -d X-MYLIST %#list.spool;
+   UNIQUE -a (%#list);
+   SAVE %#list.spool
+ };
+
+
+# Services
+<RETRY,INITIAL> From To Cc Sender X-Mn-Key Envelope Delivered-To X-BeenThere:
+ /customercare\@(relianceindiacall)\.com/i,
+ /\@(hertz)\.com/i,
+ /service\@(kayak)\.com/i,
+ /(discovercard)\@service\.discovercard\.com/i,
+ /(discovercard)\@email\.discovercard\.com/i,
+ /\@offers.(brookstone).com/i,
+ /\@.*\.(united)\.com/i,
+ /support\@(pragprog)\.com/i,
+ /Support\@(creditsecure)\.com/i,
+ /\@email.(gemoney).com/i,
+ /(drsimon)@websystem2\.com/i,
+ /\@(fandango)\.com/i,
+ /PalmInc\@News\.(palm)newsletters\.com/i,
+ /noreply\@(sourceforge)\.net/i,
+ /no-reply\@mailer\.(last)\.fm/i,
+ /Directv\@(directv)\.com/i,
+ /Directv\@(directv)\.quris\.net/i,
+ /noreply-(orkut)\@google\.com/i,
+ /ebill\@(directv)\.com/i,
+ /ebpp\@(dtccom)\.net/i,
+ /hhonors\@h2\.(hilton)hhonors\.com/i,
+ /hhonors\@(hilton)hhonors\.net/i,
+ /hiltonhotels\@(hilton)resconfirm\.com/i,
+ /\@(tiaa-cref)\.org/i,
+ /\@messaging\.(tiaa-cref)\.org/i,
+ /(fool)\@foolsubs\.com/i,
+ /\@(ProxyVote)\.com/i,
+ /(googlealerts)-noreply\@google\.com/i,
+ /discship\@(netflix)\.com/i,
+ /discship\@(netflix)\.com/i,
+ /\@(geico)mail\.com/i,
+ /customerservice\@cards.(bankofamerica)\.com/i,
+ /bankofamerica\@replies\.em\.(bankofamerica)\.com/i,
+ /billpay\@billpay.(bankofamerica)\.com/i,
+ /OnlineServices\@(americanexpress)\.com\.au/i,
+ /\@ecerts\.(americanexpress)\.com/i,
+ /\@email\.(americanexpress)\.com/i,
+ /SiteUpdate\@(myuhc)\.1nc030\.com/i,
+ /info\@(netflix)\.com/i,
+ /newsletter\@my(treo)\.net/i,
+ /newsletter\@(treo)central-mailings\.com/i,
+ /newsletter\@(hometheater)mag\.email\.primedia\.com/i,
+ /(hometheater)\@primediamags\.chtah\.com/i,
+ /\@(profantasy)\.com/i,
+ /travelercare\@(orbitz)\.com/i,
+ /paypal\@notifications\.(paypal)\.com/i,
+ /\@email\.(countrywide)\.com/i,
+ /CountrywideSubscriptionServices\@(countrywide)\.com/i,
+ /(tigerdirect)\@promo\.tigeronline\.com/i,
+ /usmail\@(expedia)mail\.com/i,
+ /\@aadvantage\.info\.(aa)\.com/i,
+ /\@info\.(aa)\.com/i,
+ /\@checkin\.info\.(aa)\.com/i,
+ /mytoyota\@(toyota)partsandservice\.com/i,
+ /webmaster\@(relianceindiacall)\.com/i,
+ /Customercare\@(relianceindiacall)\.com/i,
+ /eAccountNotify\@(verizon)wireless\.com/i,
+ /newsletters\@(boston)\.com/i,
+ /alerter\@(my-cast)\.com/i
+ {
+   ANNOTATE -d X-Disposition Services-Mailinglist;
+   ASSIGN list '%1';
+   REJECT MailingList
+ };
+
+# Sales
+<RETRY,INITIAL> From To Cc Sender X-Mn-Key Envelope Delivered-To X-BeenThere:
+ /(rediff-shopping)-noreply\@listserver\.rediff\.com/i,
+ /AbtElectronics\@newsletter\.(abtelectronics)\.com/i,
+ /BarnesandNoble_Membership\@email\.(bn)\.com/i,
+ /BarnesandNobleEmail\@email\.(bn)\.com/i,
+ /dell\@outletbusiness\.(dell)\.com/i,
+ /Dell_Automated_Email\@(dell)\.com/i,
+ /eBags\@.*\.(eBags)\.com/i,
+ /(foodnetwork)store\@foodnewsletters\.com/i,
+ /FoodNetworkStore\.com\@email-(foodnetwork)store\.com/i,
+ /\@shop\.(hammacher)\.com/i,
+ /Hammacher\.custcare\@(hammacher)\.com/i,
+ /firststreet\@email\.(firststreet)online\.com/i,
+ /\@email\.(foodnetwork)store\.com/i,
+ /email\@(firststreet)\.messages1\.com/i,
+ /(harmony)\@corp\.shopharmony\.com/i,
+ /(improvements)\@e\.improvementscatalog\.com/i,
+ /winzip-announce\@(winzip)\.com/i,
+ /specials\@email\.(officedepot)\.com/i,
+ /specials\@(officedepot)\.com/i,
+ /support\@email\.(officedepot)\.com/i,
+ /(gentleware)_AG\@mail\.vresp\.com/i,
+ /Marketing\@(extendedstay)hotels\.com/i,
+ /\@(drsfostersmith)\.com/i,
+ /(fogcreek)\@.*whatcounts\.com/i,
+ /(homefocus)\@e.homefocuscatalog.com/i,
+ /support\@(officedepot).chtah.com/i,
+ /\@.*\.the(planet)\.com/i,
+ /hm1\@(handmark).net/i,
+ /promo\@email\.(newegg)\.com/i,
+ /info\@newegg\.com/i,
+ /mailing\@(handmark).com/i,
+ /(josabank)\@shop.josbank.com/i,
+ /News\@mail\.(crutchfield)\.com/i,
+ /News\@messages\.(crutchfield)\.com/i,
+ /greatdeals\@rent\.(thrifty)email\.net/i,
+ /(Thermador)\@xmr3\.com/i,
+ /support\@(softwaremag)\.com/i,
+ /\@.*\.(verizonwireless).com/i,
+ /\@info1\.(quicken)\.com/i,
+ /TechSaver\@eletters\.(ztechsaver)\.com/i
+ {
+   ANNOTATE -d X-Disposition Sales-Mailinglist;
+   ASSIGN list '%1';
+   REJECT MailingList
+ };
+
+# Lugs and such
+<RETRY,INITIAL> From To Cc Sender X-Mn-Key Envelope Delivered-To X-BeenThere:
+ /(nashdl)\@googlegroups\.com/i,
+ /(nlug)-request\@linuxlists.org/i,
+ /(nlug)\@linuxlists.org/i,
+ /(nlug-biz)-request\@linuxlists.org/i,
+ /(nlug-biz)\@linuxlists.org/i,
+ /(nlug-newbies)-request\@linuxlists.org/i,
+ /(nlug-newbies)\@linuxlists.org/i,
+ /(nlugsc)-request\@linuxlists.org/i,
+ /(nlugsc)\@linuxlists.org/i
+ {
+   ANNOTATE -d X-Disposition LUG-Mailinglist;
+   ASSIGN list '%1';
+   REJECT MailingList
+ };
+
+#Misc
+<RETRY,INITIAL> From To Cc Sender X-Mn-Key Envelope Delivered-To X-BeenThere:
+ /announce\@crossover\.(codeweavers)\.com/i,
+ /announce-bounces\@crossover\.(codeweavers)\.com/i,
+ /mobile_(gaming)\@egroups.com/i
+ {
+   ANNOTATE -d X-Disposition Misc-Mailinglist;
+   ASSIGN list '%1';
+   REJECT MailingList
+ };
+
+<RETRY> /./  { ANNOTATE -d X-Lost Retry; REJECT LOST };
+
+# related mails sent off the list
+<INITIAL> Subject:
+        /\[LIH\]/           { ASSIGN list linux-india-help;
+                              ASSIGN subject '%s';
+                              STRIP Subject;
+                              RESYNC;
+                              SUBST #subject /\[LIH\]/[LIH] [PERSONAL]/i;
+                              RESYNC;
+                              REJECT MailingList };
+<INITIAL> Subject:
+        /\[LIG\]/           { ASSIGN list linux-india-general;
+                              ASSIGN subject '%s';
+                              STRIP Subject;
+                              RESYNC;
+                              SUBST #subject /\[LIG\]/[LIG] [PERSONAL]/i;
+                              RESYNC;
+                              REJECT MailingList };
+
+
+# Miscellaneous stuff
+<INITIAL> From To Cc Sender X-Mn-Key Envelope:
+        /perl5-porters/i      { ASSIGN list dist;     REJECT MailingList }
+        /linux-alert/i        { ASSIGN list security; REJECT MailingList }
+        /infophil.com/i       { ASSIGN list misc;     REJECT MailingList }
+        ;
+
+
+<INITIAL> Return-Path: /ding-request/i  { ASSIGN list ding;
+                                          REJECT MailingList };
+
+#<MAILAGENT> {   ASSIGN subject '%s';
+#                STRIP Subject;
+#                RESYNC;
+#                SUBST #subject /^\(agent-users\s\d+\)//i;
+#                ANNOTATE -d Subject %#subject;
+#                RESYNC;
+#                REJECT ML};
+
+### This is a work related mail
+##<INITIAL> From: /dce\@spseg.ENET.bar.com/i { REJECT DigitalDCE };
+##<INITIAL> From: /ctg\@spseg.ENET.bar.com/i { REJECT DigitalDCE };
+##<INITIAL> From: /usg_osf\@unifix.ENET.bar.com/i { REJECT GCIF };
+##<INITIAL> From: /\"UNIFIX::USG_OSF\"\@unifix.ENET.bar.com/i { REJECT GCIF };
+##<INITIAL> From: /UNIFIX::USG_OSF/i { REJECT GCIF };
+##<INITIAL> From: /\@unifix.ENET.bar.com/i { REJECT GCIF };
+### Anything else goes to the bcast address
+##<INITIAL> To Cc Sender: /sdt_reports/, /spseg/
+##      { VACATION off; UNIQUE -a (bcast); SAVE bcast };
+
+<INITIAL>  Subject: /CFV: Proposal/ { REJECT VOTE };
+
+<INITIAL> X-SBClass:/Admin/       { REJECT ADMIN };
+
+<INITIAL> X-Loop: /\d+\@bugs.debian.org/i      { REJECT DEBIANBUGS };
+<INITIAL> Sender: /debbugs\@master.debian.org/ { REJECT DEBIAN };
+
+
+######################################################################
+######################################################################
+#                                                                    #
+#                     Handle Debian Related Mail                     #
+#                                                                    #
+######################################################################
+######################################################################
+# Handle My own bugs
+<DEBIANBUGS> To Resent-CC: /Manoj Srivastava/
+        { REJECT MYBUGS };
+
+<MYBUGS> X-Debian-PR-Package: /([-\w]+)/ 
+      { ANNOTATE -d X-Agent-list 'pkg-%1';
+          ASSIGN list 'pkg-%1';
+          REJECT MailingList };
+
+# Resent-To: Manoj Srivastava is for bugs I reported
+<MYBUGS> /./
+        { ASSIGN list 'debian';
+          ANNOTATE -d X-Agent-list unknown-bug-list;
+          REJECT MailingList;
+        };
+
+#handle policy bugs
+<DEBIANBUGS> X-Debian-PR-Package: /debian-policy/
+        { ASSIGN list 'debian-policy';
+          ANNOTATE -d X-Agent-list debian-list;
+          REJECT MailingList;
+        };
+
+<DEBIANBUGS> X-Debian-PR-Package: /general/
+        { ASSIGN list 'debian-devel';
+          ANNOTATE -d X-Agent-list general-bugs;
+          REJECT MailingList;
+        };
+
+<DEBIANBUGS> X-Debian-PR-Package: /wnpp/
+        { ASSIGN list 'wnpp';
+          ANNOTATE -d X-Agent-list debian-list;
+          REJECT MailingList;
+        };
+
+<DEBIANBUGS> Subject: /\[proposal\]/i, X-Debian-PR-Package: /debian-policy/
+        { ASSIGN list 'debian-policy';
+          ANNOTATE -d X-Agent-list debian-list;
+          REJECT MailingList;
+        };
+
+<DEBIANBUGS> All:  /./  { VACATION OFF; SAVE debian-bugs.spool; };
+
+<DEBIAN> X-Loop:
+  /(debian-bugs-(closed|forwarded))(-(request|dist))?\@lists.debian.org/i
+   { REJECT ClosedBugs };
+
+
+<DEBIAN> X-Loop X-Mailing-List To Resent-From Resent-To Resent-Reply-To Cc :
+   /(debian-ctte+)(-(request|dist|private))?\@debian.org/gi
+   { ASSIGN list '%1';
+     ANNOTATE -d X-Agent-list debian-list;
+     REJECT MailingList;
+   };
+
+
+<DEBIAN>  Subject: /CFV: Proposal/, X-Loop: /debian-vote/ { REJECT VOTE };
+
+<DEBIAN> X-Loop: /(debian-[\w-]+)(-(request|dist))?\@lists.debian.org/gi
+   { ASSIGN list '%1';
+     SUBST #list /-(digest|request|dist)//gi;
+     SUBST #list /devel-changes/changes/i;
+     ANNOTATE -d X-Agent-list debian-list;
+     REJECT MailingList;
+   };
+
+<VOTE> Body: /^\s*I vote\s+\w+\s+on/i
+        { UNIQUE -a (vote); VACATION off; MESSAGE ~/etc/voteack; 
+          SAVE vote; };
+<VOTE> All:  /./  { REJECT DEBIAN };
+
+<DEBIAN> X-Loop X-Mailing-List To Resent-From Resent-To Resent-Reply-To Cc :
+   /(debian-[\w-]+)(-(request|dist))?\@lists.debian.org/gi
+   { ASSIGN list '%1';
+     SUBST #list /-(digest|request|dist)//gi;
+     SUBST #list /devel-changes/changes/i;
+     ANNOTATE -d X-Agent-list debian-list;
+     REJECT MailingList;
+   };
+
+<DEBIAN> X-Loop X-Mailing-List To Resent-From Resent-To Resent-Reply-To Cc:
+   /john.doe/ { ANNOTATE -d X-Agent-list Unknown;
+                          ASSIGN list 'debian'; REJECT MailingList };
+
+<DEBIAN>  All:  /./     { ANNOTATE -d X-Agent-list Unknown;
+                          REJECT RETRY};
+
+<ClosedBugs> {
+## construct text string suitable for single-quoting
+        ASSIGN temp %[From]%_=>%_%[Envelope-To]%_(%[Subject]);
+        SUBST #temp /['\\\\]/\\\\$1/g;
+## now write the log
+        DO add_log ("[$mfile]%_".'%#temp');
+        PERL sbin/mailagent.deblog.pl;
+        };
+
+<LSB>  Sender List-Id X-BeenThere: /(lsb-[\w-]+)(-(request|dist))?\@/gi
+   { ASSIGN list '%1';
+     SUBST #list /-(digest|request|dist)//gi;
+     SUBST #list /devel-changes/changes/i;
+     ANNOTATE -d X-Agent-list lsb-list;
+     REJECT MailingList;
+   };
+<SPI>  Sender List-Id X-BeenThere: /(spi-[\w-]+)(-(request|dist))?\@/gi
+   { ASSIGN list '%1';
+     SUBST #list /-(digest|request|dist)//gi;
+     ANNOTATE -d X-Agent-list spi-list;
+     REJECT MailingList;
+   };
+####
+#### Ok, so this is not from a mailing list.
+####
+<INITIAL> X-Loop X-Mailing-List To Resent-From Resent-To Resent-Reply-To Cc:
+ /john.doe\@debian.org/i  {  ANNOTATE -d X-Agent-list Unknown;
+                          ASSIGN list debian; REJECT MailingList };
+<INITIAL> X-Loop X-Mailing-List To Resent-From Resent-To Resent-Reply-To Cc:
+ /secretary\@debian.org/i  {  ANNOTATE -d X-Agent-list Secretary;
+                              ASSIGN list 'secretary'; REJECT MailingList };
+<INITIAL> X-Loop X-Mailing-List To Resent-From Resent-To Resent-Reply-To Cc:
+ /\@packages.debian.org/i  {  ANNOTATE -d X-Agent-list Unknown;
+                              ASSIGN list debian; REJECT MailingList };
+
+<INITIAL> X-SBClass:/Blocked/   { REJECT BLOCKED };
+
+
+<INITIAL> From:   john.doe   { ANNOTATE -d X-Agent-list me; VACATION off;
+                               REJECT SRIVASTA };
+
+<SRIVASTA> Subject: /Test Vacation/i  { MESSAGE ~/etc/vacation };
+<SRIVASTA> Subject: /LurkFTP Output/i { SAVE admin };
+<SRIVASTA>                            { ASSIGN list outgoing;
+                                        ANNOTATE -d X-Agent-list Outgoing;
+                                        REJECT MailingList };
+#<MailingList> !X-Spam-Status: /No/
+#    { ANNOTATE -d X-MYLIST %#list.spool; ANNOTATE -d X-Lost MailingList; REJECT LOST };
+
+######################################################################
+######################################################################
+#                                                                    #
+#                     All non mailing list mail                      #
+#                                                                    #
+######################################################################
+######################################################################
+<INITIAL> From:  dhaley { REJECT ADDRESSED };
+
+<!SPAM> Subject: /get pgp key/i { SAVE admin; MESSAGE ~/.pgpkey };
+<!SPAM> Subject: /get gpg key/i { SAVE admin; MESSAGE ~/.gpgkey };
+
+<_SEEN_>        { STRIP X-Filter; REJECT post_process };
+<post_process>  { VACATION off;  SAVE test; };
+
+######################################################################
+######################################################################
+#                                                                    #
+#                     Newsletters and all                            #
+#                                                                    #
+######################################################################
+######################################################################
+
+<INITIAL> X-Loop X-Mailing-List To Resent-From Resent-To Resent-Reply-To Cc:
+ /john.doe\@ieee.org/i  {  ANNOTATE -d X-List Newsletters;
+                         REJECT NEWSLETTERS };
+
+<NEWSLETTERS,INITIAL> Relayed From Reply-To Sender:
+        /AppDevTrends\@bdcimail.com/i,
+        /AppDevTrends\@101communications-news\.com/i,
+        /Data_Packet\@newsletters.theneteconomy.com/i,
+        /Ent\@101communications-news\.com/i,
+        /FareTracker.*\@faretracker.expedia.customer-email.com/i,
+        /IQUpdate\@bdcimail.com/i,
+        /\@update.informationweek.com/i,
+        /LinuxReport\@bdcimail.com/i,
+        /LinuxWorld\@emailch.com/i,
+        /MSNHotOffers_\d+\@msnnewsletters.customer-email.com/i,
+        /MyGarage\@AlconeMarketing.com/i,
+        /news\@letters.infogate.com/i,
+        /NetworkComputing\@events.cmp.netline.com/i,
+        /OpenSource\@bdcimail.com/i,
+        /ScoopHelp\@Bellevue.com/i,
+        /SecurityAlert\@bdcimail.com/i,
+        /SecurityWatch\@bdcimail.com/i,
+        /SoftwareMagazine\@emailch.com/i,
+        /SoftwareMagazine\@processrequest.com/i,
+        /Semiconbayinfo-owner\@listbot.com/i,
+        /The_InfoWorld_Scoop\@.*com/i,
+        /Williams-Sonoma\@service\.williams-sonoma\.com/i,
+        /\@.*\.americanexpress.com/i,
+        /\@.*\.computerworld.com/i,
+        /\@.*\.iomega.com/i,
+        /\@deerfield.com/,
+        /\@directsolutionsinc.com/i,
+        /\@etrade.0mm.com/i,
+        /\@garden.m0.net/i,
+        /\@ieee.org/i,
+        /\@kgpnet.org/i,
+        /\@members.clickrewards.com/i,
+        /\@msgexpress.net/i,
+        /\@news.clickrewards.com/i,
+        /\@softwaremag.com/i,
+        /\@suretrade.com/i,
+        /\@travelocity.com/i,
+        /\@usenix.org/i,
+        /all\@dtccom.net/i,
+        /barnesandnoble.com/i,
+        /betweenthelines\@daily.informationweek.com/i,
+         /burpeeseed\@burpeeseed.ve1.biz/i,
+        /chhedis\@kgpnet.org/i,
+        /Connection\@administaff.com/i,
+         /theneteconomy\@eletters1.ziffdavis.com/i,
+         /cujnews\@cuj.email-publisher.com/i,
+         /custserv\@burpee\.com/i,
+        /developerWorks\@ibm.ihost.com/i,
+        /electronics-news\@amazon\.com/i,
+        /EthicsMatters\@bdcimail.com/i,
+        /free\@arttoday.com/i,
+        /googlealerts-noreply\@google\.com/i,
+        /heimdal-announce\@sics.se/i,
+        /imaginemedia.com/i,
+        /itnews\@.*itwpub1.com/i,
+        /\@iqmailer.net/i,
+        /linuxworld\@.*itwpub1.com/i,
+        /members\@batchmates.com/i,
+        /memberservices\@travelocity.m0.net/,
+        /michael\@omg.org/i,
+        /mobicon\@mobicon.org/i,
+        /lw_ent\@idg.email-sr\@dsizone\d*\.net/i,
+        /smail\@dsi-sigs.net/i,
+        /the-institute\@ieee\.org/i,
+        /tools-news\@amazon\.com/i,
+        /urnews\@cmp.com/i,
+        /unixreview\@dsizone\d*\.net/i,
+         /urnews\@unixreview\.email-publisher\.com/i,
+        /updates\@rhinosoft.com/i,
+        /Williams_Sonoma\@.*\.customer-contact\.net/i,
+        /vmwarenews\@vmware.m0.net/i,
+        /.*travelocity.com/i,
+        /sans\@sans.org/i,
+        /dana\@omg.org/i,
+        /SLED/i, /pppcom/i,
+        /\@insider.cheaptickets.com/,
+        /\@intuit\.0mm\.com/,
+        /altavista-software.com/,
+        /compare.net/,
+        /\@TigerDirect.com/i,
+        /lists.sierra.com/,
+        /(rails)\.Book\.Buyers\@pragprog\.com/i,
+        /news.quicken.com/,
+        /InformationWeek\@update.informationweek.com/i,
+        /SDonlineUpdate\@softwaredevelopment.email-publisher.com/i,
+        /policyinfo\@HQ.ACM.ORG/i,
+        /quicken_newsletters\@newsletter.quicken.com/i,
+        /quickenmortgage/
+ { ANNOTATE -d X-List Newsletters; REJECT NEWSLETTERS };
+
+
+######################################################################
+######################################################################
+#                                                                    #
+#                    Now, take care of spammers.                     #
+#                                                                    #
+######################################################################
+######################################################################
+#<!SPAM> X-SBClass: /Spam/i                {
+#       ANNOTATE -d X-Spam Smells like spam blocked by spambounce;
+#        REJECT SPAM };
+
+#<!SPAM> To Envelope Relayed From Reply-To Message-Id: "SPAM" {
+#       ANNOTATE -d X-Spam Smells like spam from %1;
+#       REJECT SPAM };
+
+#<!SPAM> To Envelope Relayed From Reply-To Message-Id: ".spamlist-aol" {
+#       ANNOTATE -d X-Spam Smells like spam-aol from %1;
+#       REJECT SPAM };
+
+#<!SPAM> To Envelope Relayed From Reply-To Message-Id: ".spamlist-cyberpromo" {
+#       ANNOTATE -d X-Spam Smells like spam-cyberpromo" from %1;
+#       REJECT SPAM };
+
+#<!SPAM> To Envelope Relayed From Reply-To Message-Id: ".spamlist-iocom" {
+#       ANNOTATE -d X-Spam Smells like spam-iocom from %1;
+#       REJECT SPAM };
+
+#<!SPAM> To Envelope Relayed From Reply-To Message-Id: ".spamlist-llv" {
+#       ANNOTATE -d X-Spam Smells like spam-llv" from %1;
+#       REJECT SPAM };
+
+#<!SPAM> To Envelope Relayed From Reply-To Message-Id: ".spamlist-mindspring" {
+#       ANNOTATE -d X-Spam Smells like spam-mindspring from %1;
+#       REJECT SPAM };
+
+#<!SPAM> To Envelope Relayed From Reply-To Message-Id: ".spamlist-nancynet" {
+#       ANNOTATE -d X-Spam Smells like spam-nancynet from %1;
+#       REJECT SPAM };
+
+#<!SPAM> To Envelope Relayed From Reply-To Message-Id: ".spamlist-znet" {
+#       ANNOTATE -d X-Spam Smells like spam-znet from %1;
+#       REJECT SPAM };
+
+#<!SPAM>        To Envelope Relayed From Reply-To Message-Id:
+#    "/var/spamdb/mailagent.sp" {
+#       ANNOTATE -d X-Spam Smells like spam-db from %1;
+#       REJECT SPAM };
+
+#<!SPAM> X-[0-9]: /cyberpromo\.com/i     {
+#        ANNOTATE -d X-Spam Smells like spam from cyberpromo;
+#       REJECT SPAM };
+
+#<!SPAM> X-Mailer: /floodgate/i {
+#        ANNOTATE -d X-Spam Smells like spam from floodgate;
+#       REJECT SPAM };
+
+
+# The message id should really match this.
+# Message-id: !/\@([-a-zA-Z0-9]+\.)+[a-zA-Z]{2,3}\>\s*$/ { REJECT MAY_SPAM };
+
+#<!SPAM> Message-ID: /\<[^\@]*\>/, /\@.*\@/ {
+#        ANNOTATE -d X-Spam Smells like a bogus message ID;
+#       REJECT SPAM };
+
+
+#<LOST> Comments: /^Authenticated sender/i       {
+#        ANNOTATE -d X-Spam Smells like spam;
+#        REJECT SPAM };
+
+<!SPAM>  From: /\@.*\.com\.ar/
+        { ANNOTATE -d X-List Spam from argentina; REJECT spam };
+
+<INITIAL> Comments: /^Authenticated sender/i      { REJECT MAY_SPAM };
+
+<MAY_SPAM> Subject: /money/i        { ANNOTATE -d X-Spam Money; REJECT SPAM };
+<MAY_SPAM> X-Uidl: /^\w+$/i         { ANNOTATE -d X-Spam X-Uidl; REJECT SPAM };
+<MAY_SPAM> Precedence: /^bulk/i     { ANNOTATE -d X-Spam Bulk; REJECT SPAM };
+<MAY_SPAM>                          { REJECT INITIAL };
+
+<INITIAL> From: postmaster, mailer-daemon, uucp   { VACATION off;  REJECT BAD };
+
+<BAD> Body: /^X-Mailer: dist/   { REJECT BAD_AGENT };
+<BAD_AGENT> Body: /^Precedence: bulk/, /^Subject: .*patch/i     { DELETE };
+<BAD, BAD_AGENT> !X-Spam-Status: /No/ { ANNOTATE -d X-Lost Bad; REJECT LOST };
+<BAD, BAD_AGENT>        { REJECT BOUNCED };
+
+######################################################################
+######################################################################
+#                                                                    #
+#                           Dispose of Mail                          #
+#                                                                    #
+######################################################################
+######################################################################
+#<ADMIN>  !X-Spam-Status: /No/ { ANNOTATE -d X-Lost Admin; REJECT LOST };
+<ADMIN> All: /./        {  PERL sbin/mailagent.archive.pl Admin %H %Y %m};
+<ADMIN>                       { VACATION off;  SAVE admin };
+
+<LOST,INITIAL> From:  /plaistedg\@erols.com/, /67_camaro\@charter.net/
+   { ANNOTATE -d X-List Known; REJECT ADDRESSED };
+
+<BOUNCED> All: /./        {  PERL sbin/mailagent.archive.pl bounced %H %Y %m};
+<BOUNCED>        { SAVE bounced.spool };
+
+
+<MailingList> All: /./
+   {  TR #list /A-Z/a-z/; PERL sbin/mailagent.archive.pl %#list %H %Y %m};
+<MailingList> { VACATION off;  TR #list /A-Z/a-z/;
+                ANNOTATE -d X-MYLIST %#list.spool;
+                UNIQUE -a (%#list); SAVE %#list.spool };
+<!SPAM> Relayed From Reply-To Sender:
+        /skymall_information\@skymall.com/i,
+        /orders\@amazon.com/i
+        { VACATION off;  UNIQUE -a (orders); SAVE orders };
+
+<SPAM>                   { VACATION off; SAVE spam };
+#ONCE (%r, spammessage, 1d) MESSAGE ~/etc/spam;
+
+# The rest is potentially personal mail
+##<INITIAL> X-SBClass:/OK/        { REJECT ADDRESSED };
+<INITIAL> To Cc Sender:
+    /john.doe\@debian\.org/,
+    /john.doe\@acm\.org/,
+    /john.doe\@datasync\.com/,
+    /john.doe\@bar\.com/,
+    /john.doe\@.+\.internal\.bar\.com/,
+    /m\.john.doeva\@opengroup\.org/,
+    /foo.com/i { ANNOTATE -d X-List Work; REJECT ADDRESSED }
+        ;
+
+# Not explicitely for me. Mail lost or bcc'ed.
+<INITIAL> !To !Cc: /john.doe/i     { ANNOTATE -d X-Lost Not-me; REJECT LOST };
+
+
+<BLOCKED,INITIAL> !X-Spam-Status: /No/ { ANNOTATE -d X-Lost Initial; REJECT LOST };
+<BLOCKED,LOST>  X-SBPass: /Legitimate Mailing List/     { REJECT INITIAL };
+
+######################################################################
+######################################################################
+#                                                                    #
+#                   This mail comes to me                            #
+#                                                                    #
+######################################################################
+######################################################################
+# By default, beep three times for mail ending up in my mailbox
+#
+{ BEEP 3; REJECT };
+<ADDRESSED> !X-Spam-Status: /No/ { ANNOTATE -d X-Lost Addressed; REJECT LOST };
+
+#<ADDRESSED>  From: /spammer\@/ { MESSAGE ~/etc/lamb; REJECT spam };
+<ADDRESSED> To Cc Sender Subject:  /analog/
+            { 
+              ASSIGN list analog;            
+              ANNOTATE -d X-MYLIST analog.spool;
+              PERL sbin/mailagent.archive.pl analog %H %Y %m
+            };
+<ADDRESSED> To Cc Sender Subject:  /analog/
+            { 
+              VACATION off; 
+              UNIQUE -a (analog); 
+              SAVE analog.spool
+            };
+# There is too much mail ending up in the S/TDC folder that really
+# belongs in the analog folder. This is not optimal, but the hueristic
+# is to default mail to foo.spool only if it comes from s/tdc
+# employees or processes
+<ADDRESSED> To Cc Sender:  /joe.sixpack\@foo.com/i,
+            From: /\@foo.com/i
+            {
+              ASSIGN list foo;            
+              ANNOTATE -d X-MYLIST foo.spool;
+              PERL sbin/mailagent.archive.pl foo %H %Y %m;
+            };
+<ADDRESSED> To Cc Sender:  /joe.sixpack\@foo.com/i,
+            From: /\@foo.com/i
+            {
+              VACATION off; 
+              UNIQUE -a (foo); 
+              SAVE foo.spool
+            };
+# Let teh default be analog. 
+<ADDRESSED> To Cc Sender:  /joe.sixpack\@foo.com/i
+            {
+              ASSIGN list analog;            
+              ANNOTATE -d X-MYLIST analog.spool;
+              PERL sbin/mailagent.archive.pl analog %H %Y %m;
+            };
+<ADDRESSED> To Cc Sender:  /joe.sixpack\@foo.com/i
+            {
+              VACATION off; 
+              UNIQUE -a (analog); 
+              SAVE analog.spool
+            };
+<ADDRESSED> X-SBClass:     /Blocked/    { UNIQUE -a (misc); SAVE misc };
+<ADDRESSED> X-SBNote:      /FROM_DAEMON\/Listserv/ { REJECT NEWSLETTERS };
+<ADDRESSED> To Cc Sender:  /john.doe\@ieee.org/ { REJECT NEWSLETTERS };
+
+<ADDRESSED> All: /./  {  PERL sbin/mailagent.archive.pl important %H %Y %m};
+<ADDRESSED>   { UNIQUE -a (addressed); ANNOTATE -d X-Spam Addressed; 
+              SAVE important };
+
+<NEWSLETTERS> !X-Spam-Status: /No/ { ANNOTATE -d X-Lost Newsletters; REJECT LOST };
+<NEWSLETTERS> { VACATION off;  UNIQUE -a (newsletters); SAVE newsletters.spool };
+
+
+
+######################################################################
+######################################################################
+#                                                                    #
+#                   final default rule                               #
+#                                                                    #
+######################################################################
+######################################################################
+#probably spam
+{
+        ANNOTATE -d X-Lost Unknown;
+        REJECT LOST
+};
+
+<LOST> Subject: /Ballot for / { UNIQUE -a; VACATION off; DELETE; };
+
+<LOST> /./    { UNIQUE -a (lost); VACATION off;
+                ANNOTATE -d X-Spam lost; SAVE lost.spool };
+
+
+######################################################################
+######################################################################
+#                                                                    #
+#               End of mailagent rules                               #
+#                                                                    #
+######################################################################
+######################################################################
+
+

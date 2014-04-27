@@ -1,0 +1,15 @@
+Template: shared/news/organization
+Type: string
+Default: --none--
+_Description: Organization name for this computer:
+ The /etc/news/organization file does not exist. That file contains
+ the name of the organization this computer belongs to. This is the
+ name that will appear in the Organization header field of outgoing
+ articles, mail, or patches. 
+ . 
+ Please enter the name of the organization as you want it to appear in
+ that header field. It is common practice to add a location, typically
+ a city name, to the organization's name, for instance:
+  University of Southern North Dakota, Hoople
+ .
+ If you enter "--none--", no organization name will be setup.

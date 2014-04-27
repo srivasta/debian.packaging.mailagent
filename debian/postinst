@@ -1,0 +1,492 @@
+#! /usr/bin/perl
+#                              -*- Mode: Perl -*-
+# debian.postinst ---
+# Author           : Manoj Srivastava ( srivasta@pilgrim.umass.edu )
+# Created On       : Tue May 21 23:15:26 1996
+# Created On Node  : melkor.pilgrim.umass.edu
+# Last Modified By : Manoj Srivastava
+# Last Modified On : Mon Apr 19 01:42:02 2004
+# Last Machine Used: glaurung.internal.golden-gryphon.com
+# Update Count     : 65
+# Status           : Unknown, Use with caution!
+# HISTORY          :
+# Description      :
+#
+#
+# arch-tag: 5401e9ef-39cc-4aee-96a4-61dfb8f32cf7
+#
+
+$|=1;
+# Ignore all invocations uxcept when called on to configure.
+exit 0 unless $ARGV[0] =~ /configure/;
+
+my $have_debconf = 0;
+eval {require Debconf::Client::ConfModule;};
+if ( ! $@ )
+{
+  $have_debconf++;
+  import Debconf::Client::ConfModule ':all';
+}
+
+sub handle_org (){
+  my $ret;
+
+  return 1 if -f "/etc/news/organization";
+  print STDERR "\n";
+  print STDERR "Hmmm.. You don't seem to have an /etc/news/organization file.\n";
+  print STDERR "Usually that contains the name of your organization as \n";
+  print STDERR "you want it to appear on the Organization line of outgoing\n";
+  print STDERR "articles/patches.\n";
+  print STDERR "\n";
+  if (! -d "/etc/news") {
+    $ret = &create_newsdir();
+    if ($ret) {
+      warn $ret;
+      return 0;
+    }
+  }
+  if (-f "/etc/organization") {
+    $ret = &docopy();
+    if ($ret) {
+      warn $ret;
+      return 0;
+    }
+    return 1;
+  }
+  $ret = &get_orgname();
+  if ($ret) {
+    warn $ret;
+    return 0;
+  }
+  return 1;
+}
+
+sub warn_org (){
+  print STDERR "\n";
+  print STDERR "There was an error setting up /etc/news/organization to\n";
+  print STDERR "contain the name of your organization as you want\n";
+  print STDERR "it to appear on the Organization line of outgoing\n";
+  print STDERR "articles/patches. Please ensure manually that the file\n";
+  print STDERR "/etc/news/organization is set up properly.\n";
+  print STDERR "Please hit return to continue:";
+  my $ans = <STDIN>;
+}
+
+sub docopy (){
+  my $ret;
+
+  print STDERR "But you do have /etc/organization.  I'll Use that.\n";
+  print STDERR "If that is not right, just edit /etc/news/organization \n";
+  print STDERR "after the setup is done. (/etc/organization is deprecated.\n";
+  print STDERR "You might consider removing it if nothing else uses it).\n";
+  print STDERR "\n";
+  $ret = system 'cp', '/etc/organization', '/etc/news/organization';
+  if ($ret) {
+    return "Could not copy file /etc/organization to /etc/news, " .
+      ($ret >> 8);
+  }
+  return &set_perms();
+}
+
+sub get_orgname() {
+  return if -e "/etc/news/organization";
+  my $orgname;
+
+  if ( ! $have_debconf ) {
+    # No debconf
+    print STDERR <<"EOH";
+
+Please type the name of your organization as you want it to appear on
+the Organization line of outgoing articles/patches.  (It's nice if
+this also specifies your location.  Your city name is probably
+sufficient if well known.) For example:
+
+    University of Southern North Dakota, Hoople
+Type in "--none--" if you do not want to specify one.
+
+EOH
+;
+    chomp ($orgname=<STDIN>);
+  }
+  else {
+
+    my $ret;
+    my $seen;
+
+    ($ret,$orgname) = get ("share/news/organization");
+    if ($ret) {
+      ($ret,$seen) = fget ("share/news/organization", 'seen');
+      if ($seen  eq 'true') {
+	if ($orgname eq "--none--") {
+	  $orgname = '';
+	}
+      }
+      else {
+	$orgname = '';
+      }
+      # I no longer claim this question
+      unregister("share/news/organization");
+    }
+    else {
+      ($ret,$seen) = fget ("shared/news/organization", 'seen');
+      if ($seen  eq 'true') {
+	# The user saw and answered the question using debconf.
+	($ret,$orgname) = get ("shared/news/organization");
+	if ($orgname eq "--none--") {
+	  $orgname = '';
+	}
+	else {
+	  print STDERR "Using org Name $orgname\n";
+	}
+      }
+      else {
+	# Debconf did not display the question to the user.
+	print STDERR "Hmm. Apparently, Debconf did not display the question\n";
+	print STDERR "Not setting org name\n";
+	$orgname = '';
+      }
+    }
+  }
+  if ($orgname =~ m/^--none--$/) {
+    $orgname = '';
+  }
+
+  if ($orgname) {
+    if (! open (ORGS, ">/etc/news/organization")) {
+      return "Could not open /etc/news/organization:$!";
+    }
+    print ORGS "$orgname\n";
+    close (ORGS);
+    return &set_perms();
+  }
+  return '';
+}
+
+sub set_perms () {
+  my $ret;
+  my ($name,$passwd,$gid,$members);
+  ($name,$passwd,$gid,$members) = getgrnam("news");
+  $ret = chown 0, $gid, "/etc/news/organization";
+  if ($ret != 1) {
+    return "Could not chown /etc/news/organization:$!";
+  }
+  $ret = chmod 0644, "/etc/news/organization";
+  if ($ret != 1) {
+    return "Could not chmod 0644 /etc/news/organization:$!";
+  }
+  return '';
+}
+
+sub create_newsdir () {
+  umask 0000;
+  my $ret = mkdir "/etc/news", 02755;
+  return "Could not create /etc/news:($ret)$!" if ! $ret;
+  my ($name,$passwd,$gid,$members);
+  ($name,$passwd,$gid,$members) = getgrnam("news");
+  $ret = chown 0, $gid, "/etc/news";
+  if ($ret != 1) {
+    return "Could not chown /etc/news:$!";
+  }
+  return '';
+}
+
+
+sub get_hostcat()  {
+  my $hostcat = "cat /etc/hosts";
+  if (-d "/var/yp" || -d "/usr/etc/yp" || -d "/etc/yp") {
+    if (&ask_n("Do you get the hosts file via NetInfo")) {
+      $hostcat="nidump hosts .";
+    }
+    else {
+      my $found = '';
+      #test to see if /etc/passwd contains a + line
+      open (PASS, "/etc/passwd") || return '';
+      $found='';
+      while (<PASS>) {
+	chomp;
+	$found++, last if /^\+/o;
+      }
+      close (PASS);
+      if (&ask_y("Are you getting the hosts file via yellow pages")) {
+	$hostcat = "ypcat hosts";
+      }
+    }
+  }
+  return $hostcat;
+}
+
+sub get_hostname()  {
+  my $hostname = '';
+  if (-x "/bin/hostname") {
+    $hostname=`/bin/hostname 2>&1`;
+    if ($?) {
+      $hostname="";
+    }
+    else {
+      chomp($hostname);
+      $hostname =~ tr/[A-Z]/[a-z]/;
+      $hostname =~ s/^([^\.]+)\..*/$1/o;
+      return $hostname;
+    }
+  }
+  if (-x "/bin/uname") {
+    $hostname=`/bin/uname -n 2>&1`;
+    if ($?) {
+      $hostname="";
+    }
+    else {
+      chomp($hostname);
+      $hostname =~ tr/[A-Z]/[a-z]/;
+      $hostname =~ s/^([^\.]+)\..*/$1/o;
+      return $hostname;
+    }
+  }
+  print STDERR "Please type the (one word) name of your host:";
+  $hostname=<STDIN>;
+  chomp ($hostname);
+  $hostname =~ tr/[A-Z]/[a-z]/;
+  $hostname =~ s/^([^\.]+)\..*/$1/o;
+  $hostname =~ s/^(\S+).*/$1/o;
+  return $hostname;
+}
+
+sub get_domainname()  {
+  my $domainname = '';
+  my $hostcat = '';
+  my $hostname = '';
+
+  if (-x "/bin/dnsdomainname") {
+    $domainname = `/bin/dnsdomainname 2>&1 `;
+    if ($?) {
+      $domainname="";
+    }
+    else {
+      chomp($domainname);
+      $domainname =~ tr/[A-Z]/[a-z]/;
+      return $domainname;
+    }
+  }
+  $hostname = &get_hostname();
+  $hostcat = &get_hostcat();
+  if (open (HOSTS, "$hostcat |")) {
+
+    while (<HOSTS>) {
+      chomp;
+      if (/^[\d\.]+\s+($hostname.*)/o) {
+	my $rest;
+	my @names;
+
+	$rest = $1;
+	@names = split('\s+', $rest);
+	for (@names) {
+	  if (/$hostname\.(\S+)/o) {
+	    $domainname = $1;
+	    close (HOSTS);
+	    return $domainname;
+	  }
+	}
+      }
+    }
+    close (HOSTS);
+  }
+  if (-f "/etc/resolv.conf") {
+    if (open (RESOLV, "/etc/resolv.conf")) {
+      while (<RESOLV>) {
+	chomp;
+	if (/^\s*domain\s+(\S+)/o) {
+	  $domainname = "$1";
+	  close (RESOLV);
+	  return $domainname;
+	}
+      }
+      close (RESOLV);
+    }
+  }
+
+  print STDERR "What is your domain name?:";
+  $domainname = <STDIN>;
+  chomp ($domainname);
+  return $domainname;
+}
+
+sub ask_n {
+  my $answer;
+  print @_,"? [No] ";
+  $answer=<STDIN>;
+  return ( $answer =~ /^[yY].*/ );
+}
+
+sub ask_y {
+  my $answer;
+  print @_,"? [Yes] ";
+  $answer=<STDIN>;
+  return ( $answer !~ /^[Nn].*/ );
+}
+
+sub handle_doc_symlink {
+  my $linktarget = "../share/doc/mailagent";
+  if (-d "/usr/doc") {
+    # Well, we still need to handle this, at least for the time being
+    if (-l "/usr/doc/mailagent") {
+      unlink "/usr/doc/mailagent";
+    }
+    my $targetdir;
+    my $stargetdir;
+
+    if (-x '/bin/pwd') {
+      chdir('/usr/doc/');
+      $targetdir=`/bin/pwd`;
+      chdir('/usr/share/doc/');
+      $stargetdir=`/bin/pwd`;
+      chdir('/');
+
+      chdir('/usr/doc');
+      if (-f '../share/doc/') {
+        chdir('../share/doc/');
+        my $ltarget=`/bin/pwd`;
+        if ($ltarget ne $stargetdir) {
+          $linktarget = "/usr/share/doc/mailagent";
+        }
+      }
+    }
+    if ($targetdir ne $stargetdir) {
+      if (-d "/usr/share/doc/mailagent") {
+	# So the new doc dir exists, goody
+	if (-d "/usr/doc/mailagent") {
+	  print STDERR "Yikes! The old directory, /usr/doc/mailagent\n";
+	  print STDERR "has not ben removed! This is an error; attempting\n";
+	  print STDERR "repairs";
+	  if (-f "/usr/doc/mailagent/.dhelp") {
+	    unlink "/usr/doc/mailagent/.dhelp";
+	    rmdir "/usr/doc/mailagent";
+	  }
+	  if (-d "/usr/doc/mailagent") {
+	    print STDERR <<"EOFERRONE";
+Failed repairs. There are old files in /usr/doc/mailagent/ created
+by you or another script. I can copy them over to the new location
+/usr/share/doc/$package_name, if you wish, preserving your versions of
+the files.  No files shall be over written, instead, backup versions
+shall be created in /usr/share/doc/$package_name as needed.
+
+EOFERRONE
+  ;
+	    my $answer='';
+	    print "Shall I copy the files over [Yn]?";
+	    $answer=<STDIN>;
+	    if ($answer =~ /^n/i) {
+	      print "Not copying over, aborting\n";
+	      return 1;
+	    }
+	    else {
+	      system "cp", "-a", "--backup=t",
+	      "/usr/doc/mailagent",
+	      "/usr/share/doc/mailagent/.." || do {
+		warn "Error copying files over: $?";
+		return 1;
+	      };
+
+	      system "rm", "-rf", "/usr/doc/mailagent" || do {
+		warn "Error removing old directory:$?";
+		return 1;
+	      };
+
+	    }
+	  }
+	}
+	if (-e "/usr/doc/mailagent") {
+	  print STDERR "/usr/doc/mailagent exists, but is not a directory\n";
+	  if (-l "/usr/doc/mailagent") {
+	    print STDERR "It is a symbolic link. Overwriting\n";
+	    unlink "/usr/doc/mailagent";
+	    symlink $linktarget, "/usr/doc/mailagent";
+	  }
+	  else {
+	    print STDERR "This is an error. Aborting\n";
+	    return 1;
+	  }
+	}
+	# File unexists. Free to go ahead and create link
+	symlink $linktarget, "/usr/doc/mailagent";
+      }
+    }
+  }
+  else {
+    # Hmm. no dir.
+    warn "No /usr/doc directory found, no symlinks made.";
+    return 1;
+  }
+}
+
+sub edit_mailagent(){
+  my $domainname = &get_domainname();
+  open (MAILAGENT, "/usr/bin/mailagent") || do {
+    warn "Could not open /usr/bin/mailagent executable to fix domains:$!";
+    return 0;
+  };
+
+  open (NEW, ">/usr/bin/mailagent.fixed") || do {
+    warn "Could not create /usr/bin/mailagent.fixed to fix domains:$!";
+    return 0;
+  };
+
+  while (<MAILAGENT>) {
+    chomp;
+    if (/^\$mydomain = \'([^\']+)\'/o) {
+      my $compiled_domain = $1;
+      if ("$compiled_domain" ne ".$domainname") {
+	s/^(\$mydomain = \')([^\']+)(\'.*)/$1.$domainname$3/o;
+      }
+    }
+    print NEW "$_\n";
+  }
+  close (MAILAGENT);
+  close (NEW);
+  rename "/usr/bin/mailagent","/usr/bin/mailagent.old" || do {
+    warn "Could not rename /usr/bin/mailagent executable to fix domains:$!";
+    return 0;
+  };
+
+  chmod 0755, "/usr/bin/mailagent.fixed" || do {
+    warn "Could not chmod 0755 /usr/bin/mailagent.fixed:$!";
+    return 0;
+  };
+
+  rename "/usr/bin/mailagent.fixed","/usr/bin/mailagent" || do {
+    warn "Could not rename /usr/bin/mailagent.fixed to fix domains:$!";
+    return 0;
+  };
+  unlink "/usr/bin/mailagent.old";
+  return 1;
+}
+
+sub warn_agent (){
+  print "\n";
+  print "There was an error setting while I was trying to edit\n";
+  print "your domain name into /usr/bin/mailagent.  This is not\n";
+  print "critical, mailagent will just report that it is being run\n";
+  print "on a machine in the domain that this package was built on.\n";
+  print "If you find this irritating, please edit /usr/bin/mailagent\n";
+  print "and change the line\n";
+  print "\$mydomain = '.blah.blah';\n";
+  print "to your own domain.\n";
+  print "Please hit return to continue:";
+  my $ans = <STDIN>;
+}
+sub warn_doc_symlink  (){
+  print "\n";
+  print "There was an error setting a symbolic link from the directory\n";
+  print "/usr/share/doc/mailagent to /usr/doc/mailagent. Please create\n";
+  print "the symlink manually, perhaps by doing\n";
+  print "the symlink manually, perhaps by doing\n";
+  print "\t\t# ln -s /usr/share/doc/mailagent /usr/doc/mailagent\n";
+  print "Please hit return to continue:";
+  my $ans = <STDIN>;
+}
+
+&handle_org() || &warn_org();
+# &handle_doc_symlink || &warn_doc_symlink;
+# &edit_mailagent() || &warn_agent();
+
+#DEBHELPER#
+
+__END__

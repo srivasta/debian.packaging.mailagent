@@ -1,0 +1,5 @@
+The exmple files here are placeholders for real spam address files. 
+Look at ../bin/get-spamlist to see how to generate a real copy of these 
+lists. Since these sites are frequently updated, I do not want to hard 
+wire the list into this package. Also, there are liability issues about 
+censorship if we actually ship these lists.
