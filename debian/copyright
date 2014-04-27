@@ -1,0 +1,42 @@
+ This is the Debian GNU/Linux prepackaged version of Mailagent.
+ Mailagent was written by Raphael Manfredi <ram@jibe.grenoble.hp.com>
+
+ This package was put together by Manoj Srivastava
+ <srivasta@debian.org> from sources obtained directly from the
+ author. A subversion repository may be found at:
+ https://mailagent.svn.sourceforge.net/svnroot/mailagent/trunk/mailagent
+ It may also be found at most of the Comprehensive Perl Archive
+ Network sites, in the location <$CPAN/authors/id/RAM/mailagent-3.0@73.tar.gz>.
+
+                           mailagent 3.0
+
+              Copyright © 1990-2006, 2008 Raphael Manfredi
+
+------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the Artistic License, a copy of which can be
+    found with this package.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    Artistic License for more details.
+------------------------------------------------------------------------
+
+The Debian specific changes are © 1995-2009 Manoj Srivastava
+<srivasta@debian.org>, and distributed under the terms of the GNU
+General Public License, version 2.
+
+
+On Debian GNU/Linux systems, the complete text of the GNU General
+Public License can be found in `/usr/share/common-licenses/GPL-2'. 
+
+    A copy of the GNU General Public License is also available at
+    <URL:http://www.gnu.org/copyleft/gpl.html>.  You may also obtain
+    it by writing to the Free Software Foundation, Inc., 51 Franklin
+    St, Fifth Floor, Boston, MA 02110-1301 USA
+
+
+
+Manoj Srivastava <srivasta@debian.org>
+arch-tag: d4250e44-a0e0-4ee0-adb9-2bd74f6eeb27

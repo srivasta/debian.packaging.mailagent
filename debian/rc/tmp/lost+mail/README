@@ -1,0 +1,6 @@
+This directory shall hold a backup copy of the mail while it
+is being processed by mailagent.  Mailagent tries very hard
+to always keep one copy of email on disl, so loss of power
+during processing should not result in lost data.
+
+arch-tag: 9cef74eb-d55f-4bff-81b3-e9042f81dc04

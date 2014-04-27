@@ -1,0 +1,250 @@
+Well, I'm not doing really anything clever necessarily (I don't
+have enough time to play :-), but here's a snippet from a .rules-thing
+that logs some fields of the email directly into the log:
+
+<INITIAL> {
+	## construct text string suitable for single-quoting
+	ASSIGN temp %[From]%_=>%_%[Envelope-To]%_(%[Subject]);
+	SUBST #temp /['\\\\]/\\\\$1/g;
+	## now write the log
+	DO add_log ("[$mfile]%_".'%#temp');
+	REJECT;
+};
+
+And here's my current .rules file, which depends on the fact that I
+convinced Teleport staff to pass "envelope to" through to my
+procmailrc (don't ask, it's a long story), which then stuffs it into
+the header as "Envelope-To".  I've stripped a few secret things out,
+but for the most part, it's what I'm running right now.  I'm handling
+about 300 pieces of incoming mail a day, and I must say, mailagent
+rules are pretty "do what I mean" when you've played with them for a
+while.  Good job, ram!
+
+
+## stupid workaround so I can get one rule with vacation on... :-(
+{ VACATION off; REJECT; };
+
+### initial sorting based on any available envelope-to
+### requires the cooperation of Envelope-to: addition in .procmailrc
+
+<INITIAL> Envelope-to:
+	/<j_r_hacker\.fors.*\@myhost.com>/i {
+		## ahhh, fors-discuss or fors-announce
+		PIPE /home/j_r_hacker/.mail/fors-discuss-SAVE;
+		## but also operate on it:
+		REJECT TO_J_R_HACKER;
+	}
+	/<([ph]ostmaster|j_r_hacker(\.[a-z0-9-]+)+)\@myhost.com>/i {
+		ANNOTATE X-j_r_hacker-alter %1;
+		SAVE +inbag;
+	}
+	/<usual-suspects-request\@myhost.com>/i {
+		ANNOTATE X-j_r_hacker-alter usual-suspects-request;
+		SAVE +inbag;
+	}
+	/<usual-suspects\@myhost.com>/i {
+		## process for everyone else via separate copy
+		## this keeps my copy with all trace headers
+		AFTER (now)
+		      KEEP Message-Id Reply-To From Subject Date To Cc\;
+		      ANNOTATE -d Errors-To usual-suspects-request@myhost.com\;
+		      BOUNCE "~/.usual-suspects-list"\;
+		;
+		## send my copy my way
+		REJECT TO_J_R_HACKER;
+	}
+	/<j_r_hacker(\@(\S+\.)*(myhost|portal).com)?>/i
+		{ REJECT TO_J_R_HACKER; }
+	/<fund\@myhost.com>/i
+		{ REJECT TO_FUND; }
+	/<clpa\@myhost.com>/i
+		{ REJECT TO_CLPA; }
+	/<(u2i|u2o)\@myhost.com>/i
+		{ SAVE +%1; }
+	/<perl-(class(es)?|trainings?)-info\@myhost.com>/i {
+		ONCE (%r, pti, 1d) MESSAGE ~/.message.pti;
+		ANNOTATE X-perl-training info %r;
+		SAVE +pti;
+	}
+	/<perl-(class(es)?|trainings?)\@myhost.com>/i {
+		ONCE (%r, pt, 1d) MESSAGE ~/.message.pt;
+		ANNOTATE X-perl-training human %r;
+		## he sees these:
+		BOUNCE maxtrade;
+		SAVE +pt;
+	}
+	## add other myhost addresses here
+	/<(\S+)\@myhost.com>/i {
+		ASSIGN unknown_myhost_user "%1";
+		REJECT TO_UNKNOWN_MYHOST;
+	}
+	/(.*)/i {
+		## no clue?
+		ASSIGN unknown_envelope_to "%1";
+		ANNOTATE X-unknown-envelope-to %#unknown_envelope_to;
+		REJECT TO_J_R_HACKER;
+	}
+;
+
+### sort mail for J_R_HACKER
+
+## only one of these
+<TO_J_R_HACKER> { UNIQUE -a; REJECT; };
+
+## to me and from me?
+## warning: this regex appears twice
+<TO_J_R_HACKER> From: /j_r_hacker\@([a-z0-9-]+\.)*(((portal|myhost|ora|rdrop|perl|pobox|eworld|gorca|jeffrey\.vip\.best)\.com)|reed\.edu)/i {
+	REJECT TO_AND_FROM_J_R_HACKER;
+};
+
+## recognize old-style request for legal defense fund
+<TO_J_R_HACKER> Body: /^\s*\@FUND\s*$/ {
+	REJECT TO_FUND;
+};
+
+## handle llama example:
+<TO_J_R_HACKER>
+	Apparently-To To: /j_r_hacker\@ora.com/i,
+	Body: /^bad news\s*:/i
+{
+	ONCE (%r, llama, 1d) REJECT SEND_LLAMA;
+	## ignore redundant Llama mail
+	DELETE;
+};
+
+## actually send the llama stuff
+<SEND_LLAMA> {
+	MESSAGE ~/.message.llama;
+	SAVE +llama;
+};
+
+## from clipper or any newsgroup
+<TO_J_R_HACKER>
+	Newsgroups: /\S/,
+	Path: /\S/
+{
+	SAVE +clip;
+};
+
+## idiots at tenon with new mailing list thing (yuck)
+<TO_J_R_HACKER> Sender: /machten\@tenon.com/ {
+	SAVE +inbag;
+};
+
+## to me and visibly addressed to me
+## warning: this regex appears twice
+<TO_J_R_HACKER> To Cc: /j_r_hacker(\.[a-z0-9-]+)*\@([a-z0-9-]+\.)*(((portal|myhost|ora|rdrop|perl|pobox|eworld|gorca|jeffrey\.vip\.best)\.com)|reed\.edu)/i {
+	REJECT TO_J_R_HACKER_DIRECTLY;
+};
+
+## to me, but not visibly addressed to me (probably a mailing list)
+<TO_J_R_HACKER> {
+	SAVE +inbag;
+};
+
+### sort mail addressed directly to me
+
+## aub cron jobs
+<TO_J_R_HACKER_DIRECTLY>
+	Subject: /Output from "cron" command/,
+	From: root@portal.com
+{
+	SAVE +inbag;
+};
+
+## nclip cron jobs
+<TO_J_R_HACKER_DIRECTLY>
+	Subject: /^Cron/,
+	From: root@angora.drop.com
+{
+	SAVE +inbag;
+};
+
+## from anon.penet.fi: just leave in spool (reply would disclose me)
+<TO_J_R_HACKER_DIRECTLY> From Reply-To: /anon\.penet\.fi/ {
+	LEAVE;
+	## SAVE +inbox;
+};
+
+## all others: send vacation mail, and leave in spool ("you have mail")
+<TO_J_R_HACKER_DIRECTLY> {
+	MACRO -r busyout = (Busy, PROGC);
+	VACATION -l on;
+	LEAVE;
+	## SAVE +inbox;
+};
+
+### sort mail to me and from me
+
+## to and from me, not otherwise handled
+<TO_AND_FROM_J_R_HACKER> {
+	SAVE +outbox;
+};
+
+### sort mail for CLPA
+
+## from anon.penet.fi: just reject it (reply would disclose me)
+<TO_CLPA> From Reply-To: /anon\.penet\.fi/ {
+	DELETE;
+};
+
+## process moderated news posting
+<TO_CLPA> {
+	MESSAGE ~/.message.clpa;
+	SAVE +clpa;
+};
+
+### sort mail for FUND
+
+## from anon.penet.fi: just reject it (reply would disclose me)
+<TO_FUND> From Reply-To: /anon\.penet\.fi/ {
+	DELETE;
+};
+
+## fund has been requested:
+<TO_FUND> {
+	# only send out one message per hour
+	ONCE (%r, fund, 1h) REJECT SEND_FUND;
+	## nope, once failed, must be too early
+	ANNOTATE X-fund NO %r;
+	## maybe this should just be tossed?  but for now:
+	SAVE +fund;
+};
+
+## send fund:
+<SEND_FUND> {
+	# send fund message
+	MESSAGE ~/.message.fund;
+	# and note that we did this
+	ANNOTATE X-fund YES %r;
+	SAVE +fund;
+};
+
+### sort mail for UNKNOWN MYHOST
+
+## from anon.penet.fi: just reject it (reply would disclose me)
+<TO_UNKNOWN_MYHOST> From Reply-To: /anon\.penet\.fi/ {
+	DELETE;
+};
+
+## unknown myhost:
+<TO_UNKNOWN_MYHOST> {
+	MESSAGE ~/.message.unknown;
+	ANNOTATE X-auto-sent: no such myhost: %#unknown_myhost_user;
+	SAVE +inbag;
+};
+
+### final default rule for things _SEEN_
+<_SEEN_> {
+	ANNOTATE X-mailagent-note PREVIOUSLY_SEEN;
+	SAVE +inbag;
+	## eventually, just DELETE;
+};
+
+### final default rule
+{
+	ANNOTATE X-mailagent-note UNKNOWN;
+	SAVE +inbag;
+};
+
+

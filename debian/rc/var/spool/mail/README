@@ -1,0 +1,5 @@
+This directory is where the mail is spooled by the mailagent after
+processing, to be picked up by the user's mail reader (mail user
+agent). 
+
+arch-tag: 3db167ee-a170-4389-9d62-05043834535d

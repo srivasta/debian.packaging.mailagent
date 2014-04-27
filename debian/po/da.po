@@ -1,0 +1,58 @@
+# Danish translation mailagent.
+# Copyright (C) 2010 mailagent og nedenstående oversættere.
+# This file is distributed under the same license as mailagent package.
+# Joe Hansen <joedalton2@yahoo.dk>, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: mailagent\n"
+"Report-Msgid-Bugs-To: mailagent@packages.debian.org\n"
+"POT-Creation-Date: 2009-10-31 03:26-0500\n"
+"PO-Revision-Date: 2010-11-29 17:30+01:00\n"
+"Last-Translator: Joe Hansen <joedalton2@yahoo.dk>\n"
+"Language-Team: Danish <debian-l10n-danish@lists.debian.org>\n"
+"Language: da\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Type: string
+#. Description
+#: ../templates:1001
+msgid "Organization name for this computer:"
+msgstr "Organisationsnavn for denne computer:"
+
+#. Type: string
+#. Description
+#: ../templates:1001
+msgid ""
+"The /etc/news/organization file does not exist. That file contains the name "
+"of the organization this computer belongs to. This is the name that will "
+"appear in the Organization header field of outgoing articles, mail, or "
+"patches."
+msgstr ""
+"Filen /etc/news/organization findes ikke. Den fil indeholder navnet på "
+"organisationen som denne computer tilhører. Dette er navnet som vil fremstå "
+"i organisationens teksthoved for udgående artikler, post, eller rettelser "
+"(patches)."
+
+#. Type: string
+#. Description
+#: ../templates:1001
+msgid ""
+"Please enter the name of the organization as you want it to appear in that "
+"header field. It is common practice to add a location, typically a city "
+"name, to the organization's name, for instance:\n"
+" University of Southern North Dakota, Hoople"
+msgstr ""
+"Indtast venligst navnet på den organisation som du ønsker skal fremgå i "
+"teksthovedet. Det er normal kutyme at tilføje en lokation, typisk et bynavn, "
+"til organisationens navn, for eksempel:\n"
+" Det Tekniske Universitet, København"
+
+#. Type: string
+#. Description
+#: ../templates:1001
+msgid "If you enter \"--none--\", no organization name will be setup."
+msgstr ""
+"Hvis du indtaster »--none--«, vil der ikke blive brugt et organisationsnavn."

@@ -1,0 +1,29 @@
+This is Debian GNU/Linux's prepackaged version of Raphael Manfredi's
+mailagent program.
+
+This version of mailagent was put together by Manoj Srivastava
+<srivasta@datasync.com>, from the sources distributed directly by the
+author, Raphael Manfredi <Raphael_Manfredi@pobox.com>, at:
+
+       http://search.cpan.org/search?mode=dist&query=mailagent
+
+The changes in this package are essentially the addition of support for 
+the Debian package maintenance scheme, by adding various debian.* files. 
+The changes in the default configuration are using the pager /bin/more,
+and using /usr/bin/ae as the default editor, since these programs are 
+guaranteed to be present in any debian system.  The other changes are
+to ensure that a .config directory is present, so that no mail message
+is sent to the maintainer while building the debian package.  An over-
+ride file is also used to ensure that installation occurs into a local
+debian-tmp directory, required to build the debianized version. 
+
+The "getcost" program found in the original sources under misc/getcost
+was not included in the package, due to the restriction imposed by the
+original "getcost" author (not Raphael Manfredi).  The program can
+nonetheless be found in the original sources.
+
+
+See the README file for more information
+
+Manoj Srivastava <srivasta@debian.org>
+arch-tag: 7f43bdd4-92f6-4375-964d-ca0f043448b2
