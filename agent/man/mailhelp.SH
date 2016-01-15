@@ -91,7 +91,7 @@ explicitly stated in the \fISpool/distribs\fR file.
 Once the directory is found (or extracted), \fImaildist\fR looks
 for a \fI.package\fR file. If one is found, then it is assumed this
 distribution is under control of the dist 3.0 package, and the \fImakedist\fR
-commmand is called to actually mirror the source tree (makedist being part of
+command is called to actually mirror the source tree (makedist being part of
 dist 3.0).
 .PP
 Otherwise, it looks

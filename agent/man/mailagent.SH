@@ -1961,7 +1961,7 @@ Your program must be able to properly parse a MIME message and must deal
 with transfer-encoded bodies by itself.  To make the program task simpler,
 you can supply the
 .B -b
-switch wich will let mailagent decode the whole body for you, suppressing
+switch which will let mailagent decode the whole body for you, suppressing
 any Content-Transfer-Encoding header (implying "binary").  This is an invalid
 message format for sending the message, but it makes processing easier.
 You still have to parse the MIME parts yourself though.
@@ -2128,7 +2128,7 @@ Your program must be able to properly parse a MIME message and must deal
 with transfer-encoded bodies by itself.  To make the program task simpler,
 you can supply the
 .B -b
-switch wich will let mailagent decode the whole body for you, suppressing
+switch which will let mailagent decode the whole body for you, suppressing
 any Content-Transfer-Encoding header (implying "binary").  This is an invalid
 message format for sending the message, but it makes processing easier.
 You still have to parse the MIME parts yourself though.
