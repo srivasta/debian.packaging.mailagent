@@ -30,20 +30,21 @@ override_dh_auto_configure:
 	/bin/cp -rpf debian/Config      .config         && \
           /bin/cp -pf  debian/config.over config.over   && \
 	    touch .config/nomail                        && \
-              sh ./Configure                               \
-                -de                                        \
-                -D prefix=$(PREFIX)                        \
-                -D orgname=/etc/news/organization          \
-                -D myhostname=localhost                    \
-                -D mydomain=localdomain                    \
-                -D defeditor=/usr/ae                       \
-                -D usenm=no                                \
-	        -D privlib=/usr/share/$(package)           \
-                -D utmp="/var/run/utmp"                    \
-                -D optimize="$(CFLAGS)"                    \
-                -D ldflags="$(LDFLAGS)"                    \
-                -D cf_email='$(email)'                     \
-                -D d_berknames='define'
+              eval "$(dpkg-buildflags --export=sh)"     && \
+                sh ./Configure                             \
+                  -de                                      \
+                  -D prefix=$(PREFIX)                      \
+                  -D orgname=/etc/news/organization        \
+                  -D myhostname=localhost                  \
+                  -D mydomain=localdomain                  \
+                  -D defeditor=/usr/ae                     \
+                  -D usenm=no                              \
+	          -D privlib=/usr/share/$(package)         \
+                  -D utmp="/var/run/utmp"                  \
+                  -D optimize="$(CFLAGS)"                  \
+                  -D ldflags="$(LDFLAGS)"                  \
+                  -D cf_email='$(email)'                   \
+                  -D d_berknames='define'
 
 
 override_dh_auto_build:
