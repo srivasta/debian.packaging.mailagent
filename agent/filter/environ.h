@@ -14,7 +14,7 @@
  * $Id: environ.h 1 2006-08-24 13:24:12Z rmanfredi $
  *
  *  Copyright (c) 1990-2006, Raphael Manfredi
- *  
+ *
  *  You may redistribute only under the terms of the Artistic License,
  *  as specified in the README file that comes with the distribution.
  *  You may reuse parts of this distribution only within the terms of
@@ -34,7 +34,7 @@
 #define _environ_h_
 
 extern void print_env();			/* Print the environment */
-extern void init_env();				/* Initializes the environment table */
+extern int init_env(char **envp);				/* Initializes the environment table */
 extern char **make_env();			/* Make a new system environment */
 extern int append_env();			/* Append value to environment */
 extern int prepend_env();			/* Prepend value to environment */
