@@ -34,6 +34,8 @@ override_dh_auto_configure:
                 -de                                        \
                 -D prefix=$(PREFIX)                        \
                 -D orgname=/etc/news/organization          \
+                -D myhostname=localhost                    \
+                -D mydomain=localdomain                    \
                 -D defeditor=/usr/ae                       \
                 -D usenm=no                                \
 	        -D privlib=/usr/share/$(package)           \
