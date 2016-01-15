@@ -1,42 +1,45 @@
- This is the Debian GNU/Linux prepackaged version of Mailagent.
- Mailagent was written by Raphael Manfredi <ram@jibe.grenoble.hp.com>
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: mailagent 3.0
+Upstream-Contact: Raphael Manfredi <Raphael_Manfredi@grenoble.hp.com>
+Sources: https://mailagent.svn.sourceforge.net/svnroot/mailagent/trunk/mailagent
+Comment: mailagent may also be found at most of the Comprehensive Perl Archive
+         Network sites, in the location
+         <$CPAN/authors/id/RAM/mailagent-3.0@73.tar.gz>.
 
- This package was put together by Manoj Srivastava
- <srivasta@debian.org> from sources obtained directly from the
- author. A subversion repository may be found at:
- https://mailagent.svn.sourceforge.net/svnroot/mailagent/trunk/mailagent
- It may also be found at most of the Comprehensive Perl Archive
- Network sites, in the location <$CPAN/authors/id/RAM/mailagent-3.0@73.tar.gz>.
+Files: *
+Copyright: 1990-2006, 2008 Raphael Manfredi
+License: Artistic
 
-                           mailagent 3.0
+Files: debian/*
+Copyright: 1995-2009, 2014, 2016  Manoj Srivastava <srivasta@debian.org>
+License: GPL-2+
 
-              Copyright © 1990-2006, 2008 Raphael Manfredi
+License: GPL-2+
+ This package is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+ .
+ This package is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+ .
+ You should have received a copy of the GNU General Public License
+ along with this program. If not, see <http://www.gnu.org/licenses/>.
+ .
+ On Debian systems, the complete text of the GNU General
+ Public License can be found in "/usr/share/common-licenses/GPL-2".
 
-------------------------------------------------------------------------
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the Artistic License, a copy of which can be
-    found with this package.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    Artistic License for more details.
-------------------------------------------------------------------------
-
-The Debian specific changes are © 1995-2009 Manoj Srivastava
-<srivasta@debian.org>, and distributed under the terms of the GNU
-General Public License, version 2.
-
-
-On Debian GNU/Linux systems, the complete text of the GNU General
-Public License can be found in `/usr/share/common-licenses/GPL-2'. 
-
-    A copy of the GNU General Public License is also available at
-    <URL:http://www.gnu.org/copyleft/gpl.html>.  You may also obtain
-    it by writing to the Free Software Foundation, Inc., 51 Franklin
-    St, Fifth Floor, Boston, MA 02110-1301 USA
-
-
-
-Manoj Srivastava <srivasta@debian.org>
-arch-tag: d4250e44-a0e0-4ee0-adb9-2bd74f6eeb27
+License: Artistic
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the Artistic License, a copy of which can be
+ found with this package.
+ .
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ Artistic License for more details.
+ .
+ On Debian systems, the full text of the Artistic License can be found
+ in the file `/usr/share/common-licenses/Artistic'.

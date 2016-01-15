@@ -3,8 +3,11 @@ mailagent (1:3.1-81-1) unstable; urgency=low
   * New upstream release
   * Bug fix: "Conflicting return type declarations of function init_env",
     thanks to Michael Tautschnig (Closes: #749680).
+  * Converted the copyright file to DEP-5 format.
+  * Moved the maintainer scripts to where dh wants them, and upodated the
+    rules check to match.
 
- -- Manoj Srivastava <srivasta@debian.org>  Fri, 15 Jan 2016 01:44:18 -0800
+ -- Manoj Srivastava <srivasta@debian.org>  Fri, 15 Jan 2016 02:02:13 -0800
 
 mailagent (1:3.1-78-1) unstable; urgency=low
 

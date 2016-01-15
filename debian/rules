@@ -47,10 +47,10 @@ override_dh_auto_configure:
 override_dh_auto_build:
 	dh_auto_build
 	pod2man  debian/getspam > debian/getspam.1
-	perl -wc debian/postinst
-	bash -n debian/config
-	bash -n debian/postrm
-	bash -n debian/prerm
+	perl -wc debian/mailagent.postinst
+	bash -n debian/mailagent.config
+	bash -n debian/mailagent.postrm
+	bash -n debian/mailagent.prerm
 
 override_dh_installdocs:
 	dh_installdocs
