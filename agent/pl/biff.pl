@@ -1,4 +1,4 @@
-;# $Id: biff.pl 56 2008-07-01 07:33:24Z rmanfredi $
+;# $Id: biff.pl 81 2015-02-12 18:10:21Z rmanfredi $
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
@@ -51,7 +51,7 @@ sub biff {
 	&add_log("$cf'user is logged on @ttys") if $loglvl > 15;
 	my %done;						# Solaris might give same tty twice
 	foreach $tty (@ttys) {
-		&biff'notify($tty, $folder, $type) unless $done{$tty};
+		&biff'notify($tty, $folder, $type) unless $done{$tty}++;
 	}
 }
 

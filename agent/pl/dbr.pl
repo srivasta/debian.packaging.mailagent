@@ -1,4 +1,4 @@
-;# $Id: dbr.pl 30 2008-06-04 15:19:13Z rmanfredi $
+;# $Id: dbr.pl 80 2015-02-12 18:06:16Z rmanfredi $
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
@@ -136,7 +136,7 @@ sub update {
 	}
 	$linenum = (&info($hname, $tag))[1] unless defined($linenum);
 	if ($linenum == 0) {				# No entry previously recorded
-		return unless defined(@values);	# Nothing to delete
+		return unless @values;			# Nothing to delete
 		unless(open(DBR, ">>$file")) {
 			&'add_log("ERROR cannot append in $file: $!") if $'loglvl;
 			return;
@@ -162,7 +162,7 @@ sub update {
 			if ($. < $linenum) {		# Before line to update
 				print DBR;				# Print line verbatim
 			} elsif ($. == $linenum) {	# We reached line to be updated
-				next unless defined(@values);
+				next unless @values;
 				print DBR "$hname $tag $now\t";
 				print DBR join("\t", @values);
 				print DBR "\n";
