@@ -28,7 +28,7 @@ $startperl
 # $Id: magent.sh,v 3.0.1.17 2001/03/17 18:07:49 ram Exp ram $
 #
 #  Copyright (c) 1990-2006, Raphael Manfredi
-#  
+#
 #  You may redistribute only under the terms of the Artistic License,
 #  as specified in the README file that comes with the distribution.
 #  You may reuse parts of this distribution only within the terms of
@@ -380,10 +380,10 @@ if (!$run_queue) {				# Do not enter here if -q
 		&queue_mail($file_name, 'fm');
 		unlink $lockfile;
 		exit 0;					# Do not continue
-	} 
+	}
 
 	# If invoked from a tty and not in test mode, do not process queue
-	$process_queue = 0 if -t STDOUT && !$test_mode; 
+	$process_queue = 0 if -t STDOUT && !$test_mode;
 }
 
 if ($process_queue) {
@@ -505,7 +505,7 @@ sub init_constants {
 	$NO_FEEDBACK = 0;			# No feedback wanted
 	$FEEDBACK = 1;				# Feed result of command back into %Header
 	$FEEDBACK_ENCODING = 2;		# Same as $FEEDBACK, but probe body for encoding
-	
+
 	# The filter message
 	local($address) = &email_addr;
 	$FILTER =
@@ -717,7 +717,7 @@ sub mailbox_name {
 		$mailbox =~ s/%~/$cf'home/go;	# %~ stands for the user directory
 		$mailbox =~ s/%L/$cf'user/go;	# %L stands for the user login name
 		$mailbox =~ m|(.*)/.*|;			# Extract dirname
-		$mailbox = "$cf'home/mbox.$cf'user" unless (-f "mailbox" || -w "$1");
+		$mailbox = "$cf'home/mbox.$cf'user" unless (-f "$mailbox" || -w "$1");
 		&add_log("WARNING using $mailbox for mailbox") if $loglvl > 5;
 	}
 	$mailbox;

@@ -6,12 +6,14 @@ Priority: optional
 Maintainer: Manoj Srivastava <srivasta@debian.org>
 Standards-Version: 3.9.6
 Build-Depends: groff-base, debhelper (>= 9.0.0), po-debconf, file,
-               gettext, libperl4-corelibs-perl, dpkg-dev (>= 1.16.0)
+               gettext, libperl4-corelibs-perl, dpkg-dev (>= 1.16.0),
+               libfile-fcntllock-perl
 
 
 Package: mailagent
 Depends: ${shlibs:Depends}, ${misc:Depends}, perl, libperl4-corelibs-perl,
-          debconf (>= 1.2.0) | debconf-2.0, exim4 | postfix | sendmail | mail-transport-agent
+          debconf (>= 1.2.0) | debconf-2.0, exim4 | postfix | sendmail | mail-transport-agent,
+          libfile-fcntllock-perl
 Architecture: any
 Description: automatic mail-processing tool and filter
  Mailagent is a mail delivery agent, and can be programmed to
