@@ -730,7 +730,7 @@ The name of the file holding the filtering rules (optional on non
 Debian systems, suggested: ~/.rules). On Debian systems, one must have
 a minimal rules file to prevent \fImailagent\fR from trying to put
 messages into
-.I /var/spool/mail/$USER,
+.I /var/spool/mail/\$USER,
 since mailagent can't lock that directory to prevent mail from being
 garbled. This is because Debian policy requires all entities
 attempting locks on that directory to be
