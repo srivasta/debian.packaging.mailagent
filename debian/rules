@@ -33,6 +33,7 @@ override_dh_auto_configure:
               eval "$(dpkg-buildflags --export=sh)"     && \
                 sh ./Configure                             \
                   -de                                      \
+		  -D cat=/bin/cat -D zcat=/bin/zcat        \
                   -D prefix=$(PREFIX)                      \
                   -D orgname=/etc/news/organization        \
                   -D myhostname=localhost                  \

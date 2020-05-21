@@ -37,4 +37,3 @@ config.h
 config.sh
 install
 mkdep
-revision.h

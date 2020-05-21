@@ -1,3 +1,18 @@
+mailagent (1:3.1-106-1) unstable; urgency=medium
+
+  * Upstream has moved to git. This is the new upstream HEAD
+  * Indeed, whilst the current version worked fine with Debian 7, changes
+    made to INN2 on Debian 9 break the POST command and cause the messages
+    to be rejected as news articles.
+  * Bug fix: "Mailagent not up-to-date", thanks to Raphael Manfredi
+    (Closes: #919182).
+  * Pass configure flags -D cat=/bin/cat -D zcat=/bin/zcat fixes
+    reproducible build on merged-usr vs non-merged
+  * Bug fix: "reproducible build (usrmerge): embeds path of cat and zcat
+    found via PATH", thanks to Andreas Henriksson (Closes: #915303).
+
+ -- Manoj Srivastava <srivasta@debian.org>  Thu, 21 May 2020 00:30:17 -0700
+
 mailagent (1:3.1-81-4) unstable; urgency=low
 
   * Commented out a $USER in the man page shell sources that was capturing

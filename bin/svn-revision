@@ -24,6 +24,12 @@ export LC_ALL
 
 TOP="$1"
 FILE="$2"
+BRANCH="$3"
+
+if [ -z "$BRANCH" ]; then
+    BRANCH="master"
+fi
+
 
 if [ "x$FILE" = x ]; then
 	FILE="&1"
@@ -33,7 +39,7 @@ else
 fi
 
 if test -d "$TOP/.git"; then
-  revnum=`git log --oneline master | wc -l`
+  revnum=`git log --oneline $BRANCH | wc -l`
 else
   revnum="$oldrev" # keep as is
 fi
@@ -62,4 +68,3 @@ EOF
 fi
 
 } > "$FILE"
-
