@@ -1,4 +1,4 @@
-;# $Id: stats.pl 74 2011-12-23 09:46:48Z rmanfredi $
+;# $Id$
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  

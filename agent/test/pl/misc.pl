@@ -1,6 +1,6 @@
 # Common actions at the top of each misc test
 
-;# $Id: misc.pl 1 2006-08-24 13:24:12Z rmanfredi $
+;# $Id$
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
@@ -25,5 +25,21 @@ sub add_option {
 	local($opt) = @_;
 	local(@cmd) = split(' ', $cmd);
 	$cmd = join(' ', $cmd[0], $opt, @cmd[1..$#cmd]);
+}
+
+# Check that file contains a given string
+sub contains_string {
+	my ($file, $string) = @_;
+	local *FILE, $_;
+	open(FILE, $file) || return 0;
+	my $matched = 0;
+	while (<FILE>) {
+		if (/\Q$string/) {
+			$matched = 1;
+			last;
+		}
+	}
+	close FILE;
+	return $matched;
 }
 

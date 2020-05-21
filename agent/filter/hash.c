@@ -11,7 +11,7 @@
 */
 
 /*
- * $Id: hash.c 58 2008-08-19 08:44:07Z rmanfredi $
+ * $Id$
  *
  *  Copyright (c) 1990-2006, Raphael Manfredi
  *  
@@ -52,7 +52,7 @@ extern char *malloc();				/* Memory allocation */
 
 #ifndef lint
 private char *rcsid =
-	"$Id: hash.c 58 2008-08-19 08:44:07Z rmanfredi $";
+	"$Id$";
 #endif
 
 private uint32 hashcode();			/* The hahsing function */

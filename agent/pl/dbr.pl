@@ -1,4 +1,4 @@
-;# $Id: dbr.pl 80 2015-02-12 18:06:16Z rmanfredi $
+;# $Id$
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  

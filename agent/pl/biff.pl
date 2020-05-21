@@ -1,4 +1,4 @@
-;# $Id: biff.pl 81 2015-02-12 18:10:21Z rmanfredi $
+;# $Id$
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
@@ -39,6 +39,8 @@
 #
 # Local biff support
 #
+
+use Encode;
 
 # Perform biffing, given the folder where delivery was made print out a
 # biff-like message on each of the user's terminal where a 'biff y' command
@@ -265,6 +267,16 @@ sub is_blank {
 	return $l =~ /^[\W_]*$/;	# Contains only non-words and underscores
 }
 
+# Keep only printable ASCII chars from biffable lines in specified body array
+# Control chars are swallowed, non-ASCII chars converted to '.'.
+sub to_ascii {
+	my ($aref, $lines) = @_;	# Body as array ref, amount of lines to convert
+	my $n = $lines > @{$aref} ? @{$aref} : $lines;
+	for (my $i = 0; $i < $n; $i++) {
+		$aref->[$i] =~ s/(.)/mangle_ascii($1)/ge;
+	}
+}
+
 # Print first $cf'bifflines lines or $cf'bifflen charaters, whichever
 # comes first. Assumes TTY already opened correctly
 # Also known as the %-B macro if called body(0), or %-T if called body(1).
@@ -280,14 +292,39 @@ sub body {
 	# Setting bifflen or bifflines to 0 means no body
 	return '' if $len == 0 || $lines == 0;
 
-	my ($content, $entity);
+	my ($content, $entity, $enc, $biffenc);
 	($content, $entity) = unmime(\@body) if $'Header{'Mime-Version'};
 
-	&'add_log("biffing $entity entity is $content")
-		if length($content) && $'loglvl > 8;
+	my $convert_to_ascii = 0;
+	if (length($content)) {
+		&'add_log("biffing $entity entity is $content") if $'loglvl > 8;
+		my $charset;
+		$charset = $1 if $content =~ /\bcharset="?([-\w]+)/;
+		if (defined $charset) {
+			$enc = Encode::find_encoding($charset);
+			unless (ref $enc) {
+				&'add_log("WARNING unknown charset '$charset', handling as ASCII")
+					if $'loglvl > 1;
+				$convert_to_ascii = 1;
+			}
+
+			# If the encoding is the same as the one used in the terminal,
+			# we have no conversion to make.  Reset $enc.
+			$biffenc = Encode::find_encoding($cf'biffchars);
+			$enc = undef if
+				!(ref $biffenc) ||
+				(ref $enc && $biffenc->name eq $enc->name);
+		}
+	}
+
+	if (ref $enc) {
+		&'add_log("biff converting " . $enc->name . " into " . $biffenc->name)
+			if $'loglvl > 8;
+	}
 
 	strip_html(\@body) if $content =~ /html\b/;
 	&trim(*body) if $trim;		# Smart trim of leading reply text
+	to_ascii(\@body, $lines) if $convert_to_ascii;
 	&mh(*body, $len) if $cf'biffmh =~ /^on/i;
 
 	my $reformat = $cf'biffnice =~ /^on/i;
@@ -295,6 +332,10 @@ sub body {
 	my $tl = 8;					# tab length
 
 	while ($len > 0 && $lines > 0 && defined ($_ = shift(@body))) {
+		if (ref $enc) {
+			my $data = $enc->decode($_);
+			$_ = $biffenc->encode($data);
+		}
 		next if $skipnl && is_blank($_);
 		my $line_length = 0;
 		1 while s|\t|' ' x ($tl - length($`) % $tl)|e;	# Expand tabs
@@ -487,24 +528,139 @@ sub format {
 	push(@ary, $body);			# Remaining information on one line
 }
 
-# One-liner quoted-printable decoder
-# MUST be on one line to not be dataloaded (would mess $1 in the regexp)
-sub to_txt { my $l = shift; $l =~ s/=([\da-fA-F]{2})/pack('C', hex($1))/ge; $l }
+# Perload OFF
+
+# Mangle given character to ASCII, or swallow it if CTRL char
+# MUST NOT be dataloaded (would mess $1 in the regexp)
+sub mangle_ascii {
+	my ($x) = @_;
+	my $c = unpack("U", $x);				# Read as Unicode
+	return '' if $c <= 8;					# Invisible
+	# Chars 9 and 10 are \t and \n in ASCII
+	return '' if $c >= 11 && $c < 32;		# Invisible
+	return '.' if $c >= 127;				# Outside the ASCII range
+	return pack("C", $c);					# Write as a byte (ASCII)
+}
+
+# Quoted-printable decoder
+# MUST NOT be dataloaded (would mess $1 in the regexp)
+sub to_txt {
+	my ($c, $l) = @_;	# charset, line
+	$l =~ s/=([\da-fA-F]{2})/pack('C', hex($1))/ge;
+	my $enc = Encode::find_encoding($c);
+	my $biffenc = Encode::find_encoding($cf'biffchars);
+	if (ref $enc && ref $biffenc && $enc->name ne $biffenc->name) {
+		my $data = $enc->decode($l);
+		$data = $biffenc->encode($data);
+		$l = $data if length $data;
+	}
+	return $l;
+}
+
+# Base64 decoder
+# MUST NOT be dataloaded (would mess $1 in the regexp)
+sub b64_to_txt {
+	my ($c, $l) = @_;	# charset, line
+	base64'reset(length $l);
+	base64'decode($l);
+	my $o = base64'output();
+	my $enc = Encode::find_encoding($c);
+	my $biffenc = Encode::find_encoding($cf'biffchars);
+	if (ref $enc && ref $biffenc && $enc->name ne $biffenc->name) {
+		my $data = $enc->decode($$o);
+		$data = $biffenc->encode($data);
+		$l = $data if length $data;
+	}
+	return $l;
+}
+
+# Perload ON
 
 # Quick removal of quoted-printable escapes within the headers
-# We do not care about the charset and hope the tty will be able to display
-# the characters just fine.
+# We pay attention to the charset and recode data to the charset specified
+# as "biffchars" in the configuration.
 sub unquote_printable {
 	my ($l) = @_;
 	# The to_txt() routine being used MUST NOT be dataloaded or $1 would be
 	# reset to '' on the first invocation.  It's a perl bug (seen in 5.10)
-	$l =~ s/=\?[\w-]+?\?Q\?(.*?)\?=\s*/to_txt($1)/sieg && $l =~ s/_/ /g;
+	# By precaution, we also do not dataload b64_to_txt().
+	$l =~ s/=\?([\w-]+)\?Q\?(.*?)\?=/to_txt($1,$2)/sieg && $l =~ s/_/ /g;
+	$l =~ s/=\?([\w-]+)\?B\?(.*?)\?=/b64_to_txt($1,$2)/sieg;
 	&'add_log("unquoted '$_[0]' to '$l'") if $'loglvl > 19 && $_[0] ne $l;
 	return $l;
 }
 
-# Un-MIME the body by removing all the MIME headers and looking for the
-# first text entity in the message.
+# Recursive MIME parsing to extract the first text entity content
+#
+# Input is (aref, eref, boundary, n)
+# where:
+#	aref			is the array containing the body being parsed
+#	eref			is where we can stuff the entity content
+#	boundary		is the current MIME boundary
+#	n				is the running count of the entity number
+#
+# Returns (content_type, parsed_header, n)
+# where:
+# 	content_type	is the retained entity content-type
+#	parsed_header	is a ref on the parsed header hashtable
+#	n				is the entity number
+sub unmime_recursive {
+	my ($aref, $eref, $boundary, $n) = @_;
+
+	&'add_log("searching text part for biffing, boundary=$boundary, n=$n")
+		if $'loglvl > 16;
+
+	my $entity_content;
+	my $header;
+	my $grabbed = 0;
+
+	for (;;) {
+		unless ($grabbed) {
+			last unless skip_past($aref, $boundary);
+		}
+		$grabbed = 0;
+		$header = parse_header($aref);
+		my $content = lc($header->{'Content-Type'});
+		$content =~ s/\(.*?\)\s*//g;
+		&'add_log("parsed entity header: content is $content") if $'loglvl > 19;
+		$n++;
+		if ($content =~ m|^text/|) {
+			# We found (another) text part, collect it...
+			&'add_log("collecing text n=$n") if $'loglvl > 19;
+			my @entity;
+			my $end = !skip_past($aref, $boundary, \@entity);
+			$grabbed = 1;		# Avoid skipping at next loop iteration
+			if (
+				$end ||
+				$content =~ m|^text/plain\b|	# Found the best one
+			) {
+				@$eref = @entity;
+				$entity_content = $content;
+				&'add_log("done with n=$n, content=$content") if $'loglvl > 19;
+				last;
+			}
+		} elsif ($content =~ m|^multipart/|) {
+			my ($bound) = $content =~ /boundary=(\S+);/;
+			($bound) = $content =~ /boundary=(\S+)/ unless length $bound;
+			$bound = $1 if $bound =~ /^"(.*)"/ || $bound =~ /^'(.*)'/;
+			&'add_log("collecing recursively n=$n, boundary=$bound")
+				if $'loglvl > 19;
+
+			($entity_content, $header, $n) =
+				unmime_recursive($aref, $eref, $bound, $n);
+
+			if ($entity_content =~ m|^text/plain\b|) {
+				&'add_log("done with n=$n, content=$content") if $'loglvl > 19;
+				last;
+			}
+		}
+	}
+
+	return ($entity_content, $header, $n);
+}
+
+# Un-MIME the body by removing all the embedded MIME part stuff and looking
+# for the first text entity in the message.
 # The supplied array is updated in-place and will contain on return the
 # lines of the MIME entity that was retained.
 # Returns the type of the retained MIME entity and the number of the entity
@@ -522,38 +678,14 @@ sub unmime {
 	($boundary) = $content =~ /boundary=(\S+)/ unless length $boundary;
 	$boundary = $1 if $boundary =~ /^"(.*)"/ || $boundary =~ /^'(.*)'/;
 
-	# We do not perform a recursive MIME parsing here
-
-	my $entity_content;
-	my $header;
-
-	&'add_log("searching text part for biffing, boundary=$boundary")
-		if $'loglvl > 16;
+	# We perform a recursive MIME parsing here because the first part of
+	# the message could be a multipart/alternative, with sub MIME sections
+	# containing the text entity we're looking for.
+	#		--RAM, 2016-09-14
 
 	my @entity;
-	my $grabbed = 0;
-	my $n = 0;
-
-	for (;;) {
-		unless ($grabbed) {
-			return undef unless skip_past($aref, $boundary);
-		}
-		$grabbed = 0;
-		$header = parse_header($aref);
-		$entity_content = lc($header->{'Content-Type'});
-		$entity_content =~ s/\(.*?\)\s*//g;
-		&'add_log("parsed entity header: content is $entity_content")
-			if $'loglvl > 19;
-		$n++;
-		if ($entity_content =~ m|^text/|) {
-			# We found (another) text part, collect it...
-			@entity = ();
-			my $end = !skip_past($aref, $boundary, \@entity);
-			$grabbed = 1;		# Avoid skipping at next loop iteration
-			last if $entity_content =~ m|^text/plain\b|;	# Found the best one
-			last if $end;
-		}
-	}
+	my ($entity_content, $header, $n) =
+		unmime_recursive($aref, \@entity, $boundary, 0);
 
 	my $entity = "${n}th";
 	$entity =~ s/1th$/1st/;
@@ -570,16 +702,21 @@ sub unmime {
 	# XXX code duplication with body_check(), factorize some day...
 	my $output;
 	my $error;
+	my $len = 0;
+
+	foreach my $x (@entity) {
+		$len += length $x;
+	}
 
 	if ($entity_encoding =~ /^base64\s*$/i) {
-		base64'reset(length $'Header{'Body'});
+		base64'reset($len);
 		foreach my $d (@entity) {
 			base64'decode($d);
 		}
 		$error = base64'error_msg();
 		$output = base64'output();
 	} elsif ($entity_encoding =~ /^quoted-printable\s*$/i) {
-		qp'reset(length $'Header{'Body'});
+		qp'reset($len);
 		foreach my $d (@entity) {
 			qp'decode($d);
 		}

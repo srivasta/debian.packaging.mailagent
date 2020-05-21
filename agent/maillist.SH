@@ -23,7 +23,7 @@ $startperl
 	eval 'exec perl -S \$0 \${1+"\$@"}'
 		if \$running_under_some_shell;
 
-# $Id: maillist.SH 75 2011-12-23 10:18:37Z rmanfredi $
+# $Id$
 #
 #  Copyright (c) 1990-2006, Raphael Manfredi
 #  

@@ -11,7 +11,7 @@
 */
 
 /*
- * $Id: parser.c 8 2008-05-28 09:27:26Z rmanfredi $
+ * $Id$
  *
  *  Copyright (c) 1990-2006, Raphael Manfredi
  *  

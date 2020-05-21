@@ -1,4 +1,4 @@
-;# $Id: header.pl 79 2013-05-17 20:49:33Z rmanfredi $
+;# $Id$
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
@@ -225,27 +225,50 @@ sub parsedate {
 }
 
 # Format header field to fit into 78 columns, each continuation line being
-# indented by 8 chars. Returns the new formatted header string.
+# indented by 4 chars. Returns the new formatted header string.
 sub format {
-	local($field) = @_;			# Field to be formatted
-	local($tmp);				# Buffer for temporary formatting
-	local($new) = '';			# Constructed formatted header
-	local($kept);				# Length of current line
-	local($len) = 78;			# Amount of characters kept
-	local($cont) = ' ' x 8;		# Continuation lines starts with 8 spaces
+	my ($field) = @_;			# Field to be formatted
+	my $tmp;					# Buffer for temporary formatting
+	my $new = '';				# Constructed formatted header
+	my $kept;					# Length of current line
+	my $len = 78;				# Amount of characters kept
+	my $cont = ' ' x 4;			# Continuation lines starts with 4 spaces
+	# No need to format if length already fits the line
+	if (length($field) <= $len) {
+		# Normalize continuations
+		return $cont . $field if $field =~ s/^\s+//;
+		return $field;
+	}
+	# Adjust length down if we're just formatting a continuation line
+	# This can happen when we're called from news_fmt().
+	$len = 74 if $field =~ /^\s/;
 	# Format header field, separating lines on ',' or space.
 	while (length($field) > $len) {
 		$tmp = substr($field, 0, $len);		# Keep first $len chars
 		$tmp =~ s/^(.*)([,\s]).*/$1$2/;		# Cut at last space or ,
 		$kept = length($tmp);				# Amount of chars we kept
+		# We must ensure our hard split at $len chars does not fall within
+		# a word: we can only split on ',' or space!
+		if ($kept == $len) {
+			for (;;) {
+				my $s = substr($field, $kept, 1);
+				last unless length $s;		# Reached end of string
+				$kept++;
+				$tmp .= $s;
+				last if $s =~ /^[,\s]/;
+			}
+		}
 		$tmp =~ s/\s+$//;					# Remove trailing spaces
 		$tmp =~ s/^\s+//;					# Remove leading spaces
-		$new .= $cont if $new;				# Continuation starts with 8 spaces
-		$len = 70;							# Account continuation for next line
-		$new .= "$tmp\n";
-		$field = substr($field, $kept, length $field);
+		if (length $tmp) {					# Avoid empty line within header!
+			$len = 74;						# Account continuation for next line
+			$new .= $cont if $new;			# Continuation starts with 8 spaces
+			$new .= $tmp;
+			$new .= "\n";
+		}
+		$field = substr($field, $kept);
 	}
-	unless ($field =~ /^\s+$/) {			# Not only spaces
+	unless ($field =~ /^\s*$/) {			# Not only spaces and not empty
 		$new .= $cont if $new;				# Add 8 chars if continuation
 		$new .= $field;						# Remaining information on one line
 	}
@@ -257,17 +280,52 @@ sub format {
 # after the field name.
 # Also, this routine must work when called to format a continuation (field
 # stating with spaces).
+# Finally, this routine ensures that the first line is not just the header
+# name (even if there are continuation lines), so the first line can be
+# longer than 80 chars to fulfill this constraint.
 sub news_fmt {
 	my ($field) = @_;			# Field to be formatted
-	my $continuation = 0;
-	$continuation++ if $field =~ s/^\s+//;
-	my $res = &format($field);
-	if ($continuation) {
-		$res = (' ' x 8) . $res;	# Can be larger than 80 chars, but it's OK
+	my $len = 78;				# Amount of characters kept
+	my $cont = ' ' x 4;			# Continuation lines starts with 4 spaces
+	$field =~ s/^([\w-]+):(\S)/$1: $2/s;	# Ensure name is followed by space
+	return $field if length $field <= $len;	# Nothing to change
+	# The first line needs to be handled specially to not be split on the
+	# first space, even if it becomes longer than our targeted length limit.
+	my $new;
+	if ($field =~ /^[\w-]+:/) {
+		return $field unless $field =~ /^([\w-]+:\s+.+?[\s,])/;
+		$new = $1;
 	} else {
-		$res =~ s/^([\w-]+):(\S)/$1: $2/s || $res =~ s/^([\w-]+):\n/$1: \n/s;
+		unless ($field =~ /^(\s+.+?[\s,])/) {
+			# No space to break-up the header line
+			$field =~ s/^\s+//;
+			# Do not emit line if it ends-up being empty...
+			# Indeed, we're supposed to be emitting header-lines, and an
+			# empty line would signal an EOH (End Of Header) condition!
+			return '' if $field eq "\n";
+			return $cont . $field;		# Normalize continuations
+		}
+		$new = $1
 	}
-	return $res;
+	# Maybe we can fit more?
+	while (length $new < $len) {
+		my $tmp = substr($field, length $new);
+		last unless $tmp =~ /^(.+?[\s,])/;
+		my $extra = $1;
+		last if length($new) + length($extra) > $len;
+		$new .= $extra;
+	}
+	$field = substr($field, length $new);
+	$new =~ s/\s+$//;			# Remove trailing spaces
+	# Normalize continuation to 8 spaces
+	$new = $cont . $new if $new =~ s/^\s+//;
+	# Format the remaining normally now that we special-cased the first line
+	# We add a leading space because we're formatting a continuation line.
+	my $remaining;
+	$field =~ s/^\s+//;
+	$remaining = &format(" " . $field) unless $field =~ /^\s*$/;
+	$remaining = $cont . $remaining if length $remaining;
+	return $new . "\n" . $remaining;
 }
 
 # Scan the head of a file and try to determine whether there is a mail

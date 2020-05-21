@@ -71,11 +71,29 @@ $? == 0 || print "15\n";
 -f 'ok' || print "16\n";
 $size = -s 'ok';
 
-&add_option('-o fromfake: OFF');
+&add_option('-o "fromfake: OFF"');
 `$cmd`;
 $? == 0 || print "17\n";
 &get_log(18, 'ok');
 &check_log('^From: ', 19) == 1 || print "20\n";
+
+unlink "$mbox", "$user", 'mail', 'ok';
+
+cp_mail("../mail-long");
+&add_header('X-Tag: save #1');
+`$cmd`;
+$? == 0 || print "21\n";
+-f "$mbox" || print "22\n";		# Mail saved here
+-f "$user" && print "23\n";		# Must not exist!
+
+# These strings must not be cut (this is around the 78 character limit)
+my @long = (
+	"character_limit_and_must_therefore",
+	"9207030043.AA04311\@iecc.cambridge.ma.us"
+);
+for (my $i = 0; $i < @long; $i++) {
+	&contains_string('mbox', $long[$i]) || print 24 + $i, "\n";
+}
 
 unlink "$mbox", "$user", 'mail', 'ok';
 print "0\n";

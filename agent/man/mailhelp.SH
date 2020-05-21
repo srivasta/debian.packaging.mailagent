@@ -18,31 +18,31 @@ echo "Extracting agent/man/mailhelp.$manext (with variable substitutions)"
 $rm -f mailhelp.$manext
 $spitshell >mailhelp.$manext <<!GROK!THIS!
 .TH MAILHELP $manext ram
-.\" @(#) Manual page for mailagent's commands -- (c) ram February 1991
-.\"
-.\" $Id: mailhelp.SH 75 2011-12-23 10:18:37Z rmanfredi $
-.\"
-.\"  Copyright (c) 1990-2006, Raphael Manfredi
-.\"
-.\"  You may redistribute only under the terms of the Artistic License,
-.\"  as specified in the README file that comes with the distribution.
-.\"  You may reuse parts of this distribution only within the terms of
-.\"  that same Artistic License; a copy of which may be found at the root
-.\"  of the source tree for mailagent 3.0.
-.\"
-.\" $Log: mailhelp.SH,v $
-.\" Revision 3.0.1.3  1999/07/12  13:46:52  ram
-.\" patch66: updated my e-mail address
-.\"
-.\" Revision 3.0.1.2  1996/12/24  14:41:59  ram
-.\" patch45: documented command forwarding
-.\"
-.\" Revision 3.0.1.1  1995/08/07  16:14:40  ram
-.\" patch37: updated my e-mail address
-.\"
-.\" Revision 3.0  1993/11/29  13:48:29  ram
-.\" Baseline for mailagent 3.0 netwide release.
-.\"
+''' @(#) Manual page for mailagent's commands -- (c) ram February 1991
+'''
+''' $Id$
+'''
+'''  Copyright (c) 1990-2006, Raphael Manfredi
+'''
+'''  You may redistribute only under the terms of the Artistic License,
+'''  as specified in the README file that comes with the distribution.
+'''  You may reuse parts of this distribution only within the terms of
+'''  that same Artistic License; a copy of which may be found at the root
+'''  of the source tree for mailagent 3.0.
+'''
+''' $Log: mailhelp.SH,v $
+''' Revision 3.0.1.3  1999/07/12  13:46:52  ram
+''' patch66: updated my e-mail address
+'''
+''' Revision 3.0.1.2  1996/12/24  14:41:59  ram
+''' patch45: documented command forwarding
+'''
+''' Revision 3.0.1.1  1995/08/07  16:14:40  ram
+''' patch37: updated my e-mail address
+'''
+''' Revision 3.0  1993/11/29  13:48:29  ram
+''' Baseline for mailagent 3.0 netwide release.
+'''
 .SH NAME
 maildist, mailhelp, maillist, mailpatch \- mailagent's commands
 .SH SYNOPSIS

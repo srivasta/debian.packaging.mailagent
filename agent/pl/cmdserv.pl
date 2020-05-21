@@ -1,4 +1,4 @@
-;# $Id: cmdserv.pl 69 2011-05-18 12:28:03Z rmanfredi $
+;# $Id$
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  

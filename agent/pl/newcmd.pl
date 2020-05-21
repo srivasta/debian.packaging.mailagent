@@ -1,4 +1,4 @@
-;# $Id: newcmd.pl 77 2012-01-08 23:55:16Z rmanfredi $
+;# $Id$
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  

@@ -1,4 +1,4 @@
-;# $Id: sendfile.pl 23 2008-05-30 09:30:12Z rmanfredi $
+;# $Id$
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  

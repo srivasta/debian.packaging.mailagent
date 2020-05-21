@@ -82,29 +82,42 @@ cp_mail("../mime");
 &add_header('X-Tag: biff 3');
 &make_tty(0, 0777, 40);	# 40 & 41
 `$cmd`;
-$? == 0 || print "41\n";
--f 'ok' || print "42\n";
--s 'tty0' || print "43\n";
-&get_log(44, 'tty0');
-&not_log('--foo', 45);
-&check_log('^Got mail in ~/ok', 46) == 1 || print "47\n";
-&check_log('successfully decoded', 48) == 1 || print "49\n";
+$? == 0 || print "42\n";
+-f 'ok' || print "43\n";
+-s 'tty0' || print "44\n";
+&get_log(45, 'tty0');
+&not_log('--foo', 46);
+&check_log('^Got mail in ~/ok', 47) == 1 || print "48\n";
+&check_log('successfully decoded', 49) == 1 || print "50\n";
 &cleanup;
 
 cp_mail("../qp");
 my $subject = <<EOM;
-Subject: =?Cp1252?Q?Perl:_La_haute_tec?=
- =?Cp1252?Q?hnicit=E9_au_service_des_professionnels?=
+Subject: =?latin1?Q?Perl:_La_haute_technicit=E9_au_service_des_professionnels?=
 EOM
 chop $subject;
 &replace_header($subject);
 &add_header('X-Tag: biff 3');
-&make_tty(0, 0777, 50);	# 50 & 51
+&make_tty(0, 0777, 50);	# 51 & 52
 `$cmd`;
-$? == 0 || print "52\n";
-&get_log(53, 'tty0');
+$? == 0 || print "53\n";
+&get_log(54, 'tty0');
 &check_log(
-	'Subject: Perl: La haute technicité au service des professionnels', 54);
+	'Subject: Perl: La haute technicité au service des professionnels', 55);
+&cleanup;
+
+cp_mail("../mime-recursive");
+&add_header('X-Tag: biff 3');
+&make_tty(0, 0777, 40);	# 56 & 57
+`$cmd`;
+$? == 0 || print "58\n";
+-f 'ok' || print "59\n";
+-s 'tty0' || print "60\n";
+&get_log(61, 'tty0');
+&not_log('--foo', 62);
+&not_log('--bar', 63);
+&check_log('^Got mail in ~/ok', 64) == 1 || print "65\n";
+&check_log('successfully decoded', 66) == 1 || print "67\n";
 &cleanup;
 
 unlink 'mail';

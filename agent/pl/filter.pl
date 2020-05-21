@@ -1,4 +1,4 @@
-;# $Id: filter.pl 46 2008-06-25 16:35:05Z rmanfredi $
+;# $Id$
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  

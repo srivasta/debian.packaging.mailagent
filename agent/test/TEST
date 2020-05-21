@@ -58,6 +58,7 @@ $how_many = 0;
 
 require './getopt.pl';
 &Getopt;
+
 $mailagent = 'mailagent';			# Default program (dataloaded version)
 $mailagent = 'magent' if $opt_n;	# Use non-dataloaded version
 $ENV{'MAILAGENT'} = $mailagent;
@@ -66,7 +67,6 @@ $ENV{'PATH'} = "$pwd/..:.:" . $ENV{'PATH'};
 -f "../$mailagent" && -x _ || die "No $mailagent.\n";
 -f '../filter/filter' && -x _ || die "No filter.\n";
 $> || die "Cannot run tests as super-user. [$<,$>]\n";
-
 
 &load_ok;		# Don't rerun successful tests if up to date
 
@@ -114,7 +114,6 @@ open(OK, ">>OK");
 select(OK);
 $| = 1;		# We may safely interrupt
 select(STDOUT);
-
 
 foreach $dir (@tests) {
 	next unless -d $dir;

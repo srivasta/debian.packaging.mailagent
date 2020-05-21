@@ -18,139 +18,139 @@ echo "Extracting agent/man/mailagent.$manext (with variable substitutions)"
 $rm -f mailagent.$manext
 $spitshell >mailagent.$manext <<!GROK!THIS!
 .TH MAILAGENT $manext "Version $VERSION-$REVISION"
-.\" @(#) Manual page for mailagent's filter -- (c) ram February 1991
-.\"
-.\" $Id: mailagent.SH 75 2011-12-23 10:18:37Z rmanfredi $
-.\"
-.\"  Copyright (c) 1990-2006, Raphael Manfredi
-.\"
-.\"  You may redistribute only under the terms of the Artistic License,
-.\"  as specified in the README file that comes with the distribution.
-.\"  You may reuse parts of this distribution only within the terms of
-.\"  that same Artistic License; a copy of which may be found at the root
-.\"  of the source tree for mailagent 3.0.
-.\"
-.\" $Log: mailagent.SH,v $
-.\" Revision 3.0.1.26  2001/03/17 18:08:30  ram
-.\" patch72: documented new config vars: domain and hidenet
-.\" patch72: various fixes from bug reports on Debian
-.\"
-.\" Revision 3.0.1.25  2001/03/13 13:10:47  ram
-.\" patch71: documented SUBST/TR on header fields
-.\"
-.\" Revision 3.0.1.24  2001/01/10 16:51:38  ram
-.\" patch69: changed semantics of "tome"
-.\" patch69: updated POST to current practices
-.\" patch69: documented biffing macros for news article
-.\"
-.\" Revision 3.0.1.23  1999/07/12  13:46:20  ram
-.\" patch66: variables are now propagated back and forth through APPLY
-.\" patch66: updated my e-mail address
-.\"
-.\" Revision 3.0.1.22  1999/01/13  18:10:52  ram
-.\" patch64: added %Y macro for 4-digit year output
-.\" patch64: agent.wait file moved from Queue to Spool
-.\"
-.\" Revision 3.0.1.21  1998/07/28  16:59:10  ram
-.\" patch62: documented new "servshell" variable
-.\"
-.\" Revision 3.0.1.20  1998/03/31  14:40:01  ram
-.\" patch59: added "vacfixed" and "tofake" configuration parameters
-.\" patch59: new ON command to issue commands on certain days only
-.\" patch59: the SERVER "set" command can now list defined variables
-.\" patch59: added an example of alternate VACATION message selection
-.\"
-.\" Revision 3.0.1.19  1997/09/15  15:07:18  ram
-.\" patch57: new -t and -f options for BEGIN and NOP
-.\" patch57: all command options should now be output in bold
-.\" patch57: documented _CALLOUT_ working state for callout queue
-.\"
-.\" Revision 3.0.1.18  1997/02/20  11:40:44  ram
-.\" patch55: documents new execsafe, groupsafe and lockwarn variables
-.\" patch55: the C filter can now redirect output via -o
-.\" patch55: made it explicit that /pattern/i is legal
-.\"
-.\" Revision 3.0.1.17  1997/01/07  18:29:18  ram
-.\" patch52: documented new execsafe configuration variable
-.\"
-.\" Revision 3.0.1.16  1996/12/24  14:12:58  ram
-.\" patch45: examples are now shown in constant-width font if possible
-.\" patch45: big emphasis about security issues, for RUN commands & filter
-.\" patch45: new Relayed: pseudo header computations
-.\" patch45: documented the %-H biffing macro with more details
-.\" patch45: updated my e-mail address
-.\"
-.\" Revision 3.0.1.15  1995/09/15  13:56:30  ram
-.\" patch43: folder compression can now deal with various compressors
-.\" patch43: added locksafe, compspecs and comptag config variables
-.\" patch43: many typo fixes
-.\"
-.\" Revision 3.0.1.14  1995/08/31  16:27:44  ram
-.\" patch42: escaped various dollars to avoid shell substitution, grrr...
-.\"
-.\" Revision 3.0.1.13  1995/08/07  16:14:23  ram
-.\" patch37: new biffing features and configuration variables
-.\" patch37: new BIFF filtering command to dynamically configure biffing
-.\"
-.\" Revision 3.0.1.12  1995/03/21  12:56:05  ram
-.\" patch35: sample vacation message now contains a Precedence: header
-.\"
-.\" Revision 3.0.1.11  1995/02/16  14:28:45  ram
-.\" patch32: documents new -I switch and new fromfake config variable
-.\" patch32: random cleanup, mainly suppressing spurious "the" articles
-.\"
-.\" Revision 3.0.1.10  1995/01/25  15:17:42  ram
-.\" patch27: new option letter 't' for mailagent -s
-.\" patch27: new commands BEEP and PROTECT
-.\" patch27: new macro %a for biff messages
-.\"
-.\" Revision 3.0.1.9  1995/01/03  18:01:53  ram
-.\" patch24: new -u option for ANNOTATE documented
-.\" patch24: fixed example on the shell server command (power checking)
-.\" patch24: removed quotes for SERVER -d to accommodate new option parsing
-.\" patch24: added a -l switch to VACATION and extended its arguments
-.\" patch24: new section documenting Rule Environment variables
-.\"
-.\" Revision 3.0.1.8  1994/10/29  17:41:41  ram
-.\" patch20: documents the six new config variables for biffing
-.\" patch20: new section dedicated to built-in mail biffing
-.\"
-.\" Revision 3.0.1.7  1994/10/10  10:23:36  ram
-.\" patch19: typo fix
-.\"
-.\" Revision 3.0.1.6  1994/10/04  17:41:47  ram
-.\" patch17: documents new email and mboxlock config parameters
-.\" patch17: documents ~/agent.trace file and callout queue file name
-.\" patch17: new %e macro available to get user's e-mail address
-.\" patch17: mentions that the msgpath variable is read-only
-.\"
-.\" Revision 3.0.1.5  1994/09/22  13:57:09  ram
-.\" patch12: documents new config parameters callout and linkdirs
-.\" patch12: new filtering actions AFTER and DO
-.\" patch12: variable msgpath is now defined within a PERL escape
-.\" patch12: mention that PERL escape variables are available to new commands
-.\"
-.\" Revision 3.0.1.4  1994/07/01  14:56:20  ram
-.\" patch8: documents new eleven configuration variables
-.\" patch8: sub-section on timeouts has been expanded
-.\" patch8: emphasize .forward optimization danger with sendmail
-.\" patch8: new UMASK command
-.\"
-.\" Revision 3.0.1.3  1994/04/25  15:15:56  ram
-.\" patch7: documented new 'fromesc' config variable
-.\" patch7: forgot to insert the new -F option in the synopsis line
-.\"
-.\" Revision 3.0.1.2  1994/01/26  09:29:24  ram
-.\" patch5: documents new tag feature for UNIQUE and RECORD
-.\" patch5: documents new -F option
-.\" patch5: random typo fixes
-.\"
-.\" Revision 3.0.1.1  1993/12/15  09:03:44  ram
-.\" patch3: typo and minor fixes
-.\"
-.\" Revision 3.0  1993/11/29  13:48:27  ram
-.\" Baseline for mailagent 3.0 netwide release.
-.\"
+''' @(#) Manual page for mailagent's filter -- (c) ram February 1991
+'''
+''' $Id$
+'''
+'''  Copyright (c) 1990-2006, Raphael Manfredi
+'''
+'''  You may redistribute only under the terms of the Artistic License,
+'''  as specified in the README file that comes with the distribution.
+'''  You may reuse parts of this distribution only within the terms of
+'''  that same Artistic License; a copy of which may be found at the root
+'''  of the source tree for mailagent 3.0.
+'''
+''' $Log: mailagent.SH,v $
+''' Revision 3.0.1.26  2001/03/17 18:08:30  ram
+''' patch72: documented new config vars: domain and hidenet
+''' patch72: various fixes from bug reports on Debian
+'''
+''' Revision 3.0.1.25  2001/03/13 13:10:47  ram
+''' patch71: documented SUBST/TR on header fields
+'''
+''' Revision 3.0.1.24  2001/01/10 16:51:38  ram
+''' patch69: changed semantics of "tome"
+''' patch69: updated POST to current practices
+''' patch69: documented biffing macros for news article
+'''
+''' Revision 3.0.1.23  1999/07/12  13:46:20  ram
+''' patch66: variables are now propagated back and forth through APPLY
+''' patch66: updated my e-mail address
+'''
+''' Revision 3.0.1.22  1999/01/13  18:10:52  ram
+''' patch64: added %Y macro for 4-digit year output
+''' patch64: agent.wait file moved from Queue to Spool
+'''
+''' Revision 3.0.1.21  1998/07/28  16:59:10  ram
+''' patch62: documented new "servshell" variable
+'''
+''' Revision 3.0.1.20  1998/03/31  14:40:01  ram
+''' patch59: added "vacfixed" and "tofake" configuration parameters
+''' patch59: new ON command to issue commands on certain days only
+''' patch59: the SERVER "set" command can now list defined variables
+''' patch59: added an example of alternate VACATION message selection
+'''
+''' Revision 3.0.1.19  1997/09/15  15:07:18  ram
+''' patch57: new -t and -f options for BEGIN and NOP
+''' patch57: all command options should now be output in bold
+''' patch57: documented _CALLOUT_ working state for callout queue
+'''
+''' Revision 3.0.1.18  1997/02/20  11:40:44  ram
+''' patch55: documents new execsafe, groupsafe and lockwarn variables
+''' patch55: the C filter can now redirect output via -o
+''' patch55: made it explicit that /pattern/i is legal
+'''
+''' Revision 3.0.1.17  1997/01/07  18:29:18  ram
+''' patch52: documented new execsafe configuration variable
+'''
+''' Revision 3.0.1.16  1996/12/24  14:12:58  ram
+''' patch45: examples are now shown in constant-width font if possible
+''' patch45: big emphasis about security issues, for RUN commands & filter
+''' patch45: new Relayed: pseudo header computations
+''' patch45: documented the %-H biffing macro with more details
+''' patch45: updated my e-mail address
+'''
+''' Revision 3.0.1.15  1995/09/15  13:56:30  ram
+''' patch43: folder compression can now deal with various compressors
+''' patch43: added locksafe, compspecs and comptag config variables
+''' patch43: many typo fixes
+'''
+''' Revision 3.0.1.14  1995/08/31  16:27:44  ram
+''' patch42: escaped various dollars to avoid shell substitution, grrr...
+'''
+''' Revision 3.0.1.13  1995/08/07  16:14:23  ram
+''' patch37: new biffing features and configuration variables
+''' patch37: new BIFF filtering command to dynamically configure biffing
+'''
+''' Revision 3.0.1.12  1995/03/21  12:56:05  ram
+''' patch35: sample vacation message now contains a Precedence: header
+'''
+''' Revision 3.0.1.11  1995/02/16  14:28:45  ram
+''' patch32: documents new -I switch and new fromfake config variable
+''' patch32: random cleanup, mainly suppressing spurious "the" articles
+'''
+''' Revision 3.0.1.10  1995/01/25  15:17:42  ram
+''' patch27: new option letter 't' for mailagent -s
+''' patch27: new commands BEEP and PROTECT
+''' patch27: new macro %a for biff messages
+'''
+''' Revision 3.0.1.9  1995/01/03  18:01:53  ram
+''' patch24: new -u option for ANNOTATE documented
+''' patch24: fixed example on the shell server command (power checking)
+''' patch24: removed quotes for SERVER -d to accommodate new option parsing
+''' patch24: added a -l switch to VACATION and extended its arguments
+''' patch24: new section documenting Rule Environment variables
+'''
+''' Revision 3.0.1.8  1994/10/29  17:41:41  ram
+''' patch20: documents the six new config variables for biffing
+''' patch20: new section dedicated to built-in mail biffing
+'''
+''' Revision 3.0.1.7  1994/10/10  10:23:36  ram
+''' patch19: typo fix
+'''
+''' Revision 3.0.1.6  1994/10/04  17:41:47  ram
+''' patch17: documents new email and mboxlock config parameters
+''' patch17: documents ~/agent.trace file and callout queue file name
+''' patch17: new %e macro available to get user's e-mail address
+''' patch17: mentions that the msgpath variable is read-only
+'''
+''' Revision 3.0.1.5  1994/09/22  13:57:09  ram
+''' patch12: documents new config parameters callout and linkdirs
+''' patch12: new filtering actions AFTER and DO
+''' patch12: variable msgpath is now defined within a PERL escape
+''' patch12: mention that PERL escape variables are available to new commands
+'''
+''' Revision 3.0.1.4  1994/07/01  14:56:20  ram
+''' patch8: documents new eleven configuration variables
+''' patch8: sub-section on timeouts has been expanded
+''' patch8: emphasize .forward optimization danger with sendmail
+''' patch8: new UMASK command
+'''
+''' Revision 3.0.1.3  1994/04/25  15:15:56  ram
+''' patch7: documented new 'fromesc' config variable
+''' patch7: forgot to insert the new -F option in the synopsis line
+'''
+''' Revision 3.0.1.2  1994/01/26  09:29:24  ram
+''' patch5: documents new tag feature for UNIQUE and RECORD
+''' patch5: documents new -F option
+''' patch5: random typo fixes
+'''
+''' Revision 3.0.1.1  1993/12/15  09:03:44  ram
+''' patch3: typo and minor fixes
+'''
+''' Revision 3.0  1993/11/29  13:48:27  ram
+''' Baseline for mailagent 3.0 netwide release.
+'''
 .de Ex		\" Start of Example
 .sp
 .in +5
@@ -186,7 +186,7 @@ There is a set of options which may be used when you invoke
 \fImailagent\fR yourself. Please refer to the \fBOPTIONS\fR section for
 a complete description. You may use the \fB\-h\fR option to get a cryptic
 usage reminder.
-.\"
+'''
 .SS Product Overview
 .PP
 .I Mailagent
@@ -225,7 +225,7 @@ It is possible to extend the mailagent filtering commands by implementing
 them in \fIperl\fR and then having them automagically loaded when used. Those
 extended commands will behave exactly like built in ones, as documented
 in the \fBEXTENDING FILTERING COMMANDS\fR section.
-.\"
+'''
 .SS Learning From Examples
 .PP
 It is quite possible that you will find this manual page too complex for you.
@@ -234,9 +234,9 @@ material. If you wish, you may start by looking at the examples held in the
 distribution source tree under \fIagent/examples\fR. This directory contains
 two examples of rule files (look at the README file first) and are verbosely
 commented.
-.\"
-.\" G e t t i n g   S t a r t e d
-.\"
+'''
+''' G e t t i n g   S t a r t e d
+'''
 .SH "GETTING STARTED"
 .PP
 First, you need to install a minimum configuration and see how it works. It
@@ -245,7 +245,7 @@ not work as advertised...
 .PP
 To start the installation, you have to set up a \fI~/.mailagent\fR file which is
 the main configuration file, and choose the right \fIfilter\fR program.
-.\"
+'''
 .SS "Choosing The Filter Program"
 .PP
 The distribution comes with two filter programs. One written in shell and one
@@ -283,7 +283,7 @@ As of version 3.0 PL44, I advise you to prefer the C version if you are
 concerned about security. If you are in a position where multiple architectures
 can process your \fI.forward\fR, then a shell wrapper selecting the proper
 executable based on the architecture will be required.
-.\"
+'''
 .SS "Configuring Mailagent"
 .PP
 If \fImailagent\fR is in your path, you may automatically configure a default
@@ -337,6 +337,10 @@ the vacation mode.)
 Whether or not biffing is wanted when \fImailagent\fR delivers mail to
 a folder. Set it to ON (case insensitively) to allow local biffing if you
 are logged in. (optional, defaults to: OFF)
+.TP
+.I biffchars
+The charset to use when biffing on the terminal.  Set it to utf-8 if you are
+using UTF-8 terminals. (optional, defaults to: iso-8859-1).
 .TP
 .I biffhead
 When biffing is enabled, this variable lists which headers should be
@@ -847,7 +851,7 @@ force one unique message (optional, defaults to: OFF).
 The minimum time elapsed between two vacation messages to a given address
 (suggested: 1d).
 .PD
-.\"
+'''
 .SS "Available Logging Levels"
 .PP
 The following log levels can be used while running mailagent:
@@ -866,7 +870,7 @@ The following log levels can be used while running mailagent:
 19	Verbose
 20	Lot more verbose
 .Ef
-.\"
+'''
 .SS "Plugging Mailagent"
 .PP
 Once you have configured mailagent in a \fI~/.mailagent\fR (where \fI~\fR
@@ -1025,9 +1029,9 @@ for local processing, to avoid an excessive workload on the \fImailhost\fR
 machine, especially if it is a dedicated NFS server. If you are a system
 administrator installing \fImailagent\fR and expect many people to use it,
 keep this in mind.
-.\"
-.\" O p t i o n s
-.\"
+'''
+''' O p t i o n s
+'''
 .SH OPTIONS
 There is a limited set of options which may be used when calling the
 mailagent directly. Only one special option at a time may be specified.
@@ -1177,7 +1181,7 @@ should return a zero exit status).
 .PP
 If you do not want to use the default rules, you may skip the remaining of this
 section.
-.\"
+'''
 .SS "Configuring Help"
 .PP
 The help text mailagent will send to people must be copied from
@@ -1194,7 +1198,7 @@ files back (parameter \fImaxsize\fR in your \fI~/.mailagent\fR file\fR).
 .PP
 You may use the default help file or design one that will give even more
 details to the poor user.
-.\"
+'''
 .SS "Distribution Files"
 .PP
 The two files \fIproglist\fR and \fIdistribs\fR held in \fILib/mailagent\fR
@@ -1246,7 +1250,7 @@ directory.
 .PP
 You may include comments in both files: all lines starting with a leading
 # will be ignored.
-.\"
+'''
 .SS "Testing Your Mail Agent"
 .PP
 It is now time to make sure your mailagent works. Send yourself the following
@@ -1281,9 +1285,9 @@ your mailagent's configuration. Retry with a log level set to 20 and look
 at the issued log messages in your Log directory. Make sure that the file
 listed in the \fIplsave\fR entry of your \fI~/.mailagent\fR is correctly
 updated after a \fImaillist\fR has been run.
-.\"
-.\" F i l t e r i n g   R u l e s
-.\"
+'''
+''' F i l t e r i n g   R u l e s
+'''
 .SH "USING THE FILTER"
 The \fImailagent\fR can also be used as a filter: mail is parsed and some
 actions are taken based on simple \fIlex\fR-like rules. Actions range from
@@ -1313,7 +1317,8 @@ for instance, no '{' may be used as part of an address.
 .PP
 Comments are introduced by a leading '#' , which must be on the left margin.
 Unlike shell comments, a '#' which is not left justified will not be understood
-as a comment. However, spaces or tabs are allowed in front of '#'.
+as a comment, unless there is a space following '#'.
+Spaces or tabs are allowed in front of '#'.
 .PP
 All the statements in the rule file must end with a ';'. There are mainly
 four parts in each line. A list of comma separated modes, between '<' and '>',
@@ -1490,7 +1495,7 @@ From:
 Note the use of the file inclusion: all the users listed in file \fIusers\fR
 will have their mail left in the system mailbox. The usual rules apply for
 these loaded patterns.
-.\"
+'''
 .SS "Selector Combination"
 .PP
 A single rule may have a various set of selectors. For instance, in the
@@ -1587,7 +1592,7 @@ From: !ram, !root
 # Matches if \fIram\fR is listed in the \fITo\fR OR the \fICc\fR line
 To Cc: ram
 .Ef
-.\"
+'''
 .SS "Minimal Header"
 .PP
 A minimal set of selectors are guaranteed to be set, regardless of the
@@ -1636,7 +1641,7 @@ Where any reply should be sent. If no \fIReply-To:\fR field is present, then
 the \fIReturn-Path\fR is used (with <> stripped out), or the \fIFrom:\fR
 line is parsed to extract the e-mail address of the author.
 .PD
-.\"
+'''
 .SS "Variables"
 .PP
 The mailagent supports user-defined variables, which are globals. They are
@@ -1701,7 +1706,7 @@ There is currently no way for erasing a variable from the database. But if
 you do not use the variable any more, it will be removed when its age
 becomes greater than the maximum age specified by the \fIagemax\fR configuration
 variable.
-.\"
+'''
 .SS "Regular Expressions"
 .PP
 All the regular expressions follow the V8 syntax, as in \fIperl\fR, with all
@@ -1768,7 +1773,7 @@ then it might be worth knowing that all the set of matching selectors are
 recorded within %&, each set terminated with a ';'. If a negated selector is
 used, then %& will record all the fields which did not contain the pattern,
 assuming the selection succeeded (otherwise nothing is recorded).
-.\"
+'''
 .SS "Available Actions"
 .PP
 The following actions are available as filtering commands. Case is irrelevant
@@ -2430,7 +2435,7 @@ previous one. This is useful to store output of system commands ran by
 \fIcron\fR. Don't try to use it with an MH folder or a directory folder or
 it will behave like SAVE.
 (Fails if message cannot be written)
-.\"
+'''
 .SS "Execution Status"
 .PP
 Almost all the actions modify a variable which keeps track of the execution
@@ -2451,7 +2456,7 @@ It is unfortunate that ONCE or SELECT commands cannot make the difference
 between a non-execution and a successful execution of the specified command.
 There may be a change in the way this scheme works, but it should remain
 backward compatible.
-.\"
+'''
 .SS "Perl Escape"
 .PP
 By using the PERL command, you have the ability to perform filtering and other
@@ -2626,7 +2631,7 @@ mailagent and directly calling the routines you need. If it is not documented
 in the manual page, it may be changed without notice by any further patch.
 (And this does not say that documented features may not change also... It's
 just more unlikely, and patches would clearly state that, of course.)
-.\"
+'''
 .SS "Program Environment"
 .PP
 All the programs started by mailagent via RUN and friends inherit the
@@ -2639,7 +2644,7 @@ set PATH (if you are using the shell filter).
 All the programs are executed from within the \fIhome\fR directory. This
 includes scripts started via the PERL command and mail hooks. The latter will
 be described in detail further down.
-.\"
+'''
 .SS "File inclusion"
 .PP
 Some commands like FORWARD or KEEP allow you to specify a file name between
@@ -2653,7 +2658,7 @@ will be reported.
 The file should list each parameter (be it an address, a header or a pattern)
 on a line by itself. Shell-style comments (#) are allowed within that file and
 leading white spaces are trimmed (but not trailing spaces).
-.\"
+'''
 .SS "Macros Substitutions"
 .PP
 All the commands go through a macro substitution mechanism before being
@@ -2776,7 +2781,7 @@ Year (last two digits)
 %[To]
 Value of the header field (here To:)
 .PD
-.\"
+'''
 .SS "User-defined Macros"
 .PP
 The mailagent lets you define your own macros in two ways: at the filter
@@ -2856,7 +2861,7 @@ At the filter level, the MACRO command has three options. By default,
 the command defines a new macro by using \fIpush\fR, and the other
 options each let you access one of the other interface functions.
 Note that macro definitions persist across APPLY commands.
-.\"
+'''
 .SS "User-defined Logging"
 .PP
 Most of the time when writing a new mailagent filtering command or an
@@ -2893,7 +2898,7 @@ option will not be honored in that case. This may or may not be useful to you.
 If you call \fI&main'usr_log\fR with a non-existent logfile name, logging
 is redirected to the default system-wide logfile defined in your
 \fI~/.mailagent\fR.
-.\"
+'''
 .SS "Dynamically Loading New Code"
 .PP
 In you perl routines (user-defined commands, perl hooks, etc...), you may
@@ -2929,7 +2934,7 @@ The routine returns \fIundef\fR if the file cannot be loaded
 (non-existent file, most probably), \fB0\fR if the file was loaded but
 contained a syntax error or did not define the specified function, and \fB1\fR
 for success.
-.\"
+'''
 .SS "Using Once Commands"
 .PP
 The ONCE constructs lets you specify a given command to be run once every
@@ -2963,7 +2968,7 @@ but that would be likely to be less efficient, as the first hashing would be
 done on a fixed word, hence all the timestamps would be located in the file
 \fIHash/m/e\fR (where \fIHash\fR is the name of your hashing directory, which
 is the \fIhash\fR parameter in the configuration file).
-.\"
+'''
 .SS "Using Tags in Record and Unique"
 .PP
 Both the RECORD and UNIQUE commands let you specify a comma-separated tag list
@@ -3013,7 +3018,7 @@ To Cc: agent-users {
 If you have some rule using UNIQUE without any
 tags, it will match when at least one instance of the message has been
 recorded, no matter what tag (if any at all) was used in the first place.
-.\"
+'''
 .SS "Specifying A Period"
 .PP
 The period parameter of the ONCE commands or the \fIvacperiod\fR parameter
@@ -3046,7 +3051,7 @@ year (365 days)
 All the periods are converted internally in seconds, although you do not
 really care... Examples of valid periods range from "1m" to "136y" on a 32 bits
 machine (why ?).
-.\"
+'''
 .SS "Timeouts"
 .PP
 In order to avoid having a \fImailagent\fR waiting for a command forever, a
@@ -3085,7 +3090,7 @@ lock. If you want a secure locking policy, make sure
 times
 .I lockdelay
 is greater than \fIlockhold\fR, that parameter being "large" enough.
-.\"
+'''
 .SS "Avoiding Loops"
 .PP
 The \fImailagent\fR leaves an "X-Filter:" header on each filtered message,
@@ -3111,7 +3116,7 @@ do
 add that header line.  You can add one via ANNOTATE if you wish to prevent
 loops, in case the program to which you are feeding the message might
 return it to you in some strange way.
-.\"
+'''
 .SS "Message Files"
 .PP
 The text of the message to be sent back (for MESSAGE or NOTIFY) is read from
@@ -3324,13 +3329,13 @@ concerned).
 For those hooks which are finally ran by perl, the special @INC array has
 mailagent's own private library path prepended to it, so that \fIrequire\fR
 first looks in this place.
-.\"
-.\" F o l d e r s
-.\"
+'''
+''' F o l d e r s
+'''
 .SH "FOLDERS"
 A folder is a file or a directory which can be the target of a delivery by the
 mailagent, that is to say the argument of SAVE-like commands.
-.\"
+'''
 .SS "Folder Format"
 .PP
 By default, mails are written into folders according to the standard UNIX-style
@@ -3366,7 +3371,7 @@ line is used to specify the base name of the message, then a number is
 appended to give the name of the message file to use. That is, if there is
 no such file, the folder will look like an MH one, without any MH sequence
 file though.
-.\"
+'''
 .SS "Folder Compression"
 .PP
 If you have one or more of the widely available file compression
@@ -3463,9 +3468,9 @@ made automatically to the plain file.
 .PP
 On newly created folders the \fIcomptag\fR configuration variable is
 referenced to determine the compression type to use for the folder.
-.\"
-.\" M a i l   B i f f i n g
-.\"
+'''
+''' M a i l   B i f f i n g
+'''
 .SH MAIL BIFFING
 If you are receiving and processing mail on your own machine, then you have
 access to local mail biffing where \fImailagent\fR can warn you about new
@@ -3657,14 +3662,14 @@ randomly and this may make reading difficult. You may request an automatic
 reformatting of the compacted body by turning \fIbiffnice\fR to ON and the
 biff output will fit nicely within the terminal.
 .PP
-Unfortunately, it is not possible to customize the amount of columns that
-should be used for formatting: since you may biff to any tty you are logged
-on, that would force \fImailagent\fR to probe the tty for its column size,
-for each possible tty where output may go, and there is no reliable portable
-way of doing that. Sorry.
-.\"
-.\" E x t e n d i n g   F i l t e r i n g   C o m m a n d s
-.\"
+To make \fIbiffnice\fR really nice, \fImailagent\fR probes each tty (those
+where biffing was turned on) for its size and uses that information to drive
+formatting of the output.  Note that you can set \fIbiffnice\fR even
+when \fIbiffmh\fR is OFF.  This really helps maximizing the amount of body
+text displayed.
+'''
+''' E x t e n d i n g   F i l t e r i n g   C o m m a n d s
+'''
 .SH EXTENDING FILTERING COMMANDS
 Once you've reached the \fIexpert\fR level, and provided you have a fair
 knowledge of \fIperl\fR, you may feel the need for more advanced commands
@@ -3684,7 +3689,7 @@ in an interpreted language like \fIperl\fR. This of course once you have
 convinced yourself that it is a Good Thing to customize and extend a program
 in the same language as the one used for the core, meaning usually a fairly
 low-level language with fewer user-friendly hooks.
-.\"
+'''
 .SS Overview
 .PP
 In order to implement a new command, say FOLD, you will need to do the
@@ -3714,7 +3719,7 @@ you within the \fImailhook\fR package).
 In the following sections, we're going to describe the syntax of the
 \fInewcmd\fR file, and we'll then present some low-level internal variables
 which may be used when implementing new commands.
-.\"
+'''
 .SS New Command File Format
 .PP
 The \fInewcmd\fR file consists of a series of lines, each line describing
@@ -3751,7 +3756,7 @@ FOLD  ~/mail/cmds/fold.pl  fold  no  yes
 .Ef
 to allow FOLD even in _SEEN_ state and have it executed without modifying
 the current value of the \fIlast-command-status\fR variable.
-.\"
+'''
 .SS Writing An Implementation
 .PP
 Your perl function will be loaded when needed into the special package
@@ -3795,7 +3800,7 @@ safely use \fIdie\fR or call external library routines that use \fIdie\fR.
 If you use \fIrequire\fR, be aware that mailagent is setting up a special
 \fI@INC\fR array by putting its private library path first, so you may place
 all your \fImailagent\fR-related library files in this place.
-.\"
+'''
 .SS Special Variables
 .PP
 The following special variables (some of them marked read-only, meaning you
@@ -3855,7 +3860,7 @@ the suitable X-Filter line that should be appended in \fBall\fR the mail you
 send via mailagent, in order to avoid loops. Also when you save mails
 to a folder, it's wise adding this line in case a problem arises: you may
 then identify the culprit.
-.\"
+'''
 .SS Rule Environment
 .PP
 An action might have a legitimate desire of altering the environment for
@@ -3902,7 +3907,7 @@ its processing to initialize the \fIenv\fR package, and \fI&env'cleanup\fR
 at the end before returning. Before running the actions specified on a rule
 match, \fI&apply_rules\fR calls \fI&env'restore\fR to ensure a coherent
 view of the environment while running the actions for that particular rule.
-.\"
+'''
 .SS Altering Control Flow
 .PP
 When you want to alter control flow to perform a REJECT, a RESTART or an
@@ -3926,7 +3931,7 @@ The preferred way is to invoke the \fImailhook\fR interface functions,
 \fI&mailhook'begin\fR, \fI&mailhook'reject\fR, etc..., and that will work
 even if you redefine those functions yourself. Besides, that's the only
 interface which is likely not to be changed by new versions.
-.\"
+'''
 .SS General Purpose Routines
 .PP
 The following is a list of all the general routines you may wish to call when
@@ -4055,7 +4060,7 @@ once finished, and ABORT is perl's \fIdie\fR.
 You may also use the three functions from the \fIextern\fR package which
 manipulate persistent variables (already documented in the section dealing
 with variables) as well as the user-defined macro routines.
-.\"
+'''
 .SS Example
 .PP
 Writing your own commands is not easy, since it requires some basic knowledge
@@ -4114,7 +4119,7 @@ it has been bounced. Indeed, should the SENDBACK action be the only one
 action to be run, we do not want mailagent to LEAVE the mail in the
 mailbox because it has never been saved (this default behavior being
 a precaution only -- better safe than sorry).
-.\"
+'''
 .SS Conclusion
 .PP
 If along the way you imagine some useful commands which could be made
@@ -4134,9 +4139,9 @@ code, the mailagent providing a fixed and reliable frame and the external
 program providing the service. One immediate extension would be mailing
 list handling, using this mechanism to interface with some mailing list
 management software written in perl.
-.\"
-.\" G e n e r i c   M a i l   S e r v e r
-.\"
+'''
+''' G e n e r i c   M a i l   S e r v e r
+'''
 .SH GENERIC MAIL SERVER
 .PP
 One nice thing about mailagent is that it provides you with the basic tools to
@@ -4151,7 +4156,7 @@ equivalent. There is no notion of modes, with separate command sets for
 each mode or limited name-space visibility, at least for now, so it is not
 easy (albeit possible) to implement an ftpmail server, for instance, since
 this implies the notion of mode.
-.\"
+'''
 .SS Overview
 In order to implement a mail server command (say send \fIfile\fR, which
 would send an arbitrary file from the file system in a separate mail message),
@@ -4190,7 +4195,7 @@ Start using the command... which of course is the nicest part in this scheme!
 In the following sections, we'll learn about the syntax of the \fIcomserver\fR
 file, what \fIpowers\fR are, how the session transcript is built, what the
 command environment is, etc...
-.\"
+'''
 .SS Builtin Commands Overview
 .PP
 The mail server has a limited set of builtin commands, dealing with user
@@ -4251,7 +4256,7 @@ number of command that can be issued in one single message.
 In case you think this \fImailagent\fR feature is dangerous for your account,
 do not create the \fIroot\fR and \fIsecurity\fR powers, and do not write
 any sensitive commands.
-.\"
+'''
 .SS Builtin Commands Definition
 .PP
 Now let's have a look at those builtin commands. Passwords of sensitive
@@ -4360,7 +4365,7 @@ use of that information. If no command is specified, the new identity is
 assumed until changed by another \fIuser\fR command and all the powers
 currently held by the user are released. If no \fIe-mail\fR address
 is given, the original user ID is restored.
-.\"
+'''
 .SS Command Environment
 .PP
 There are six types of commands and variables that can be specified in server
@@ -4463,7 +4468,7 @@ clearance mechanism.
 .I user
 The effective user ID, originally the same as the uid, but may be changed
 via the \fIuser\fR builtin command.
-.\"
+'''
 .SS Session Transcript
 .PP
 A session transcript is mailed back automatically to the user who requested
@@ -4486,7 +4491,7 @@ commands, authentication based on that information is really weak. A more
 "secure" authentication is provided by the server powers, which is
 password-based. Unfortunately, the clear password has to be transmitted in the
 message itself and could be eavesdropped.
-.\"
+'''
 .SS Recording New Commands and Variables
 .PP
 Server commands and variables are defined in the \fIcomserver\fR file defined
@@ -4541,7 +4546,7 @@ function to call to execute the command; if none is specified, the name of
 the command itself is called. Shell commands may use that field to supply
 additional options, which will be inserted right after the command name and
 before any other user-supplied arguments. Others should leave this alone.
-.\"
+'''
 .SS Special Command Types
 .PP
 There are currently two special command types.
@@ -4560,7 +4565,7 @@ same name as the command itself. For example, assuming a command \fIshoot\fR,
 its help file would be expected in \fIhelpdir/shoot\fR. If no file is found
 there, mailagent looks in its public library ($privlibexp) for an help file.
 Help is provided only when the help file exists and is not zero-sized.
-.\"
+'''
 .SS Creating the Root Power
 .PP
 In order to bootstrap the server, you need to create the root power. All the
@@ -4653,7 +4658,7 @@ should be prohibited and access to \fIcron\fR forbidden in order to avoid
 automatic mail processing (since it would be possible to have cron invoke
 a \fImailagent\fR process \-or any other program for that matter\- to process
 the incoming mail in a comparable way).
-.\"
+'''
 .SS Example
 .PP
 Here is an example showing the steps involved in creating a \fIshell\fR
@@ -4797,7 +4802,7 @@ End of processing (.signature)
 The first invocation of the \fIshell\fR command fails since we lack the
 \fIshell\fR power. The string "Permission denied." is echoed by the
 command itself into file descriptor #3 and makes it to the transcript.
-.\"
+'''
 .SS Conclusion
 .PP
 The generic mail server implemented in mailagent can be used to

@@ -1,4 +1,4 @@
-;# $Id: rules.pl 1 2006-08-24 13:24:12Z rmanfredi $
+;# $Id$
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
@@ -204,7 +204,7 @@ sub dump_rules {
 	# Print the environement variable which differ from the original
 	# environment, i.e. those variable which were set by the user.
 	$lines = 0;
-	foreach (keys(%XENV)) {
+	foreach (sort keys(%XENV)) {
 		unless ("$XENV{$_}" eq "$ENV{$_}") {
 			print "$_ = ", $XENV{$_}, ";\n";
 			$lines++;

@@ -23,7 +23,7 @@ $startperl
 	eval 'exec perl -S \$0 \${1+"\$@"}'
 		if \$running_under_some_shell;
 
-# $Id: edusers.SH 47 2008-06-26 19:18:00Z rmanfredi $
+# $Id$
 #
 #  Copyright (c) 1990-2006, Raphael Manfredi
 #  

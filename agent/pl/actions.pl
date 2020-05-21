@@ -1,4 +1,4 @@
-;# $Id: actions.pl 77 2012-01-08 23:55:16Z rmanfredi $
+;# $Id$
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
@@ -766,7 +766,7 @@ sub post {
 	my ($faddr, $fcom) = &parse_address($Header{'From'});
 	$fcom = '"' . $fcom . '"' if $fcom =~ /[@.\(\)<>,:!\/=;]/;
 	if ($fcom ne '') {
-		print NEWS header'news_fmt("From: $fcom <$faddr>\n");
+		print NEWS header::news_fmt("From: $fcom <$faddr>\n");
 	} else {
 		print NEWS "From: $faddr\n";
 	}
@@ -823,7 +823,7 @@ sub post {
 	} else {
 		my $subject = $Header{'Subject'};
 		$subject =~ tr/\n/ /;				# Multiples instances collapsed
-		print NEWS header'news_fmt("Subject: $subject\n");
+		print NEWS header::news_fmt("Subject: $subject\n");
 	}
 
 	# If no proper Message-ID is present, generate one
@@ -839,7 +839,7 @@ sub post {
 			# duplicate detection provided all feeds are done from mailagent
 			# But we also need to fix places using those message IDs, i.e.
 			# the References line, to preserve correct threading (see below).
-			my $fixup = &header'msgid_cleanup(\$msgid);
+			my $fixup = header::msgid_cleanup(\$msgid);
 			&add_log("WARNING fixed Message-Id line for news")
 				if $loglvl > 5 && $fixup;
 		} else {
@@ -900,13 +900,11 @@ sub post {
 			$last_was_header = 1;			# Mark we discarded the line
 			next;							# Line is skipped
 		}
-		s/^Sender:/Prev-Sender:/i;
-		s/^(To|Cc):/X-$1:/i;				# Keep distribution info
-		s/^(Resent-\w+):/X-$1:/i;
 		# Skip any RFC-822 header that is not purely made up of [\w-]+
 		# as it is not possible it can be meaningful to the news system.
 		if (/^([!-9;-~\w-]+):/) {
 			my $header = $1;
+			$header = &header::normalize($header);
 			unless ($header =~ /^[\w-]+$/) {
 				&add_log("NOTICE droping RFC-822 header \"$header\" for news")
 					if $loglvl > 5;
@@ -914,7 +912,16 @@ sub post {
 				next;						# Line is skipped
 			}
 			# All headers will now match /^[\w-]+:/
+			if ($Header{$header} =~ /^\s*$/) {
+				&add_log("NOTICE dropping empty header \"$header\" for news")
+					if $loglvl > 5;
+				$last_was_header = 1;		# Mark we discarded the line
+				next;						# Line is skipped
+			}
 		}
+		s/^Sender:/Prev-Sender:/i;
+		s/^(To|Cc):/X-$1:/i;				# Keep distribution info
+		s/^(Resent-\w+):/X-$1:/i;
 		if (/^([\w-]+):/ && exists $single{"\L$1"}) {
 			my $field = lc($1);
 			if ($single{$field}++) {
@@ -936,7 +943,10 @@ sub post {
 			&add_log("NOTICE added space after \"$header:\", for news")
 				if $loglvl > 5;
 		}
-		print NEWS header'news_fmt($_), "\n";
+		# We include the "\n" at the end of the string to let news_fmt()
+		# avoid emitting the line if it ends-up being a blank line: since
+		# we are emitting a header, that blank line would signal EOH.
+		print NEWS header::news_fmt("$_\n");
 	}
 
 	# For correct threading, we need a References: line.
@@ -964,14 +974,14 @@ sub post {
 		# INN does not like an empty References: line, even if properly
 		# followed by continuations.  Therefore, cheat to force the message
 		# to have at least one ref on the line.
-		print NEWS header'news_fmt("References: $refs\n");
+		print NEWS header::news_fmt("References: $refs\n");
 	}
 
 	# Any address included withing "" means addresses are stored in a file
 	$newsgroups = &complete_list($newsgroups, 'newsgroup');
 	$newsgroups =~ s/\s/,/g;	# Cannot have spaces between them
 	$newsgroups =~ tr/,/,/s;	# Squash down consecutive ','
-	print NEWS header'news_fmt("Newsgroups: $newsgroups\n");
+	print NEWS header::news_fmt("Newsgroups: $newsgroups\n");
 	print NEWS "Distribution: local\n" if $localdist;
 	print NEWS $FILTER, "\n";	# Avoid loops: inews may forward to sendmail
 	print NEWS "\n";

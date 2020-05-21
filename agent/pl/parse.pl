@@ -1,4 +1,4 @@
-;# $Id: parse.pl 67 2010-09-16 11:43:06Z rmanfredi $
+;# $Id$
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  

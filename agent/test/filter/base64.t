@@ -1,6 +1,6 @@
 # Check base64 body decoding for matching
 
-# $Id: base64.t 38 2008-06-13 09:32:24Z rmanfredi $
+# $Id$
 #
 #  Copyright (c) 2008, Raphael Manfredi
 #  

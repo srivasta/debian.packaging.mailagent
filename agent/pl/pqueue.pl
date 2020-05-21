@@ -1,4 +1,4 @@
-;# $Id: pqueue.pl 39 2008-06-13 09:43:39Z rmanfredi $
+;# $Id$
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  

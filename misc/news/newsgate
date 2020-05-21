@@ -3,7 +3,7 @@
 		if $running_under_some_shell;
 
 #
-# $Id: newsgate 2 2006-11-04 11:46:52Z rmanfredi $
+# $Id$
 #
 #  Copyright (c) 1990-2006, Raphael Manfredi
 #  

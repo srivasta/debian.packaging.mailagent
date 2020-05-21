@@ -1,4 +1,4 @@
-;# $Id: qp.pl 38 2008-06-13 09:32:24Z rmanfredi $
+;# $Id$
 ;#
 ;#  Copyright (c) 2008, Raphael Manfredi
 ;#  

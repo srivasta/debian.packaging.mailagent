@@ -1,4 +1,4 @@
-;# $Id: lexical.pl 1 2006-08-24 13:24:12Z rmanfredi $
+;# $Id$
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  
@@ -57,6 +57,7 @@ sub get_line {
 		next if /^\s*#/;		# skip comments
 		next if /^\s*$/;		# skip empty lines
 		s/\s\s+/ /;				# reduce white spaces
+		s/#\s.*$//;				# trailing comments skipped (need space after #)
 		$result .= $_;
 		# Very simple braces handling
 		$in_braces += tr/{/{/ - tr/}/}/;

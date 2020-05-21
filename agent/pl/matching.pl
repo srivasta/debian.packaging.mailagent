@@ -1,4 +1,4 @@
-;# $Id: matching.pl 38 2008-06-13 09:32:24Z rmanfredi $
+;# $Id$
 ;#
 ;#  Copyright (c) 1990-2006, Raphael Manfredi
 ;#  

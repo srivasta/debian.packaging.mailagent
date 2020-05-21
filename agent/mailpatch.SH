@@ -23,7 +23,7 @@ $startperl
 	eval 'exec perl -S \$0 \${1+"\$@"}'
 		if \$running_under_some_shell;
 
-# $Id: mailpatch.SH 48 2008-06-26 19:18:44Z rmanfredi $
+# $Id$
 #
 #  Copyright (c) 1990-2006, Raphael Manfredi
 #  
